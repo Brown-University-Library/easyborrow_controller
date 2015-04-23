@@ -1,0 +1,226 @@
+# -*- coding: utf-8 -*-
+
+import datetime, imp, json, os, pprint, sys, time
+import requests
+from types import InstanceType, ModuleType, NoneType
+
+
+
+class BD_Runner(object):
+
+
+  def __init__( self, settings=None  ):
+    '''
+    - Allows a settings module to be passed in,
+        or a settings path to be passed in,
+        or a dictionary to be passed in,
+        or nothing to be passed in.
+    - Sets other attributes.
+    - Attributes in caps are passed in; others are calculated.
+    '''
+    ## discern settings type
+    types = [ NoneType, dict, ModuleType, unicode ]
+    assert type(settings) in types, Exception( u'Passing in settings is optional, but if used, must be either a dict, a unicode path to a settings module, or a module named settings; current type is: %s' % repr(type(settings)) )
+    if isinstance(settings, dict):
+      s = imp.new_module( u'settings' )
+      for k, v in settings.items():
+        setattr( s, k, v )
+      settings = s
+    elif isinstance(settings, ModuleType):
+      pass
+    elif isinstance(settings, unicode):  # path
+      settings = imp.load_source( u'*', settings )
+    ## attribs
+    self.EB_REQUEST_NUM = settings.EB_REQUEST_NUM; assert type(self.EB_REQUEST_NUM) == unicode, Exception( u'EB_REQUEST_NUM must be unicode' )
+    self.API_URL = settings.API_URL; assert type(self.API_URL) == unicode, Exception( u'API_URL must be unicode' )
+    self.API_AUTH_CODE = settings.API_AUTH_CODE; assert type(self.API_AUTH_CODE) == unicode, Exception( u'API_AUTH_CODE must be unicode' )
+    self.API_IDENTITY = settings.API_IDENTITY; assert type(self.API_IDENTITY) == unicode, Exception( u'API_IDENTITY must be unicode' )
+    self.UNIVERSITY = settings.UNIVERSITY; assert type(self.UNIVERSITY) == unicode, Exception( u'UNIVERSITY must be unicode' )
+    self.USER_BARCODE = settings.USER_BARCODE; assert type(self.USER_BARCODE) == unicode, Exception( u'USER_BARCODE must be unicode' )
+    self.ISBN = settings.ISBN; assert type(self.ISBN) == unicode, Exception( u'ISBN must be unicode' )  # u'' or u'the-isbn'
+    self.WC_URL = settings.WC_URL; assert type(self.WC_URL) == unicode, Exception( u'WC_URL must be unicode' )
+    self.OPENURL_PARSER_URL = settings.OPENURL_PARSER_URL; assert type(self.OPENURL_PARSER_URL) == unicode, Exception( u'OPENURL_PARSER_URL must be unicode' )
+    self.UC_INSTANCE = settings.UC_INSTANCE; assert type(self.UC_INSTANCE) == InstanceType, Exception( u'UC_INSTANCE must be of InstanceType' )  # for logging
+    self.search_type = None
+    self.prepared_data_dict = None
+    self.worldcat_url_parsed_response = None
+    self.string_good_to_go = None
+    self.string_title = None
+    self.string_author = None
+    self.string_date = None
+    self.history_table_updated = None
+    self.history_table_message = None  # 'no_valid_string' or self.api_result
+    self.api_response = None
+    self.api_result = None  # api_response 'search_result': 'SUCCESS' or 'FAILURE' (failure meaning not-found or not-requestable)
+    self.api_confirmation_code = None  # api_response 'bd_confirmation_code'
+    self.api_found = None
+    self.api_requestable = None
+
+
+  def determineSearchType( self ):
+    '''
+    Determines 'isbn' or 'string' search_type
+    '''
+    if len( self.ISBN ) > 0:
+      self.search_type = u'isbn'
+    else:
+      self.search_type = u'string'
+    self.UC_INSTANCE.updateLog( message=u'- in controller.BD_Runner.determineSearchType(); search_type is: %s' % self.search_type, message_importance=u'low', identifier=self.EB_REQUEST_NUM )
+    return
+
+
+  def prepRequestData( self ):
+    '''
+    Prepares data dict
+    '''
+    assert type(self.search_type) == unicode, Exception( u'search_type must be unicode' )
+    assert self.search_type in [ u'isbn', u'string' ], Exception( u'search_type must be "isbn" or "string"' )
+    data_dict = {
+      u'api_authorization_code': self.API_AUTH_CODE,
+      u'api_identity': self.API_IDENTITY,
+      u'university': self.UNIVERSITY,
+      u'user_barcode': self.USER_BARCODE,
+      u'command': u'request',
+      }
+    if self.search_type == u'isbn':
+      data_dict[u'isbn'] = self.ISBN
+      self.prepared_data_dict = data_dict
+    else:
+      ## get string
+      self.makeSearchString()
+      if self.string_good_to_go == True:
+        assert type(self.string_title) == unicode, Exception( u'string_title must be unicode' )
+        assert type(self.string_author) == unicode, Exception( u'string_author must be unicode' )
+        assert type(self.string_date) == unicode, Exception( u'string_date must be unicode' )
+        data_dict[u'title'] = self.string_title
+        data_dict[u'author'] = self.string_author
+        data_dict[u'date'] = self.string_date
+        self.prepared_data_dict = data_dict
+      else:
+        self.prepared_data_dict = u'skip_to_illiad'
+    self.UC_INSTANCE.updateLog( message=u'- in controller.BD_Runner.prepRequestData(); self.prepared_data_dict: %s' % self.prepared_data_dict, message_importance=u'low', identifier=self.EB_REQUEST_NUM )
+    return
+
+
+  def makeSearchString( self ):
+    '''
+    Prepares search string from worldcat url.
+    Called by self.prepRequestData()
+    '''
+    import requests
+    self.UC_INSTANCE.updateLog( message=u'- in controller.BD_Runner.makeSearchString(); wc-url to parse: %s' % self.WC_URL, message_importance=u'low', identifier=self.EB_REQUEST_NUM )
+    url = self.OPENURL_PARSER_URL
+    payload = { u'db_wc_url': self.WC_URL }
+    r = requests.get( url, params=payload, verify=False )
+    assert type(r.url) == unicode, Exception( u'type(r.url) should be unicode; it is: %s' % type(r.url) )
+    self.worldcat_url_parsed_response = r.content.decode(u'utf-8', u'replace')
+    try:
+      d = json.loads( self.worldcat_url_parsed_response )
+      assert sorted(d.keys()) == [u'doc_url', u'request', u'response'], Exception( u'makeSearchString() dict-keys not as expected; they are: %s' % sorted(d.keys()) )
+      assert sorted(d[u'request'].keys()) == [u'db_wc_url', u'time'], Exception( u'makeSearchString() request-keys not as expected; they are: %s' % sorted(d[u'request'].keys()) )  # 'db_wc_url' means 'the worldcat url in the database'
+      assert sorted(d[u'response'].keys()) == [u'bd_author', u'bd_date', u'bd_title', u'time_taken'], Exception( u'makeSearchString() response-keys not as expected; they are: %s' % sorted(d[u'response'].keys()) )
+      self.string_good_to_go = True
+      self.string_title = d[u'response'][u'bd_title']
+      self.string_author = d[u'response'][u'bd_author']
+      self.string_date = d[u'response'][u'bd_date']
+    except Exception, e:
+      self.string_good_to_go = False
+      self.UC_INSTANCE.updateLog( message=u'- in controller.BD_Runner.makeSearchString(); exception handling make-string response is: %s' % repr(e).decode(u'utf-8', u'replace'), message_importance=u'low', identifier=self.EB_REQUEST_NUM )
+    self.UC_INSTANCE.updateLog( message=u'- in controller.BD_Runner.makeSearchString(); self.string_good_to_go is: %s' % self.string_good_to_go, message_importance=u'low', identifier=self.EB_REQUEST_NUM )
+    self.UC_INSTANCE.updateLog( message=u'- in controller.BD_Runner.makeSearchString(); self.worldcat_url_parsed_response is: %s' % self.worldcat_url_parsed_response, message_importance=u'low', identifier=self.EB_REQUEST_NUM )
+    return
+
+
+  def updateHistoryTable( self ):
+    '''
+    Updates history table with action-result & ezb request#.
+    '''
+    try:
+      self.history_table_updated == u'init'
+      assert type( int(self.EB_REQUEST_NUM) ) == int  # will cause exception if not an int instead of evaluating to False
+      ## conditon: no request made due to string-creation failure
+      if self.prepared_data_dict == u'skip_to_illiad':
+        self.history_table_message = u'no_valid_string'
+        self.api_confirmation_code = u''  # instead of None, so the sql statement will work
+      ## condition: request was made, so store result
+      elif type(self.prepared_data_dict) == dict:
+        if self.api_result == u'SUCCESS':
+          self.history_table_message = u'Request_Successful'
+        elif self.api_result == None:  # some error -- I've seen timeout or main bd website returning 500
+          self.history_table_message = u'Error'
+          self.api_confirmation_code = u''
+        else:  # self.api == u'FAILURE'
+          if self.api_found == True and self.api_requestable == False:
+            self.history_table_message = u'not_requestable'
+          else:  # self.api_found == False:
+            self.history_table_message = u'not_found'
+      self.UC_INSTANCE.updateLog( message=u'- in controller.BD_Runner.updateHistoryTable(); history_table_message: %s' % self.history_table_message, message_importance=u'low', identifier=self.EB_REQUEST_NUM )
+
+      ## execute sql
+      SQL_PATTERN = unicode( os.environ[u'ezbCTL__INSERT_HISTORY_FULLACTION_SQL_PATTERN'] )
+      sql = SQL_PATTERN % (
+        self.EB_REQUEST_NUM.encode('utf-8', 'replace'),
+        'borrowdirect',
+        'attempt',
+        self.history_table_message.encode(u'utf-8', u'replace'),
+        self.api_confirmation_code.encode(u'utf-8', u'replace')
+        )  # old code was expecting non-unicode string, so I'll give it.
+
+      self.UC_INSTANCE.connectExecute( sql )  # no useful result currently returned; TODO: try gabbing history record-id
+      self.history_table_updated = True
+      self.UC_INSTANCE.updateLog( message=u'- in controller.BD_Runner.updateHistoryTable(); history table updated for ezb#: %s' % self.EB_REQUEST_NUM, message_importance=u'low', identifier=self.EB_REQUEST_NUM )
+      return
+    except Exception, e:
+      self.UC_INSTANCE.updateLog( message=u'- in controller.BD_Runner.updateHistoryTable(); exception; repr(e): %s' % repr(e).decode(u'utf-8', u'replace'), message_importance=u'low', identifier=self.EB_REQUEST_NUM )
+      return
+
+
+  def requestItem( self ):
+    '''
+    Hits the bd_tunneler webservice.
+    See tests for response keys.
+    Must fail gracefully so-as to pass request on to next service.
+    '''
+    assert type( self.prepared_data_dict ) == dict, Exception( u'type(prepared_data_dict) should be dict; it is: %s' % type(self.prepared_data_dict) )
+    r = requests.post( self.API_URL, data=self.prepared_data_dict, verify=False )
+    self.api_response = r.text
+    self.UC_INSTANCE.updateLog( message=u'- in controller.BD_Runner.requestItem(); self.api_response: %s' % self.api_response, message_importance=u'low', identifier=self.EB_REQUEST_NUM )
+    try:
+      d = json.loads( self.api_response )
+      self.api_result = d[u'response'][u'search_result']
+      self.api_confirmation_code = d[u'response'][u'bd_confirmation_code']
+      self.api_found = d[u'response'][u'found']
+      self.api_requestable = d[u'response'][u'requestable']
+    except Exception, e:
+      self.UC_INSTANCE.updateLog( message=u'- in controller.BD_Runner.requestItem(); exception: %s' % repr(e).decode(u'utf-8', u'replace'), message_importance=u'high', identifier=self.EB_REQUEST_NUM )
+      ## for history table update
+      self.api_result = u'Error'
+      self.api_confirmation_code = u''
+      self.api_found = u''
+      self.api_requestable = u''
+    return
+
+
+  # def requestItem( self ):
+  #   '''
+  #   Hits the bd_tunneler webservice.
+  #   See tests for response keys.
+  #   Must fail gracefully so-as to pass request on to next service.
+  #   '''
+  #   assert type( self.prepared_data_dict ) == dict, Exception( u'type(prepared_data_dict) should be dict; it is: %s' % type(self.prepared_data_dict) )
+  #   r = requests.post( self.API_URL, data=self.prepared_data_dict, verify=False )
+  #   self.api_response = r.text
+  #   self.UC_INSTANCE.updateLog( message=u'- in controller.BD_Runner.requestItem(); self.api_response: %s' % self.api_response, message_importance=u'low', identifier=self.EB_REQUEST_NUM )
+  #   try:
+  #     d = json.loads( self.api_response )
+  #     self.api_result = d[u'response'][u'search_result']
+  #     self.api_confirmation_code = d[u'response'][u'bd_confirmation_code']
+  #   except Exception, e:
+  #     self.UC_INSTANCE.updateLog( message=u'- in controller.BD_Runner.requestItem(); exception: %s' % repr(e).decode(u'utf-8', u'replace'), message_importance=u'high', identifier=self.EB_REQUEST_NUM )
+  #     self.api_result = u'Error'
+  #     self.api_confirmation_code = u''
+  #   return
+
+
+  # end class BD_Runner()
+
