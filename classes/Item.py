@@ -511,7 +511,8 @@ class Item:
     if len( self.volumesPreference ) > 0:
       flow = [u'illiad']
     elif len( self.itemIsbn ) > 0:
-      flow = [ u'bd', u'ir', u'illiad' ] # changed on 2012-09-05 at request of BH from 2012-04-02 email
+      flow = [ u'bd', u'illiad' ] # changed on 2015-04-27 at request of BB email
+      # flow = [ u'bd', u'ir', u'illiad' ] # changed on 2012-09-05 at request of BH from 2012-04-02 email
     else:
       flow = [ u'bd', u'illiad' ]
     return flow
