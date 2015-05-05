@@ -191,44 +191,6 @@ class Controller:
               itemInstance.genericAssignedReferenceNumber = bd_runner.api_confirmation_code
               break  # out of the for-loop
 
-        # elif(service == "bd"):
-        #
-        #   ##
-        #   ## send a request to BorrowDirect
-        #   ##
-        #
-        #   itemInstance.currentlyActiveService = "borrowDirect"
-        #
-        #   utCdInstance.updateLog( message='- in controller; checking BorrowDirect...', message_importance='high', identifier=eb_request_number )
-        #   borrowDirectResultData = itemInstance.checkBorrowDirect( eb_request_number )
-        #
-        #   # examine BorrowDirect results
-        #   utCdInstance.updateLog( message="- in controller; borrowDirect resultData: '%s'" % (borrowDirectResultData), message_importance='high', identifier=eb_request_number ) # added 2007-06-23-Saturday
-        #   try:
-        #     borrowDirectStatus = itemInstance.parseBorrowDirectResultData( borrowDirectResultData, eb_request_number )
-        #   except Exception, e:
-        #     utCdInstance.updateLog( message='- in controller; error on parsing BD status: %s' % e, message_importance='high', identifier=eb_request_number )
-        #     pass
-        #   utCdInstance.updateLog( message="- in controller; borrowDirect status: '%s'" % (borrowDirectStatus), message_importance='high', identifier=eb_request_number )
-        #
-        #   # update history table
-        #
-        #   if( borrowDirectStatus == "Request_Successful" ):
-        #     parameterDict = {'serviceName':'borrowdirect', 'action':'attempt', 'result':borrowDirectStatus, 'number':itemInstance.borrowDirectAssignedReferenceNumber}
-        #   else:
-        #     parameterDict = {'serviceName':'borrowdirect', 'action':'attempt', 'result':borrowDirectStatus, 'number':''}
-        #   itemInstance.updateHistoryAction( parameterDict['serviceName'], parameterDict['action'], parameterDict['result'], parameterDict['number'] )
-        #
-        #   # end section
-        #
-        #   if( borrowDirectStatus == "Request_Successful" ):
-        #     itemInstance.requestSuccessStatus = "success"
-        #     itemInstance.genericAssignedUserEmail = itemInstance.patronEmail
-        #     itemInstance.genericAssignedReferenceNumber = 'N.A.'
-        #     # itemInstance.genericAssignedUserEmail = itemInstance.borrowDirectAssignedUserEmail  # because bd-api is not yet capturing email
-        #     itemInstance.genericAssignedReferenceNumber = itemInstance.borrowDirectAssignedReferenceNumber  # because bd-api is not yet caturing the assigned reference number
-        #     break # break out of the 'for' loop
-
         elif(service == "vc"):
 
           ##
