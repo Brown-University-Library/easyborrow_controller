@@ -1,7 +1,7 @@
-""" Add to project's env site-packages if needed. """
+""" Add to project's env site-packages directory if needed. """
 
 # local settings directory
 /path/to/project_local_settings
 
-# project enclosing directory -- allows references like "from project directory import..."
-/path/to/project_enclosing_folder
+# project enclosing directory -- allows references like "from easyborrow_controller_code import import..."
+/path/to/folder_enclosing_easyborrow_controller_code
