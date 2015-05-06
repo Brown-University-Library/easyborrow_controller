@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
 
-'''
+"""
 - Purpose: this script directs calls to the tunnelers,
   updates logging and history tables, and sends user and staff emails.
 - Called by: cron script running every two minutes.
-'''
+"""
 
-import os  #  interesting -- the import os in the try below is needed
-
+import json, os, pprint, string, sys
+from easyborrow_controller_code import settings, utility_code
+from easyborrow_controller_code.classes import Item, UtilityCode
+from easyborrow_controller_code.classes.tunneler_runners import BD_Runner
 
 
 class Controller:
@@ -21,14 +23,14 @@ class Controller:
       # setup environment
       #######
 
-      import os
+      # import os
 
       MYSQL_DIRECTORY_PATH = unicode( os.environ[u'ezbCTL__MYSQL_DIRECTORY_PATH'] )
       EASYBORROW_SCRIPTS_PATH = unicode( os.environ[u'ezbCTL__EASYBORROW_SCRIPTS_PATH'] )
       SELECT_SQL = unicode( os.environ[u'ezbCTL__SELECT_SQL'] )
 
       # pathwork
-      import os, sys
+      # import os, sys
       mainDirectoryPath = os.path.abspath('')
       sys.path.append( mainDirectoryPath + '/classes/' )  # will eventually get rid of this
       sys.path.append( MYSQL_DIRECTORY_PATH ) # not sure if this is necessary
@@ -47,12 +49,11 @@ class Controller:
       # remaining imports
       #######
 
-      # from django.utils import simplejson
-      from easyborrow_controller_code import settings
-      from easyborrow_controller_code import utility_code
-      from easyborrow_controller_code.classes import Item
-      from easyborrow_controller_code.classes import UtilityCode
-      import json, pprint, string, sys
+      # from easyborrow_controller_code import settings
+      # from easyborrow_controller_code import utility_code
+      # from easyborrow_controller_code.classes import Item
+      # from easyborrow_controller_code.classes import UtilityCode
+      # import json, pprint, string, sys
 
       itemInstance = Item.Item()
       utCdInstance = UtilityCode.UtilityCode()
@@ -144,7 +145,7 @@ class Controller:
           ## send a request to BorrowDirect
           ##
 
-          from easyborrow_controller_code.classes.tunneler_runners import BD_Runner
+          # from easyborrow_controller_code.classes.tunneler_runners import BD_Runner
 
           itemInstance.currentlyActiveService = u'borrowDirect'
           utCdInstance.updateLog( message='- in controller; checking BorrowDirect...', message_importance='high', identifier=eb_request_number )
@@ -304,7 +305,7 @@ class Controller:
       # utility_code.updateLog( '- in controller; quitting', log_identifier=log_identifier, message_importance='high' )
     except:
       try:
-        import sys
+        # import sys
         err_msg = u'error-type - %s; error-message-a - %s; line-number - %s' % ( sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2].tb_lineno, )
         print err_msg
         error_message = utility_code.makeErrorString()
@@ -312,7 +313,7 @@ class Controller:
       except Exception, e:
         print 'ezb controller exception: %s' % e
 
-        import sys
+        # import sys
         err_msg = u'error-type - %s; error-message - %s; line-number - %s' % ( sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2].tb_lineno, )
         print err_msg
 
@@ -322,18 +323,12 @@ class Controller:
 
   def endProgram(self):
 
-    import sys
+    # import sys
 
     sys.exit()
 
 
 
 if __name__ == "__main__":
-  ## setup
-  # from easyborrow_project_local_settings.eb_controller_local_settings import settings_local as controller_settings
-  # activate_this = '%s/bin/activate_this.py' % controller_settings.PROJECT_ENV_DIR_PATH
-  # execfile( activate_this, dict(__file__=activate_this) )
-  ## run controller
   controllerInstance = Controller()
   controllerInstance.runCode()
-
