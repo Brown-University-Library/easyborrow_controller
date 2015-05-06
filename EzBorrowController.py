@@ -330,9 +330,9 @@ class Controller:
 
 if __name__ == "__main__":
   ## setup
-  from easyborrow_project_local_settings.eb_controller_local_settings import settings_local as controller_settings
-  activate_this = '%s/bin/activate_this.py' % controller_settings.PROJECT_ENV_DIR_PATH
-  execfile( activate_this, dict(__file__=activate_this) )
+  # from easyborrow_project_local_settings.eb_controller_local_settings import settings_local as controller_settings
+  # activate_this = '%s/bin/activate_this.py' % controller_settings.PROJECT_ENV_DIR_PATH
+  # execfile( activate_this, dict(__file__=activate_this) )
   ## run controller
   controllerInstance = Controller()
   controllerInstance.runCode()
