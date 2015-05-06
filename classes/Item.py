@@ -138,12 +138,7 @@ class Item:
       prefs_instance = Prefs.Prefs()
 
       import sys
-      # utCdInstance.updateLog( message="- in controller.Item.grabConvertedPatronApiInfo(); sys.path is: %s" % sys.path, message_importance='high', identifier='NA' )
-      # sys.path.append( prefs_instance.SIMPLEJSON_ENCLOSING_FOLDER )
-      # sys.path.append( './../lib')
-      # utCdInstance.updateLog( message="- in controller.Item.grabConvertedPatronApiInfo(); sys.path is now: %s" % sys.path, message_importance='high', identifier='NA' )
 
-      # from django.utils import simplejson
       import urllib
 
       dataDict = {}

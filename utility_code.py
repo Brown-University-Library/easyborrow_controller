@@ -681,7 +681,6 @@ def submitIlliadRequest( parameter_dict, log_identifier ):
 
   try:
 
-    # from django.utils import simplejson
     from easyborrow_controller_code import settings
     import json, urllib, urllib2
 

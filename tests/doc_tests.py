@@ -15,13 +15,6 @@ for entry in directory_list:
     break
 sys.path.append( enclosing_directory_path )
 
-# print '- full_directory_path is: %s' % full_directory_path
-# print '- directory_list is: %s' % directory_list
-# print '- target_element_string is: %s' % target_element_string
-# print '- enclosing_directory_path is: %s' % enclosing_directory_path
-
-# from django.utils import simplejson
-
 
 
 class UtilityCodeDocTests:
