@@ -12,25 +12,21 @@ from easyborrow_controller_code.classes import Item, UtilityCode
 from easyborrow_controller_code.classes.tunneler_runners import BD_Runner
 
 
-class Controller:
+class Controller( object ):
 
 
-
-  def runCode(self):
+  def run_code( self ):
 
     try:
       #######
       # setup environment
       #######
 
-      # import os
-
       MYSQL_DIRECTORY_PATH = unicode( os.environ[u'ezbCTL__MYSQL_DIRECTORY_PATH'] )
       EASYBORROW_SCRIPTS_PATH = unicode( os.environ[u'ezbCTL__EASYBORROW_SCRIPTS_PATH'] )
       SELECT_SQL = unicode( os.environ[u'ezbCTL__SELECT_SQL'] )
 
       # pathwork
-      # import os, sys
       mainDirectoryPath = os.path.abspath('')
       sys.path.append( mainDirectoryPath + '/classes/' )  # will eventually get rid of this
       sys.path.append( MYSQL_DIRECTORY_PATH ) # not sure if this is necessary
@@ -44,16 +40,6 @@ class Controller:
       last_element_string = directory_list[-1]
       enclosing_directory = full_directory_path.replace( '/' + last_element_string, '' ) # strip off the slash plus the current directory
       sys.path.append( enclosing_directory )
-
-      #######
-      # remaining imports
-      #######
-
-      # from easyborrow_controller_code import settings
-      # from easyborrow_controller_code import utility_code
-      # from easyborrow_controller_code.classes import Item
-      # from easyborrow_controller_code.classes import UtilityCode
-      # import json, pprint, string, sys
 
       itemInstance = Item.Item()
       utCdInstance = UtilityCode.UtilityCode()
@@ -145,8 +131,6 @@ class Controller:
           ## send a request to BorrowDirect
           ##
 
-          # from easyborrow_controller_code.classes.tunneler_runners import BD_Runner
-
           itemInstance.currentlyActiveService = u'borrowDirect'
           utCdInstance.updateLog( message='- in controller; checking BorrowDirect...', message_importance='high', identifier=eb_request_number )
 
@@ -158,9 +142,6 @@ class Controller:
             itemInstance.itemIsbn = itemInstance.itemIsbn.decode( u'utf-8', u'replace' )
           if type(itemInstance.sfxurl) == str:
             itemInstance.sfxurl = itemInstance.sfxurl.decode( u'utf-8', u'replace' )
-
-          # print u'- settings.BD_API_URL:'; print settings.BD_API_URL
-          # print u'- settings.OPENURL_PARSER_URL:'; print settings.OPENURL_PARSER_URL
 
           bd_data = {
             u'EB_REQUEST_NUM': eb_request_number,
@@ -305,7 +286,6 @@ class Controller:
       # utility_code.updateLog( '- in controller; quitting', log_identifier=log_identifier, message_importance='high' )
     except:
       try:
-        # import sys
         err_msg = u'error-type - %s; error-message-a - %s; line-number - %s' % ( sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2].tb_lineno, )
         print err_msg
         error_message = utility_code.makeErrorString()
@@ -313,22 +293,16 @@ class Controller:
       except Exception, e:
         print 'ezb controller exception: %s' % e
 
-        # import sys
         err_msg = u'error-type - %s; error-message - %s; line-number - %s' % ( sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2].tb_lineno, )
         print err_msg
 
-        # self.endProgram()
-
-
 
   def endProgram(self):
-
-    # import sys
-
     sys.exit()
 
 
 
-if __name__ == "__main__":
-  controllerInstance = Controller()
-  controllerInstance.runCode()
+
+if __name__ == u'__main__':
+  controller_instance = Controller()
+  controller_instance.run_code()
