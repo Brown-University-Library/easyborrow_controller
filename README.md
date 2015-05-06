@@ -9,7 +9,7 @@
 
 In 2005 ago the [Library](http://library.brown.edu) made a decision to privilege giving patrons as deep and wide a choice of books as possible -- rather than promoting _our_ holdings specifically.
 
-We encouraged them to start at [WorldCat](http://www.worldcat.org) to browse and search -- and our job would be to get them their chosen books with no more effort on their part.
+We encouraged them to start at [WorldCat](http://www.worldcat.org) to browse and search -- our job would be to get them their chosen books with no more effort on their part.
 
 We repurposed the WorldCat openUrl link-resolver to take a patron to a landing page under our control. (Now openUrls reach the landing page from numerous sources.) If the requested item is a book which is not available locally, it goes into an [easyBorrow](http://library.brown.edu/borrowing/easyBorrow.php) flow. This code manages that flow. The basic overview is that this code:
 - checks to see if a new request exists, and if so
