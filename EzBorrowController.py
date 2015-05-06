@@ -1,9 +1,15 @@
 # -*- coding: utf-8 -*-
 
 """
-- Purpose: this script directs calls to the tunnelers,
-  updates logging and history tables, and sends user and staff emails.
+- Purpose:
+  - directs calls to the tunnelers
+  - updates logging and history tables
+  - sends user and staff emails
 - Called by: cron script running every two minutes.
+- Assumes:
+  - virtual environment set up
+  - site-packages .pth file adds settings directory and easyborrow_controller_code-enclosing-directory to sys path.
+  - env/bin/activate file sources settings
 """
 
 import json, os, pprint, string, sys
@@ -15,6 +21,10 @@ from easyborrow_controller_code.classes.tunneler_runners import BD_Runner
 class Controller( object ):
 
 
+  def __init__( self ):
+    self.SELECT_SQL = unicode( os.environ[u'ezbCTL__SELECT_SQL'] )
+
+
   def run_code( self ):
 
     try:
@@ -22,24 +32,36 @@ class Controller( object ):
       # setup environment
       #######
 
-      MYSQL_DIRECTORY_PATH = unicode( os.environ[u'ezbCTL__MYSQL_DIRECTORY_PATH'] )
-      EASYBORROW_SCRIPTS_PATH = unicode( os.environ[u'ezbCTL__EASYBORROW_SCRIPTS_PATH'] )
-      SELECT_SQL = unicode( os.environ[u'ezbCTL__SELECT_SQL'] )
+      # MYSQL_DIRECTORY_PATH = unicode( os.environ[u'ezbCTL__MYSQL_DIRECTORY_PATH'] )
+      # EASYBORROW_SCRIPTS_PATH = unicode( os.environ[u'ezbCTL__EASYBORROW_SCRIPTS_PATH'] )
+      # SELECT_SQL = unicode( os.environ[u'ezbCTL__SELECT_SQL'] )
 
-      # pathwork
-      mainDirectoryPath = os.path.abspath('')
-      sys.path.append( mainDirectoryPath + '/classes/' )  # will eventually get rid of this
-      sys.path.append( MYSQL_DIRECTORY_PATH ) # not sure if this is necessary
-      sys.path.append( EASYBORROW_SCRIPTS_PATH ) # to call inRhode code, until it can be made into a webservice
+      # # pathwork
+      # mainDirectoryPath = os.path.abspath('')
+      # sys.path.append( mainDirectoryPath + '/classes/' )  # will eventually get rid of this
+      # sys.path.append( MYSQL_DIRECTORY_PATH ) # not sure if this is necessary
+      # sys.path.append( EASYBORROW_SCRIPTS_PATH ) # to call inRhode code, until it can be made into a webservice
 
-      # add enclosing directory to path
-      current_script_name = sys.argv[0] # may or may not include path
-      directory_path = os.path.dirname( current_script_name )
-      full_directory_path = os.path.abspath( directory_path )
-      directory_list = full_directory_path.split('/')
-      last_element_string = directory_list[-1]
-      enclosing_directory = full_directory_path.replace( '/' + last_element_string, '' ) # strip off the slash plus the current directory
-      sys.path.append( enclosing_directory )
+      # # add enclosing directory to path
+      # current_script_name = sys.argv[0] # may or may not include path
+      # directory_path = os.path.dirname( current_script_name )
+      # full_directory_path = os.path.abspath( directory_path )
+      # directory_list = full_directory_path.split('/')
+      # last_element_string = directory_list[-1]
+      # enclosing_directory = full_directory_path.replace( '/' + last_element_string, '' ) # strip off the slash plus the current directory
+      # sys.path.append( enclosing_directory )
+
+      # itemInstance = Item.Item()
+      # utCdInstance = UtilityCode.UtilityCode()
+
+      # temp_identifier = utility_code.makeIdentifier()  # used until request-number is obtained
+      # log_identifier = temp_identifier  # log_identifier used in newer utility_code.updateLog()
+      # dateAndTimeText = utCdInstance.obtainDate()
+      # utCdInstance.updateLog( message='EZBorrowController session starting at %s' % dateAndTimeText, identifier=temp_identifier, message_importance='high' )
+
+      #######
+      # check for a request-record
+      #######
 
       itemInstance = Item.Item()
       utCdInstance = UtilityCode.UtilityCode()
@@ -49,12 +71,8 @@ class Controller( object ):
       dateAndTimeText = utCdInstance.obtainDate()
       utCdInstance.updateLog( message='EZBorrowController session starting at %s' % dateAndTimeText, identifier=temp_identifier, message_importance='high' )
 
-      #######
-      # check for a request-record
-      #######
-
       utCdInstance.updateLog( message='- in controller; checking for request-record...', identifier=temp_identifier, message_importance='low' )
-      resultInfo = utCdInstance.connectExecuteSelect( SELECT_SQL ) ## [ [fieldname01, fieldname02], ( (row01field01_value, row01field02_value), (row02field01_value, row02field02_value) ) ]
+      resultInfo = utCdInstance.connectExecuteSelect( self.SELECT_SQL ) ## [ [fieldname01, fieldname02], ( (row01field01_value, row01field02_value), (row02field01_value, row02field02_value) ) ]
       if( resultInfo == None ):
         utCdInstance.updateLog( message='- in controller; no new request found; quitting', identifier=temp_identifier, message_importance='high' )
         sys.exit()
