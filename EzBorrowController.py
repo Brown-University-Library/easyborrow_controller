@@ -307,12 +307,13 @@ class Controller( object ):
         err_msg = u'error-type - %s; error-message-a - %s; line-number - %s' % ( sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2].tb_lineno, )
         print err_msg
         error_message = utility_code.makeErrorString()
+        self.logger.error( u'%s- exception message, `%s`' % (self.log_identifier, err_msg) )
         utility_code.updateLog( '- in controller; EXCEPTION; error: %s' % repr(error_message), log_identifier='exception', message_importance='high' )
       except Exception, e:
         print 'ezb controller exception: %s' % e
-
         err_msg = u'error-type - %s; error-message - %s; line-number - %s' % ( sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2].tb_lineno, )
         print err_msg
+        self.logger.error( u'%s- exception message, `%s`' % (self.log_identifier, err_msg) )
 
     # end def run_code()
 
