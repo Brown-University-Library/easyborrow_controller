@@ -31,15 +31,14 @@ class Controller( object ):
   def setup_logger( self ):
       """ Configures log path and level.
           Called by BorrowDirect.__init__() """
-      log_level = {
-          u'DEBUG': logging.DEBUG,
-          u'INFO': logging.INFO, }
+      log_level = { u'DEBUG': logging.DEBUG, u'INFO': logging.INFO }
       logging.basicConfig(
           filename=self.LOG_PATH, level=log_level[self.LOG_LEVEL],
-          format=u'dt %(asctime)s | ln %(lineno)d | md %(module)s | fn %(funcName)s() | %(message)s',
-          datefmt=u'%Y-%m-%d %H:%M:%S' )
+          format=u'[%(asctime)s] %(levelname)s [%(module)s-%(funcName)s()::%(lineno)d] %(message)s',
+          datefmt=u'%d/%b/%Y %H:%M:%S'
+          )
       self.logger = logging.getLogger(__name__)
-      self.logger.info( u'controller_instance instantiated' )
+      self.logger.debug( u'controller_instance instantiated' )
       return
 
   def run_code( self ):
