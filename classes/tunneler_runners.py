@@ -25,9 +25,7 @@ class BD_ApiRunner( object ):
     """ Handles bdpyweb call.
         Called by Controller.run_code() """
     self.logger.info( u'%s- starting try_request()' % self.log_identifier )
-    parameter_dict = {
-      u'api_authorization_code': self.bdpyweb_defaults[u'api_authorization_code'],
-      u'api_identity': self.bdpyweb_defaults[u'api_identity'] }
+    parameter_dict = self.prepare_bd_api( isbn, user_barcode )
     try:
       r = requests.post( self.bdpyweb_defaults[u'url'], data=parameter_dict, timeout=300, verify=False )
       self.logger.debug( u'%s- bdpyweb response content, `%s`' % (self.log_identifier, r.content.decode(u'utf-8')) )
@@ -35,6 +33,17 @@ class BD_ApiRunner( object ):
     except Exception, e:
       self.logger.debug( u'%s- exception on bdpyweb post, `%s`' % (self.log_identifier, pprint.pformat(unicode(repr(e)))) )
     return
+
+  def prepare_bd_api( self, isbn, user_barcode ):
+    """ Prepares bd-api dct for post.
+        Called by: hit_bd_api() """
+    parameter_dict = {
+      u'api_authorization_code': self.bdpyweb_defaults[u'api_authorization_code'],
+      u'api_identity': self.bdpyweb_defaults[u'api_identity'],
+      u'isbn': isbn,
+      u'user_barcode': user_barcode }
+    self.logger.debug( u'%s- post parameter_dict, `%s`' % (self.log_identifier, parameter_dict) )
+    return parameter_dict
 
   def compare_responses( self, old_runner_instance ):
     """ Writes comparison of old-production and new-api runners.
