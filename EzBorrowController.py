@@ -38,7 +38,7 @@ class Controller( object ):
           datefmt=u'%d/%b/%Y %H:%M:%S'
           )
       self.logger = logging.getLogger(__name__)
-      self.logger.debug( u'controller_instance instantiated' )
+      self.logger.info( u'controller_instance instantiated' )
       return
 
   def run_code( self ):
@@ -181,8 +181,11 @@ class Controller( object ):
           ## send a shadow request to BorrowDirect-API test-server
           ##
 
-          bd_api_runner = BD_ApiRunner( self.logger )
-          bd_api_runner.try_request()
+          if len( bd_data[u'ISBN'] ) > 0:
+            bd_api_runner = BD_ApiRunner( self.logger )
+            bd_api_runner.try_request()
+          else:
+            self.logger.debug( u'skipping bd_api_runner; no isbn' )
 
         elif(service == "vc"):
 

@@ -17,7 +17,7 @@ class BD_ApiRunner( object ):
   def try_request( self ):
     """ Handles bdpyweb call.
         Called by Controller.run_code() """
-    self.logger.debug( u'starting try_request()' )
+    self.logger.info( u'starting try_request()' )
     return
 
   # end class BD_ApiRunner
