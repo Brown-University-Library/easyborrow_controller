@@ -14,11 +14,38 @@ class BD_ApiRunner( object ):
         Called by EzBorrowController.py """
     self.logger = logger
     self.log_identifier = log_identifier
+    self.bdpyweb_defaults = {
+      u'url': unicode( os.environ[u'ezbCTL__BDPYWEB_URL'] ),
+      u'api_authorization_code': unicode( os.environ[u'ezbCTL__BDPYWEB_AUTHORIZATION_CODE'] ),
+      u'api_identity': unicode( os.environ[u'ezbCTL__BDPYWEB_IDENTITY'] )
+      }
+    self.bdpyweb_response_dct = None
 
-  def hit_bd_api( self ):
+  def hit_bd_api( self, isbn, user_barcode ):
     """ Handles bdpyweb call.
         Called by Controller.run_code() """
     self.logger.info( u'%s- starting try_request()' % self.log_identifier )
+    parameter_dict = {
+      u'api_authorization_code': self.bdpyweb_defaults[u'api_authorization_code'],
+      u'api_identity': self.bdpyweb_defaults[u'api_identity'] }
+    try:
+      r = requests.post( self.bdpyweb_defaults[u'url'], data=parameter_dict, timeout=300, verify=False )
+      self.bdpyweb_response_dct = json.loads( r.content )
+      self.logger.debug( u'%s- bdpyweb response, `%s`' % (self.log_identifier, pprint.pformat(self.bdpyweb_response_dct)) )
+    except Exception, e:
+      self.logger.debug( u'%s- exception on bdpyweb post, `%s`' % (self.log_identifier, pprint.pformat(unicode(repr(e)))) )
+    return
+
+  def compare_responses( self, old_runner_instance ):
+    """ Writes comparison of old-production and new-api runners.
+        Called by Controller.run_code() """
+    comparison_dct = {
+      u'old_api_found': old_runner_instance.api_found,
+      u'old_api_requestable': old_runner_instance.api_requestable,
+      u'new_api_found': self.bdpyweb_response_dct[u'response'][u'found'],
+      u'new_api_requestable': self.bdpyweb_response_dct[u'response'][u'requestable']
+      }
+    self.logger.debug( u'%s- bd-runner comparison, `%s`' % (self.log_identifier, pprint.pformat(comparison_dct)) )
     return
 
   # end class BD_ApiRunner

@@ -185,7 +185,8 @@ class Controller( object ):
 
               if len( bd_data[u'ISBN'] ) > 0:
                 bd_api_runner = BD_ApiRunner( self.logger, self.log_identifier )
-                bd_api_runner.hit_bd_api()
+                bd_api_runner.hit_bd_api( bd_data[u'ISBN'], bd_data[u'USER_BARCODE'] )
+                bd_api_runner.compare_responses( bd_runner )
               else:
                 self.logger.debug( u'%s- skipping bd_api_runner; no isbn' % self.log_identifier )
 
