@@ -168,13 +168,8 @@ class Controller( object ):
           if bd_runner.prepared_data_dict == u'skip_to_illiad':  # neither isbn nor good string
             bd_runner.updateHistoryTable()
           else:
-            try:  # ensures bd problem doesn't hang full request processing
-              bd_runner.requestItem()
-            except Exception, e:
-              bd_runner.api_result == u'FAILURE'  # eventually change this to u'ERROR' after updating code that acts on u'FAILURE'
-            bd_runner.updateHistoryTable()
             ##
-            ## send a shadow request to BorrowDirect-API test-server
+            ## send a shadow request to BorrowDirect-API test-server; must do it before real request in case real request would change availability
             ##
             if len( bd_data[u'ISBN'] ) > 0:
               bd_api_runner = BD_ApiRunner( self.logger, self.log_identifier )
@@ -183,6 +178,11 @@ class Controller( object ):
             else:
               self.logger.debug( u'%s- skipping bd_api_runner; no isbn' % self.log_identifier )
             ## end shadow
+            try:  # ensures bd problem doesn't hang full request processing
+              bd_runner.requestItem()
+            except Exception, e:
+              bd_runner.api_result == u'FAILURE'  # eventually change this to u'ERROR' after updating code that acts on u'FAILURE'
+            bd_runner.updateHistoryTable()
             if bd_runner.api_result == u'SUCCESS':
               ## return to existing flow
               itemInstance.requestSuccessStatus = u'success'
