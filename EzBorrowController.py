@@ -15,11 +15,10 @@
 import json, logging, os, pprint, string, sys
 from easyborrow_controller_code import settings, utility_code
 from easyborrow_controller_code.classes import Item, UtilityCode
-from easyborrow_controller_code.classes.tunneler_runners import BD_Runner
+from easyborrow_controller_code.classes.tunneler_runners import BD_Runner, BD_ApiRunner
 
 
 class Controller( object ):
-
 
   def __init__( self ):
     """ Grabs settings from environment and sets up logger. """
@@ -28,7 +27,6 @@ class Controller( object ):
     self.LOG_LEVEL = unicode( os.environ[u'ezbCTL__LOG_LEVEL'] )
     self.logger = None
     self.setup_logger()
-
 
   def setup_logger( self ):
       """ Configures log path and level.
@@ -41,9 +39,8 @@ class Controller( object ):
           format=u'dt %(asctime)s | ln %(lineno)d | md %(module)s | fn %(funcName)s() | %(message)s',
           datefmt=u'%Y-%m-%d %H:%M:%S' )
       self.logger = logging.getLogger(__name__)
-      self.logger.debug( u'controller_instance instantiated' )
+      self.logger.info( u'controller_instance instantiated' )
       return
-
 
   def run_code( self ):
 
@@ -181,6 +178,13 @@ class Controller( object ):
               itemInstance.genericAssignedReferenceNumber = bd_runner.api_confirmation_code
               break  # out of the for-loop
 
+          ##
+          ## send a shadow request to BorrowDirect-API test-server
+          ##
+
+          bd_api_runner = BD_ApiRunner( self.logger )
+          bd_api_runner.try_request()
+
         elif(service == "vc"):
 
           ##
@@ -304,9 +308,12 @@ class Controller( object ):
         err_msg = u'error-type - %s; error-message - %s; line-number - %s' % ( sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2].tb_lineno, )
         print err_msg
 
+    # end def run_code()
 
   def endProgram(self):
     sys.exit()
+
+  # end class Controller
 
 
 

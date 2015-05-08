@@ -6,6 +6,24 @@ from types import InstanceType, ModuleType, NoneType
 
 
 
+class BD_ApiRunner( object ):
+  """ Handles bdpyweb calls. """
+
+  def __init__( self, logger ):
+    """ Loads env vars.
+        Called by EzBorrowController.py """
+    self.logger = logger
+
+  def try_request( self ):
+    """ Handles bdpyweb call.
+        Called by Controller.run_code() """
+    self.logger.debug( u'starting try_request()' )
+    return
+
+  # end class BD_ApiRunner
+
+
+
 class BD_Runner(object):
 
 
