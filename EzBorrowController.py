@@ -26,6 +26,7 @@ class Controller( object ):
     self.LOG_PATH = unicode( os.environ[u'ezbCTL__LOG_PATH'] )
     self.LOG_LEVEL = unicode( os.environ[u'ezbCTL__LOG_LEVEL'] )
     self.logger = None
+    self.log_identifier = None  # ezb-request-number: helps track which log-entries go with which request
     self.setup_logger()
 
   def setup_logger( self ):
@@ -54,6 +55,7 @@ class Controller( object ):
 
       temp_identifier = utility_code.makeIdentifier()  # used until request-number is obtained
       log_identifier = temp_identifier  # log_identifier used in newer utility_code.updateLog()
+      self.log_identifier = log_identifier
       dateAndTimeText = utCdInstance.obtainDate()
       utCdInstance.updateLog( message='EZBorrowController session starting at %s' % dateAndTimeText, identifier=temp_identifier, message_importance='high' )
 
@@ -73,6 +75,7 @@ class Controller( object ):
       itemInstance.fillFromDbRow(resultInfo)
       eb_request_number = itemInstance.itemDbId
       log_identifier = eb_request_number  # used in newer utility_code.updateLog()
+      self.log_identifier = log_identifier
       utCdInstance.updateLog( message='- in controller; record grabbed: %s' % resultInfo, message_importance='high', identifier='was_%s_now_%s' % (temp_identifier, eb_request_number) )
 
       # update request and history tables
@@ -175,17 +178,18 @@ class Controller( object ):
               itemInstance.requestSuccessStatus = u'success'
               itemInstance.genericAssignedUserEmail = itemInstance.patronEmail
               itemInstance.genericAssignedReferenceNumber = bd_runner.api_confirmation_code
+
+              ##
+              ## send a shadow request to BorrowDirect-API test-server
+              ##
+
+              if len( bd_data[u'ISBN'] ) > 0:
+                bd_api_runner = BD_ApiRunner( self.logger )
+                bd_api_runner.try_request()
+              else:
+                self.logger.debug( u'%s- skipping bd_api_runner; no isbn' % self.log_identifier )
+
               break  # out of the for-loop
-
-          ##
-          ## send a shadow request to BorrowDirect-API test-server
-          ##
-
-          if len( bd_data[u'ISBN'] ) > 0:
-            bd_api_runner = BD_ApiRunner( self.logger )
-            bd_api_runner.try_request()
-          else:
-            self.logger.debug( u'skipping bd_api_runner; no isbn' )
 
         elif(service == "vc"):
 
