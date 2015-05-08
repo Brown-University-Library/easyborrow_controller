@@ -174,12 +174,13 @@ class Controller( object ):
             if len( bd_data[u'ISBN'] ) > 0:
               bd_api_runner = BD_ApiRunner( self.logger, self.log_identifier )
               bd_api_runner.hit_bd_api( bd_data[u'ISBN'], bd_data[u'USER_BARCODE'] )
-              bd_api_runner.compare_responses( bd_runner )
+              # bd_api_runner.compare_responses( bd_runner )  # can't run comparison because real request hasn't run yet
             else:
               self.logger.debug( u'%s- skipping bd_api_runner; no isbn' % self.log_identifier )
             ## end shadow
             try:  # ensures bd problem doesn't hang full request processing
               bd_runner.requestItem()
+              bd_api_runner.compare_responses( bd_runner )  ## shadow comparison ##
             except Exception, e:
               bd_runner.api_result == u'FAILURE'  # eventually change this to u'ERROR' after updating code that acts on u'FAILURE'
             bd_runner.updateHistoryTable()
