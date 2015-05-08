@@ -52,8 +52,8 @@ class BD_ApiRunner( object ):
       comparison_dct = {
         u'old_api_found': old_runner_instance.api_found,
         u'old_api_requestable': old_runner_instance.api_requestable,
-        u'new_api_found': self.bdpyweb_response_dct[u'response'][u'found'],
-        u'new_api_requestable': self.bdpyweb_response_dct[u'response'][u'requestable']
+        u'new_api_found': self.bdpyweb_response_dct[u'found'],
+        u'new_api_requestable': self.bdpyweb_response_dct[u'requestable']
         }
       self.logger.debug( u'%s- bd-runner comparison, `%s`' % (self.log_identifier, pprint.pformat(comparison_dct)) )
     except Exception as e:  # handles case where bdpyweb response fails
