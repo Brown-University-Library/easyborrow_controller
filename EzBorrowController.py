@@ -223,24 +223,31 @@ class Controller( object ):
             itemInstance.genericAssignedReferenceNumber = itemInstance.virtualCatalogAssignedReferenceNumber
             break # break out of the 'for' loop
 
-        elif service == 'illiad':
+        elif service == u'illiad':
           utility_code.updateLog( u'- in controller; service is now illiad', log_identifier )
-          illiad_switch = settings.ILLIAD_REMOTEAUTH_SWITCH
-          utility_code.updateLog( u'- in controller; illiad_switch is: %s' % illiad_switch, log_identifier )
-          if illiad_switch == u'old_code':
-            old_illiad_flow_result = utility_code.oldIlliadControllerFlow( eb_request_number, itemInstance, settings, utCdInstance )
-            if type(old_illiad_flow_result) == dict:
-              if u'status' in old_illiad_flow_result:
-                if old_illiad_flow_result[u'status'] == u'failure':
-                  return old_illiad_flow_result  # includes message key & value
-          if illiad_switch == u'new_code':
-            itemInstance.currentlyActiveService = "illiad"
-            ## prepare parameters
-            prep_result_dict = utility_code.makeIlliadParametersV2( itemInstance, settings, log_identifier )
-            ## send request to illiad
-            send_result_dict = utility_code.submitIlliadRemoteAuthRequestV2( prep_result_dict[u'parameter_dict'], log_identifier )
-            ## evaluate result (update itemInstance, & history & request tables)
-            eval_result_dict = utility_code.evaluateIlliadSubmissionV2( itemInstance, send_result_dict, log_identifier )
+          itemInstance.currentlyActiveService = u'illiad'
+          prep_result_dict = utility_code.makeIlliadParametersV2( itemInstance, settings, log_identifier )  # prepare parameters
+          send_result_dict = utility_code.submitIlliadRemoteAuthRequestV2( prep_result_dict[u'parameter_dict'], log_identifier )  # send request to illiad
+          eval_result_dict = utility_code.evaluateIlliadSubmissionV2( itemInstance, send_result_dict, log_identifier )  # evaluate result (update itemInstance, & history & request tables)
+
+        # elif service == 'illiad':
+        #   utility_code.updateLog( u'- in controller; service is now illiad', log_identifier )
+        #   illiad_switch = settings.ILLIAD_REMOTEAUTH_SWITCH
+        #   utility_code.updateLog( u'- in controller; illiad_switch is: %s' % illiad_switch, log_identifier )
+        #   if illiad_switch == u'old_code':
+        #     old_illiad_flow_result = utility_code.oldIlliadControllerFlow( eb_request_number, itemInstance, settings, utCdInstance )
+        #     if type(old_illiad_flow_result) == dict:
+        #       if u'status' in old_illiad_flow_result:
+        #         if old_illiad_flow_result[u'status'] == u'failure':
+        #           return old_illiad_flow_result  # includes message key & value
+        #   if illiad_switch == u'new_code':
+        #     itemInstance.currentlyActiveService = "illiad"
+        #     ## prepare parameters
+        #     prep_result_dict = utility_code.makeIlliadParametersV2( itemInstance, settings, log_identifier )
+        #     ## send request to illiad
+        #     send_result_dict = utility_code.submitIlliadRemoteAuthRequestV2( prep_result_dict[u'parameter_dict'], log_identifier )
+        #     ## evaluate result (update itemInstance, & history & request tables)
+        #     eval_result_dict = utility_code.evaluateIlliadSubmissionV2( itemInstance, send_result_dict, log_identifier )
 
       # end of '''for service in flowList:'''
 
