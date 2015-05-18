@@ -247,286 +247,286 @@ def makeIlliadParametersV2( itemInstance, settings, log_identifier ):
 
 
 
-def oldIlliadControllerFlow( eb_request_number, itemInstance, settings, utCdInstance ):
+# def oldIlliadControllerFlow( eb_request_number, itemInstance, settings, utCdInstance ):
 
-  utCdInstance.updateLog( message='- in controller.uc.oldIlliadControllerFlow(); checking illiad via django-handler', message_importance='high', identifier=eb_request_number )
-  log_identifier = eb_request_number
+#   utCdInstance.updateLog( message='- in controller.uc.oldIlliadControllerFlow(); checking illiad via django-handler', message_importance='high', identifier=eb_request_number )
+#   log_identifier = eb_request_number
 
-  # update itemInstance (used later in email)
-  itemInstance.currentlyActiveService = "illiad"
+#   # update itemInstance (used later in email)
+#   itemInstance.currentlyActiveService = "illiad"
 
-  # prepare info
-  parameter_dict_for_django_illiad = {
-    'auth_key': settings.ILLIAD_REQUEST_AUTHORIZATION_KEY,
-    'request_id': eb_request_number,
-    'first_name': itemInstance.firstname,
-    'last_name': itemInstance.lastname,
-    'address': '',  # perceived but not handled by dj_ill_submission
-    'oclc_number': itemInstance.oclcNumber,
-    # 'openurl': itemInstance.convertSfxurlToOpenurlSegment( itemInstance.sfxurl ),
-    'openurl': makeOpenUrlSegment( itemInstance.sfxurl, log_identifier )['openurl_segment'],
-    'patron_email': itemInstance.patronEmail,  # not yet perceived by dj_ill_submission
-    'patron_status': itemInstance.patronStatus,  # perceived but not handled by dj_ill_submission
-    'phone': '',  # perceived but not handled by dj_ill_submission
-    'volumes': '',  # perceived but not handled by dj_ill_submission
-    }
-  utCdInstance.updateLog( message='- in controller.uc.oldIlliadControllerFlow(); parameter_dict_for_django_illiad is: %s' % parameter_dict_for_django_illiad, message_importance='low', identifier=eb_request_number )
+#   # prepare info
+#   parameter_dict_for_django_illiad = {
+#     'auth_key': settings.ILLIAD_REQUEST_AUTHORIZATION_KEY,
+#     'request_id': eb_request_number,
+#     'first_name': itemInstance.firstname,
+#     'last_name': itemInstance.lastname,
+#     'address': '',  # perceived but not handled by dj_ill_submission
+#     'oclc_number': itemInstance.oclcNumber,
+#     # 'openurl': itemInstance.convertSfxurlToOpenurlSegment( itemInstance.sfxurl ),
+#     'openurl': makeOpenUrlSegment( itemInstance.sfxurl, log_identifier )['openurl_segment'],
+#     'patron_email': itemInstance.patronEmail,  # not yet perceived by dj_ill_submission
+#     'patron_status': itemInstance.patronStatus,  # perceived but not handled by dj_ill_submission
+#     'phone': '',  # perceived but not handled by dj_ill_submission
+#     'volumes': '',  # perceived but not handled by dj_ill_submission
+#     }
+#   utCdInstance.updateLog( message='- in controller.uc.oldIlliadControllerFlow(); parameter_dict_for_django_illiad is: %s' % parameter_dict_for_django_illiad, message_importance='low', identifier=eb_request_number )
 
-  # submit to illiad
-  illiad_submission_result_dict = submitIlliadRequest( parameter_dict_for_django_illiad, log_identifier )
-  utCdInstance.updateLog( message='- in controller.uc.oldIlliadControllerFlow(); illiad_submission_result_dict from django tunneler is: %s' % illiad_submission_result_dict, message_importance='low', identifier=eb_request_number )
+#   # submit to illiad
+#   illiad_submission_result_dict = submitIlliadRequest( parameter_dict_for_django_illiad, log_identifier )
+#   utCdInstance.updateLog( message='- in controller.uc.oldIlliadControllerFlow(); illiad_submission_result_dict from django tunneler is: %s' % illiad_submission_result_dict, message_importance='low', identifier=eb_request_number )
 
-  # parse Illiad results and return string to older code
-  illiadStatus = illiad_submission_result_dict['status']
-  utCdInstance.updateLog( message='- in controller.uc.oldIlliadControllerFlow(); illiadStatus is: %s' % illiadStatus, message_importance='low', identifier=eb_request_number )
+#   # parse Illiad results and return string to older code
+#   illiadStatus = illiad_submission_result_dict['status']
+#   utCdInstance.updateLog( message='- in controller.uc.oldIlliadControllerFlow(); illiadStatus is: %s' % illiadStatus, message_importance='low', identifier=eb_request_number )
 
-  #
-  # switch back to regular code
-  #
+#   #
+#   # switch back to regular code
+#   #
 
-  # update history table
-  if( illiadStatus == "submission_successful" ):
-    itemInstance.illiadAssignedReferenceNumber = illiad_submission_result_dict['transaction_number']
-    parameterDict = {'serviceName':'illiad', 'action':'attempt', 'result':'Request_Successful', 'number':itemInstance.illiadAssignedReferenceNumber}
-  else:
-    parameterDict = {'serviceName':'illiad', 'action':'attempt', 'result':illiadStatus, 'number':''}
-  itemInstance.updateHistoryAction( parameterDict['serviceName'], parameterDict['action'], parameterDict['result'], parameterDict['number'] )
+#   # update history table
+#   if( illiadStatus == "submission_successful" ):
+#     itemInstance.illiadAssignedReferenceNumber = illiad_submission_result_dict['transaction_number']
+#     parameterDict = {'serviceName':'illiad', 'action':'attempt', 'result':'Request_Successful', 'number':itemInstance.illiadAssignedReferenceNumber}
+#   else:
+#     parameterDict = {'serviceName':'illiad', 'action':'attempt', 'result':illiadStatus, 'number':''}
+#   itemInstance.updateHistoryAction( parameterDict['serviceName'], parameterDict['action'], parameterDict['result'], parameterDict['number'] )
 
-  # handle happy-path success
-  if( illiadStatus == "submission_successful" ):
-    itemInstance.requestSuccessStatus = "success"
-    itemInstance.genericAssignedUserEmail = itemInstance.patronEmail
-    itemInstance.genericAssignedReferenceNumber = itemInstance.illiadAssignedReferenceNumber
+#   # handle happy-path success
+#   if( illiadStatus == "submission_successful" ):
+#     itemInstance.requestSuccessStatus = "success"
+#     itemInstance.genericAssignedUserEmail = itemInstance.patronEmail
+#     itemInstance.genericAssignedReferenceNumber = itemInstance.illiadAssignedReferenceNumber
 
-  # handle 'possibly blocked' situation
-  if( illiadStatus == "login_failed_possibly_blocked" ):
-    itemInstance.requestSuccessStatus = illiadStatus
-    # for staff email
-    itemInstance.genericAssignedUserEmail = itemInstance.patronEmail
-    patronInfo = itemInstance.grabPatronApiInfo(itemInstance.patronId)
-    itemInstance.grabConvertedPatronApiInfo(patronInfo) # grabs converted info and stores it to attributes
+#   # handle 'possibly blocked' situation
+#   if( illiadStatus == "login_failed_possibly_blocked" ):
+#     itemInstance.requestSuccessStatus = illiadStatus
+#     # for staff email
+#     itemInstance.genericAssignedUserEmail = itemInstance.patronEmail
+#     patronInfo = itemInstance.grabPatronApiInfo(itemInstance.patronId)
+#     itemInstance.grabConvertedPatronApiInfo(patronInfo) # grabs converted info and stores it to attributes
 
-  #
-  # new user situation handling
-  #
+#   #
+#   # new user situation handling
+#   #
 
-  NEW_USER_SWITCH = 'new_code'  # 'old_code' or 'new_code'
+#   NEW_USER_SWITCH = 'new_code'  # 'old_code' or 'new_code'
 
-  # handle new-user situation -- OLD CODE
-  if( illiadStatus == "login_failed_new_user" and NEW_USER_SWITCH == 'old_code' ):
-    utCdInstance.updateLog( message='- in controller.uc.oldIlliadControllerFlow(); preparing to add Illiad new user via old code...', message_importance='high', identifier=eb_request_number )
-    # prepare some data
-    itemInstance.genericAssignedUserEmail = itemInstance.patronEmail
-    patronInfo = itemInstance.grabPatronApiInfo(itemInstance.patronId)
-    utCdInstance.updateLog( message="- in controller.uc.oldIlliadControllerFlow(); grabbed patronInfo", message_importance='high', identifier=eb_request_number )
-    try:
-      itemInstance.grabConvertedPatronApiInfo(patronInfo) # grabs converted info and stores it to attributes
-      utCdInstance.updateLog( message="- in controller.uc.oldIlliadControllerFlow(); grabbed convertedPatronInfo and updated properties", message_importance='high', identifier=eb_request_number )
-    except Exception, e:
-      utCdInstance.updateLog( message="- in controller.uc.oldIlliadControllerFlow(); problem with convertedPatronApiInfo: %s" % e, message_importance='high', identifier=eb_request_number )
+#   # handle new-user situation -- OLD CODE
+#   if( illiadStatus == "login_failed_new_user" and NEW_USER_SWITCH == 'old_code' ):
+#     utCdInstance.updateLog( message='- in controller.uc.oldIlliadControllerFlow(); preparing to add Illiad new user via old code...', message_importance='high', identifier=eb_request_number )
+#     # prepare some data
+#     itemInstance.genericAssignedUserEmail = itemInstance.patronEmail
+#     patronInfo = itemInstance.grabPatronApiInfo(itemInstance.patronId)
+#     utCdInstance.updateLog( message="- in controller.uc.oldIlliadControllerFlow(); grabbed patronInfo", message_importance='high', identifier=eb_request_number )
+#     try:
+#       itemInstance.grabConvertedPatronApiInfo(patronInfo) # grabs converted info and stores it to attributes
+#       utCdInstance.updateLog( message="- in controller.uc.oldIlliadControllerFlow(); grabbed convertedPatronInfo and updated properties", message_importance='high', identifier=eb_request_number )
+#     except Exception, e:
+#       utCdInstance.updateLog( message="- in controller.uc.oldIlliadControllerFlow(); problem with convertedPatronApiInfo: %s" % e, message_importance='high', identifier=eb_request_number )
 
-    #
-    # NOTE: the code below shows the need to update the password holder from handler.php even when using the django-illiad-option
-    #
+#     #
+#     # NOTE: the code below shows the need to update the password holder from handler.php even when using the django-illiad-option
+#     #
 
-    # try to create the user
-    result_dict = makeEbRequest( itemInstance, log_identifier )  # returns eg { u'status': u'success', u'eb_request': eb_request }; eb_request is a storage-object; NOTE: as code is migrated toward newer architecture; this line will occur near beginning of runCode()
-    utCdInstance.updateLog( message='- in controller.uc.oldIlliadControllerFlow(); eb_request instance-object created; result_dict is: %s; eb_request.__dict__ is: %s' % (result_dict, result_dict['eb_request'].__dict__), identifier=eb_request_number )
-    # create_illiad_user_result = createIlliadUser( result_dict['eb_request'], log_identifier )
-    create_illiad_user_result = itemInstance.createIlliadUserViaPasswordHolder( eb_request_number )
+#     # try to create the user
+#     result_dict = makeEbRequest( itemInstance, log_identifier )  # returns eg { u'status': u'success', u'eb_request': eb_request }; eb_request is a storage-object; NOTE: as code is migrated toward newer architecture; this line will occur near beginning of runCode()
+#     utCdInstance.updateLog( message='- in controller.uc.oldIlliadControllerFlow(); eb_request instance-object created; result_dict is: %s; eb_request.__dict__ is: %s' % (result_dict, result_dict['eb_request'].__dict__), identifier=eb_request_number )
+#     # create_illiad_user_result = createIlliadUser( result_dict['eb_request'], log_identifier )
+#     create_illiad_user_result = itemInstance.createIlliadUserViaPasswordHolder( eb_request_number )
 
-    # if create-illiad-user result is success
-    # if create_illiad_user_result['status'] == 'success':
-    if ( 'registration_successful' in create_illiad_user_result  ):
+#     # if create-illiad-user result is success
+#     # if create_illiad_user_result['status'] == 'success':
+#     if ( 'registration_successful' in create_illiad_user_result  ):
 
-      # update history and log
-      utCdInstance.updateLog( message='- in controller.uc.oldIlliadControllerFlow(); Illiad user created...', message_importance='high', identifier=eb_request_number )
-      parameterDict = {'serviceName':'illiad', 'action':'create_illiad_user_attempt', 'result':'success', 'number':''}
-      itemInstance.updateHistoryAction( parameterDict['serviceName'], parameterDict['action'], parameterDict['result'], parameterDict['number'] )
+#       # update history and log
+#       utCdInstance.updateLog( message='- in controller.uc.oldIlliadControllerFlow(); Illiad user created...', message_importance='high', identifier=eb_request_number )
+#       parameterDict = {'serviceName':'illiad', 'action':'create_illiad_user_attempt', 'result':'success', 'number':''}
+#       itemInstance.updateHistoryAction( parameterDict['serviceName'], parameterDict['action'], parameterDict['result'], parameterDict['number'] )
 
-      #
-      # Illiad request-try # 2
-      #
+#       #
+#       # Illiad request-try # 2
+#       #
 
-      #
-      # BACK TO NEW SUBMISSION CODE
-      #
+#       #
+#       # BACK TO NEW SUBMISSION CODE
+#       #
 
-      # prepare info
-      parameter_dict_for_django_illiad = {
-        'auth_key': settings.ILLIAD_REQUEST_AUTHORIZATION_KEY,
-        'request_id': eb_request_number,
-        'first_name': itemInstance.firstname,
-        'last_name': itemInstance.lastname,
-        'address': '',  # perceived but not handled by dj_ill_submission
-        'oclc_number': itemInstance.oclcNumber,
-        # 'openurl': itemInstance.convertSfxurlToOpenurlSegment( itemInstance.sfxurl ),
-        'openurl': makeOpenUrlSegment( itemInstance.sfxurl, log_identifier )['openurl_segment'],
-        'patron_email': itemInstance.patronEmail,  # not yet perceived by dj_ill_submission
-        'patron_status': itemInstance.patronStatus,  # perceived but not handled by dj_ill_submission
-        'phone': '',  # perceived but not handled by dj_ill_submission
-        'volumes': '',  # perceived but not handled by dj_ill_submission
-        }
+#       # prepare info
+#       parameter_dict_for_django_illiad = {
+#         'auth_key': settings.ILLIAD_REQUEST_AUTHORIZATION_KEY,
+#         'request_id': eb_request_number,
+#         'first_name': itemInstance.firstname,
+#         'last_name': itemInstance.lastname,
+#         'address': '',  # perceived but not handled by dj_ill_submission
+#         'oclc_number': itemInstance.oclcNumber,
+#         # 'openurl': itemInstance.convertSfxurlToOpenurlSegment( itemInstance.sfxurl ),
+#         'openurl': makeOpenUrlSegment( itemInstance.sfxurl, log_identifier )['openurl_segment'],
+#         'patron_email': itemInstance.patronEmail,  # not yet perceived by dj_ill_submission
+#         'patron_status': itemInstance.patronStatus,  # perceived but not handled by dj_ill_submission
+#         'phone': '',  # perceived but not handled by dj_ill_submission
+#         'volumes': '',  # perceived but not handled by dj_ill_submission
+#         }
 
-      utCdInstance.updateLog( message='- in controller.uc.oldIlliadControllerFlow(); parameter_dict_for_django_illiad (#2) is: %s' % parameter_dict_for_django_illiad, message_importance='low', identifier=eb_request_number )
+#       utCdInstance.updateLog( message='- in controller.uc.oldIlliadControllerFlow(); parameter_dict_for_django_illiad (#2) is: %s' % parameter_dict_for_django_illiad, message_importance='low', identifier=eb_request_number )
 
-      # submit to illiad
-      illiad_submission_result_dict = submitIlliadRequest( parameter_dict_for_django_illiad, log_identifier )
-      # illiad_submission_result_dict = submitIlliadRequest( parameter_dict_for_django_illiad, identifier=eb_request_number )
-      utCdInstance.updateLog( message='- in controller.uc.oldIlliadControllerFlow(); illiad_submission_result_dict (#2) from django tunneler is: %s' % illiad_submission_result_dict, message_importance='low', identifier=eb_request_number )
+#       # submit to illiad
+#       illiad_submission_result_dict = submitIlliadRequest( parameter_dict_for_django_illiad, log_identifier )
+#       # illiad_submission_result_dict = submitIlliadRequest( parameter_dict_for_django_illiad, identifier=eb_request_number )
+#       utCdInstance.updateLog( message='- in controller.uc.oldIlliadControllerFlow(); illiad_submission_result_dict (#2) from django tunneler is: %s' % illiad_submission_result_dict, message_importance='low', identifier=eb_request_number )
 
-      # parse Illiad results and return string to older code
-      illiadStatus = illiad_submission_result_dict['status']
-      utCdInstance.updateLog( message='- in controller.uc.oldIlliadControllerFlow(); illiadStatus (#2) is: %s' % illiadStatus, message_importance='low', identifier=eb_request_number )
+#       # parse Illiad results and return string to older code
+#       illiadStatus = illiad_submission_result_dict['status']
+#       utCdInstance.updateLog( message='- in controller.uc.oldIlliadControllerFlow(); illiadStatus (#2) is: %s' % illiadStatus, message_importance='low', identifier=eb_request_number )
 
-      #
-      # BACK TO OLD HANDLING CODE
-      #
+#       #
+#       # BACK TO OLD HANDLING CODE
+#       #
 
-      # update history and log #2
-      if( illiadStatus == "submission_successful" ):
-        parameterDict = {'serviceName':'illiad', 'action':'attempt', 'result':'Request_Successful', 'number':itemInstance.illiadAssignedReferenceNumber}
-      else:
-        parameterDict = {'serviceName':'illiad', 'action':'attempt', 'result':illiadStatus, 'number':''}
-      itemInstance.updateHistoryAction( parameterDict['serviceName'], parameterDict['action'], parameterDict['result'], parameterDict['number'] )
+#       # update history and log #2
+#       if( illiadStatus == "submission_successful" ):
+#         parameterDict = {'serviceName':'illiad', 'action':'attempt', 'result':'Request_Successful', 'number':itemInstance.illiadAssignedReferenceNumber}
+#       else:
+#         parameterDict = {'serviceName':'illiad', 'action':'attempt', 'result':illiadStatus, 'number':''}
+#       itemInstance.updateHistoryAction( parameterDict['serviceName'], parameterDict['action'], parameterDict['result'], parameterDict['number'] )
 
-      # handle Illiad-request #2 happy-path success
-      if( illiadStatus == "submission_successful" ):
-        itemInstance.requestSuccessStatus = "success"
-        itemInstance.genericAssignedUserEmail = itemInstance.patronEmail
-        itemInstance.genericAssignedReferenceNumber = itemInstance.illiadAssignedReferenceNumber
+#       # handle Illiad-request #2 happy-path success
+#       if( illiadStatus == "submission_successful" ):
+#         itemInstance.requestSuccessStatus = "success"
+#         itemInstance.genericAssignedUserEmail = itemInstance.patronEmail
+#         itemInstance.genericAssignedReferenceNumber = itemInstance.illiadAssignedReferenceNumber
 
-      # handle Illiad-request #2 failure
-      if ( illiadStatus != 'submission_successful' and illiadStatus != 'illiadResultData_unparseable' ):
-        itemInstance.requestSuccessStatus = "unknown_illiad_failure"
+#       # handle Illiad-request #2 failure
+#       if ( illiadStatus != 'submission_successful' and illiadStatus != 'illiadResultData_unparseable' ):
+#         itemInstance.requestSuccessStatus = "unknown_illiad_failure"
 
-    # if create-illiad-user result is failure
-    else:
+#     # if create-illiad-user result is failure
+#     else:
 
-      # update history and log
-      utCdInstance.updateLog( message='- in controller.uc.oldIlliadControllerFlow(); illiad create-user attempt failed', message_importance='high', identifier=eb_request_number )
-      parameterDict = {'serviceName':'illiad', 'action':'create_illiad_user_attempt', 'result':'create_user_failed', 'number':''}
-      itemInstance.updateHistoryAction( parameterDict['serviceName'], parameterDict['action'], parameterDict['result'], parameterDict['number'] )
+#       # update history and log
+#       utCdInstance.updateLog( message='- in controller.uc.oldIlliadControllerFlow(); illiad create-user attempt failed', message_importance='high', identifier=eb_request_number )
+#       parameterDict = {'serviceName':'illiad', 'action':'create_illiad_user_attempt', 'result':'create_user_failed', 'number':''}
+#       itemInstance.updateHistoryAction( parameterDict['serviceName'], parameterDict['action'], parameterDict['result'], parameterDict['number'] )
 
-      # prep itemInstance for email
-      itemInstance.requestSuccessStatus = "create_illiad_user_failed"
+#       # prep itemInstance for email
+#       itemInstance.requestSuccessStatus = "create_illiad_user_failed"
 
-    # [ end of '''if ( create_illiad_user_result == "illiad_user_created" ):''']
+#     # [ end of '''if ( create_illiad_user_result == "illiad_user_created" ):''']
 
-  # [ end of '''if( illiadStatus == "login_failed_new_user" and NEW_USER_SWITCH == 'old_code' ):''']
+#   # [ end of '''if( illiadStatus == "login_failed_new_user" and NEW_USER_SWITCH == 'old_code' ):''']
 
-  # handle new-user situation -- NEW CODE
-  try:
-    if( illiadStatus == "login_failed_new_user" and NEW_USER_SWITCH == 'new_code' ):
-      utCdInstance.updateLog( message='- in controller.uc.oldIlliadControllerFlow(); preparing to add Illiad new user via new code...', message_importance='high', identifier=eb_request_number )
-      # prepare some data
-      itemInstance.genericAssignedUserEmail = itemInstance.patronEmail
-      patronInfo = itemInstance.grabPatronApiInfo(itemInstance.patronId)
-      utCdInstance.updateLog( message="- in controller.uc.oldIlliadControllerFlow(); grabbed patronInfo", message_importance='high', identifier=eb_request_number )
-      try:
-        itemInstance.grabConvertedPatronApiInfo(patronInfo) # grabs converted info and stores it to attributes
-        utCdInstance.updateLog( message="- in controller.uc.oldIlliadControllerFlow(); grabbed convertedPatronInfo and updated properties", message_importance='high', identifier=eb_request_number )
-      except Exception, e:
-        utCdInstance.updateLog( message="- in controller.uc.oldIlliadControllerFlow(); problem with convertedPatronApiInfo: %s" % e, message_importance='high', identifier=eb_request_number )
+#   # handle new-user situation -- NEW CODE
+#   try:
+#     if( illiadStatus == "login_failed_new_user" and NEW_USER_SWITCH == 'new_code' ):
+#       utCdInstance.updateLog( message='- in controller.uc.oldIlliadControllerFlow(); preparing to add Illiad new user via new code...', message_importance='high', identifier=eb_request_number )
+#       # prepare some data
+#       itemInstance.genericAssignedUserEmail = itemInstance.patronEmail
+#       patronInfo = itemInstance.grabPatronApiInfo(itemInstance.patronId)
+#       utCdInstance.updateLog( message="- in controller.uc.oldIlliadControllerFlow(); grabbed patronInfo", message_importance='high', identifier=eb_request_number )
+#       try:
+#         itemInstance.grabConvertedPatronApiInfo(patronInfo) # grabs converted info and stores it to attributes
+#         utCdInstance.updateLog( message="- in controller.uc.oldIlliadControllerFlow(); grabbed convertedPatronInfo and updated properties", message_importance='high', identifier=eb_request_number )
+#       except Exception, e:
+#         utCdInstance.updateLog( message="- in controller.uc.oldIlliadControllerFlow(); problem with convertedPatronApiInfo: %s" % e, message_importance='high', identifier=eb_request_number )
 
-      # try to create the user
-      result_dict = makeEbRequest( itemInstance, log_identifier )  # returns eg { u'status': u'success', u'eb_request': eb_request }; eb_request is a storage-object; NOTE: as code is migrated toward newer architecture; this line will occur near beginning of runCode()
-      updateLog( u'- in controller.uc.oldIlliadControllerFlow(); eb_request instance-object created; result_dict is: %s; eb_request.__dict__ is: %s' % (result_dict, result_dict['eb_request'].__dict__), log_identifier )
-      # utCdInstance.updateLog( message='- in controller.uc.oldIlliadControllerFlow(); eb_request instance-object created; result_dict is: %s; eb_request.__dict__ is: %s' % (result_dict, result_dict['eb_request'].__dict__), identifier=eb_request_number )
-      create_illiad_user_result = createIlliadUser( result_dict['eb_request'], log_identifier )
-      updateLog( u'- in controller.uc.oldIlliadControllerFlow(); create_illiad_user_result is: %s' % create_illiad_user_result, log_identifier )
+#       # try to create the user
+#       result_dict = makeEbRequest( itemInstance, log_identifier )  # returns eg { u'status': u'success', u'eb_request': eb_request }; eb_request is a storage-object; NOTE: as code is migrated toward newer architecture; this line will occur near beginning of runCode()
+#       updateLog( u'- in controller.uc.oldIlliadControllerFlow(); eb_request instance-object created; result_dict is: %s; eb_request.__dict__ is: %s' % (result_dict, result_dict['eb_request'].__dict__), log_identifier )
+#       # utCdInstance.updateLog( message='- in controller.uc.oldIlliadControllerFlow(); eb_request instance-object created; result_dict is: %s; eb_request.__dict__ is: %s' % (result_dict, result_dict['eb_request'].__dict__), identifier=eb_request_number )
+#       create_illiad_user_result = createIlliadUser( result_dict['eb_request'], log_identifier )
+#       updateLog( u'- in controller.uc.oldIlliadControllerFlow(); create_illiad_user_result is: %s' % create_illiad_user_result, log_identifier )
 
-      # if create-illiad-user result is success
-      if create_illiad_user_result['status'] == 'success':
-      # if ( 'registration_successful' in create_illiad_user_result  ):
+#       # if create-illiad-user result is success
+#       if create_illiad_user_result['status'] == 'success':
+#       # if ( 'registration_successful' in create_illiad_user_result  ):
 
-        # update history and log
-        utCdInstance.updateLog( message='- in controller.uc.oldIlliadControllerFlow(); Illiad user created...', message_importance='high', identifier=eb_request_number )
-        parameterDict = {'serviceName':'illiad', 'action':'create_illiad_user_attempt', 'result':'success', 'number':''}
-        itemInstance.updateHistoryAction( parameterDict['serviceName'], parameterDict['action'], parameterDict['result'], parameterDict['number'] )
+#         # update history and log
+#         utCdInstance.updateLog( message='- in controller.uc.oldIlliadControllerFlow(); Illiad user created...', message_importance='high', identifier=eb_request_number )
+#         parameterDict = {'serviceName':'illiad', 'action':'create_illiad_user_attempt', 'result':'success', 'number':''}
+#         itemInstance.updateHistoryAction( parameterDict['serviceName'], parameterDict['action'], parameterDict['result'], parameterDict['number'] )
 
-        #
-        # Illiad request-try # 2
-        #
+#         #
+#         # Illiad request-try # 2
+#         #
 
-        # prepare info
-        parameter_dict_for_django_illiad = {
-          'auth_key': settings.ILLIAD_REQUEST_AUTHORIZATION_KEY,
-          'request_id': eb_request_number,
-          'first_name': itemInstance.firstname,
-          'last_name': itemInstance.lastname,
-          'address': '',  # perceived but not handled by dj_ill_submission
-          'oclc_number': itemInstance.oclcNumber,
-          # 'openurl': itemInstance.convertSfxurlToOpenurlSegment( itemInstance.sfxurl ),
-          'openurl': makeOpenUrlSegment( itemInstance.sfxurl, log_identifier )['openurl_segment'],
-          'patron_email': itemInstance.patronEmail,  # not yet perceived by dj_ill_submission
-          'patron_status': itemInstance.patronStatus,  # perceived but not handled by dj_ill_submission
-          'phone': '',  # perceived but not handled by dj_ill_submission
-          'volumes': '',  # perceived but not handled by dj_ill_submission
-          }
+#         # prepare info
+#         parameter_dict_for_django_illiad = {
+#           'auth_key': settings.ILLIAD_REQUEST_AUTHORIZATION_KEY,
+#           'request_id': eb_request_number,
+#           'first_name': itemInstance.firstname,
+#           'last_name': itemInstance.lastname,
+#           'address': '',  # perceived but not handled by dj_ill_submission
+#           'oclc_number': itemInstance.oclcNumber,
+#           # 'openurl': itemInstance.convertSfxurlToOpenurlSegment( itemInstance.sfxurl ),
+#           'openurl': makeOpenUrlSegment( itemInstance.sfxurl, log_identifier )['openurl_segment'],
+#           'patron_email': itemInstance.patronEmail,  # not yet perceived by dj_ill_submission
+#           'patron_status': itemInstance.patronStatus,  # perceived but not handled by dj_ill_submission
+#           'phone': '',  # perceived but not handled by dj_ill_submission
+#           'volumes': '',  # perceived but not handled by dj_ill_submission
+#           }
 
-        utCdInstance.updateLog( message='- in controller.uc.oldIlliadControllerFlow(); parameter_dict_for_django_illiad (#2) is: %s' % parameter_dict_for_django_illiad, message_importance='low', identifier=eb_request_number )
+#         utCdInstance.updateLog( message='- in controller.uc.oldIlliadControllerFlow(); parameter_dict_for_django_illiad (#2) is: %s' % parameter_dict_for_django_illiad, message_importance='low', identifier=eb_request_number )
 
-        # submit to illiad
-        illiad_submission_result_dict = submitIlliadRequest( parameter_dict_for_django_illiad, log_identifier )
-        # illiad_submission_result_dict = submitIlliadRequest( parameter_dict_for_django_illiad, identifier=eb_request_number )
-        utCdInstance.updateLog( message='- in controller.uc.oldIlliadControllerFlow(); illiad_submission_result_dict (#2) from django tunneler is: %s' % illiad_submission_result_dict, message_importance='low', identifier=eb_request_number )
+#         # submit to illiad
+#         illiad_submission_result_dict = submitIlliadRequest( parameter_dict_for_django_illiad, log_identifier )
+#         # illiad_submission_result_dict = submitIlliadRequest( parameter_dict_for_django_illiad, identifier=eb_request_number )
+#         utCdInstance.updateLog( message='- in controller.uc.oldIlliadControllerFlow(); illiad_submission_result_dict (#2) from django tunneler is: %s' % illiad_submission_result_dict, message_importance='low', identifier=eb_request_number )
 
-        # parse Illiad results and return string to older code
-        illiadStatus = illiad_submission_result_dict['status']
-        utCdInstance.updateLog( message='- in controller.uc.oldIlliadControllerFlow(); illiadStatus (#2) is: %s' % illiadStatus, message_importance='low', identifier=eb_request_number )
+#         # parse Illiad results and return string to older code
+#         illiadStatus = illiad_submission_result_dict['status']
+#         utCdInstance.updateLog( message='- in controller.uc.oldIlliadControllerFlow(); illiadStatus (#2) is: %s' % illiadStatus, message_importance='low', identifier=eb_request_number )
 
-        #
-        # BACK TO OLD HANDLING CODE
-        #
+#         #
+#         # BACK TO OLD HANDLING CODE
+#         #
 
-        # update history and log #2
-        if( illiadStatus == "submission_successful" ):
-          parameterDict = {'serviceName':'illiad', 'action':'attempt', 'result':'Request_Successful', 'number':itemInstance.illiadAssignedReferenceNumber}
-        else:
-          parameterDict = {'serviceName':'illiad', 'action':'attempt', 'result':illiadStatus, 'number':''}
-        itemInstance.updateHistoryAction( parameterDict['serviceName'], parameterDict['action'], parameterDict['result'], parameterDict['number'] )
+#         # update history and log #2
+#         if( illiadStatus == "submission_successful" ):
+#           parameterDict = {'serviceName':'illiad', 'action':'attempt', 'result':'Request_Successful', 'number':itemInstance.illiadAssignedReferenceNumber}
+#         else:
+#           parameterDict = {'serviceName':'illiad', 'action':'attempt', 'result':illiadStatus, 'number':''}
+#         itemInstance.updateHistoryAction( parameterDict['serviceName'], parameterDict['action'], parameterDict['result'], parameterDict['number'] )
 
-        # handle Illiad-request #2 happy-path success
-        if( illiadStatus == "submission_successful" ):
-          itemInstance.requestSuccessStatus = "success"
-          itemInstance.genericAssignedUserEmail = itemInstance.patronEmail
-          itemInstance.genericAssignedReferenceNumber = itemInstance.illiadAssignedReferenceNumber
+#         # handle Illiad-request #2 happy-path success
+#         if( illiadStatus == "submission_successful" ):
+#           itemInstance.requestSuccessStatus = "success"
+#           itemInstance.genericAssignedUserEmail = itemInstance.patronEmail
+#           itemInstance.genericAssignedReferenceNumber = itemInstance.illiadAssignedReferenceNumber
 
-        # handle Illiad-request #2 failure
-        if ( illiadStatus != 'submission_successful' and illiadStatus != 'illiadResultData_unparseable' ):
-          itemInstance.requestSuccessStatus = "unknown_illiad_failure"
+#         # handle Illiad-request #2 failure
+#         if ( illiadStatus != 'submission_successful' and illiadStatus != 'illiadResultData_unparseable' ):
+#           itemInstance.requestSuccessStatus = "unknown_illiad_failure"
 
-      # if create-illiad-user result is failure
-      else:
+#       # if create-illiad-user result is failure
+#       else:
 
-        # update history and log
-        utCdInstance.updateLog( message='- in controller.uc.oldIlliadControllerFlow(); illiad create-user attempt failed', message_importance='high', identifier=eb_request_number )
-        parameterDict = {'serviceName':'illiad', 'action':'create_illiad_user_attempt', 'result':'create_user_failed', 'number':''}
-        itemInstance.updateHistoryAction( parameterDict['serviceName'], parameterDict['action'], parameterDict['result'], parameterDict['number'] )
+#         # update history and log
+#         utCdInstance.updateLog( message='- in controller.uc.oldIlliadControllerFlow(); illiad create-user attempt failed', message_importance='high', identifier=eb_request_number )
+#         parameterDict = {'serviceName':'illiad', 'action':'create_illiad_user_attempt', 'result':'create_user_failed', 'number':''}
+#         itemInstance.updateHistoryAction( parameterDict['serviceName'], parameterDict['action'], parameterDict['result'], parameterDict['number'] )
 
-        # prep itemInstance for email
-        itemInstance.requestSuccessStatus = "create_illiad_user_failed"
+#         # prep itemInstance for email
+#         itemInstance.requestSuccessStatus = "create_illiad_user_failed"
 
-      # [ end of '''if ( create_illiad_user_result == "illiad_user_created" ):''']
+#       # [ end of '''if ( create_illiad_user_result == "illiad_user_created" ):''']
 
-    # [ end of '''if( illiadStatus == "login_failed_new_user" and NEW_USER_SWITCH == 'new_code' ):''']
+#     # [ end of '''if( illiadStatus == "login_failed_new_user" and NEW_USER_SWITCH == 'new_code' ):''']
 
-  except:
-    message = u'- in controller.uc.oldIlliadControllerFlow(); error detail: %s' % makeErrorString()
-    updateLog( message, log_identifier, message_importance='high' )
-    return { u'status': u'failure', u'message': message }
+#   except:
+#     message = u'- in controller.uc.oldIlliadControllerFlow(); error detail: %s' % makeErrorString()
+#     updateLog( message, log_identifier, message_importance='high' )
+#     return { u'status': u'failure', u'message': message }
 
-  if( illiadStatus == "failure_no_sfx-link_to_illiad" ):
-    itemInstance.requestSuccessStatus = "failure_no_sfx-link_to_illiad"
-    utCdInstance.updateLog( message="- in controller.uc.oldIlliadControllerFlow(); illiad_no_sfx-link detected", message_importance='high', identifier=eb_request_number )
-    # for staff email
-    itemInstance.genericAssignedUserEmail = itemInstance.patronEmail
-    patronInfo = itemInstance.grabPatronApiInfo(itemInstance.patronId)
-    utCdInstance.updateLog( message="- in controller.uc.oldIlliadControllerFlow(); illiad_no_sfx-link - patronInfo grabbed", message_importance='high', identifier=eb_request_number )
-    itemInstance.grabConvertedPatronApiInfo( patronInfo, eb_request_number ) # grabs converted info and stores it to attributes
-    utCdInstance.updateLog( message="- in controller.uc.oldIlliadControllerFlow(); illiad_no_sfx-link - convertedPatronInfo grabbed", message_importance='high', identifier=eb_request_number )
-  # end def oldIlliadControllerFlow()
+#   if( illiadStatus == "failure_no_sfx-link_to_illiad" ):
+#     itemInstance.requestSuccessStatus = "failure_no_sfx-link_to_illiad"
+#     utCdInstance.updateLog( message="- in controller.uc.oldIlliadControllerFlow(); illiad_no_sfx-link detected", message_importance='high', identifier=eb_request_number )
+#     # for staff email
+#     itemInstance.genericAssignedUserEmail = itemInstance.patronEmail
+#     patronInfo = itemInstance.grabPatronApiInfo(itemInstance.patronId)
+#     utCdInstance.updateLog( message="- in controller.uc.oldIlliadControllerFlow(); illiad_no_sfx-link - patronInfo grabbed", message_importance='high', identifier=eb_request_number )
+#     itemInstance.grabConvertedPatronApiInfo( patronInfo, eb_request_number ) # grabs converted info and stores it to attributes
+#     utCdInstance.updateLog( message="- in controller.uc.oldIlliadControllerFlow(); illiad_no_sfx-link - convertedPatronInfo grabbed", message_importance='high', identifier=eb_request_number )
+#   # end def oldIlliadControllerFlow()
 
 
 
