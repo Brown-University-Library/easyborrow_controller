@@ -213,7 +213,6 @@ def make_datetime_string():
 
 
 
-
 def makeIlliadParametersV2( itemInstance, settings, log_identifier ):
   try:
     updateLog( u'- in controller.uc.makeIlliadParametersV2(); starting...', log_identifier, message_importance='high' )  # TODO: lower hardcoded message_importance
@@ -245,34 +244,6 @@ def makeIlliadParametersV2( itemInstance, settings, log_identifier ):
     message = u'- in controller.uc.makeIlliadParametersV2(); error detail: %s' % makeErrorString()
     updateLog( message, log_identifier, message_importance='high' )
     return { u'error_message': message }
-
-
-
-# def makeIlliadParametersV2( itemInstance, settings, log_identifier ):
-#   try:
-#     updateLog( u'- in controller.uc.makeIlliadParametersV2(); starting...', log_identifier, message_importance='high' )  # TODO: lower hardcoded message_importance
-#     parameter_dict = {
-#       u'auth_key': settings.ILLIAD_REMOTEAUTH_KEY,
-#       u'request_id': log_identifier,
-#       u'first_name': itemInstance.firstname,  # used for new_user registration
-#       u'last_name': itemInstance.lastname,  # used for new_user registration
-#       u'username': itemInstance.eppn,  # for login _and_ new_user registration
-#       u'address': '',  # used for new_user registration
-#       u'email': itemInstance.patronEmail,  # used for new_user registration
-#       u'oclc_number': itemInstance.oclcNumber,
-#       u'openurl': makeOpenUrlSegment( itemInstance.sfxurl, log_identifier )['openurl_segment'],
-#       u'patron_barcode': itemInstance.patronBarcode,
-#       u'patron_department': itemInstance.patron_api_dept,  # used for new_user registration
-#       u'patron_status': itemInstance.patronStatus,  # used for new_user registration
-#       u'phone': '',  # used for new_user registration
-#       u'volumes': '',  # perceived but not handled by dj_ill_submission
-#       }
-#     updateLog( u'- in controller.uc.makeIlliadParametersV2(); parameter_dict: %s' % parameter_dict, log_identifier, message_importance='high' )  # TODO: lower hardcoded message_importance
-#     return { u'parameter_dict': parameter_dict }
-#   except:
-#     message = u'- in controller.uc.makeIlliadParametersV2(); error detail: %s' % makeErrorString()
-#     updateLog( message, log_identifier, message_importance='high' )
-#     return { u'error_message': message }
 
 
 
@@ -720,27 +691,6 @@ def submitIlliadRemoteAuthRequestV2( parameter_dict, log_identifier ):
     updateLog( message, log_identifier, message_importance=u'high' )
     return { u'error_message': message }
   # end def submitIlliadRemoteAuthRequestV2()
-
-
-
-# def submitIlliadRemoteAuthRequestV2( parameter_dict, log_identifier ):
-#   try:
-#     import json, pprint
-#     import requests
-#     return_dict = { u'output': u'init', u'status': u'init' }
-#     url = u'%s://127.0.0.1/easyborrow/ill/v2/make_request/' % settings.ILLIAD_HTTP_S_SEGMENT
-#     headers = { u'Content-Type': u'application/x-www-form-urlencoded; charset=utf-8' }
-#     r = requests.post( url, data=parameter_dict, headers=headers, timeout=10, verify=False )
-#     return_dict[u'output'] = r.text
-#     jdict = json.loads( r.text )
-#     return_dict[u'status'] = jdict[u'status']
-#     updateLog( u'- in controller.uc.submitIlliadRequestV2(); return_dict: %s' % return_dict, log_identifier, message_importance=u'high' )  # TODO: remove hardcoded importance
-#     return return_dict
-#   except:
-#     message = u'- in controller.uc.submitIlliadRequestV2(); error detail: %s' % makeErrorString()
-#     updateLog( message, log_identifier, message_importance=u'high' )
-#     return { u'error_message': message }
-#   # end def submitIlliadRemoteAuthRequestV2()
 
 
 
