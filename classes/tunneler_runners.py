@@ -259,26 +259,4 @@ class BD_Runner(object):
     return
 
 
-  # def requestItem( self ):
-  #   '''
-  #   Hits the bd_tunneler webservice.
-  #   See tests for response keys.
-  #   Must fail gracefully so-as to pass request on to next service.
-  #   '''
-  #   assert type( self.prepared_data_dict ) == dict, Exception( u'type(prepared_data_dict) should be dict; it is: %s' % type(self.prepared_data_dict) )
-  #   r = requests.post( self.API_URL, data=self.prepared_data_dict, verify=False )
-  #   self.api_response = r.text
-  #   self.UC_INSTANCE.updateLog( message=u'- in controller.BD_Runner.requestItem(); self.api_response: %s' % self.api_response, message_importance=u'low', identifier=self.EB_REQUEST_NUM )
-  #   try:
-  #     d = json.loads( self.api_response )
-  #     self.api_result = d[u'response'][u'search_result']
-  #     self.api_confirmation_code = d[u'response'][u'bd_confirmation_code']
-  #   except Exception, e:
-  #     self.UC_INSTANCE.updateLog( message=u'- in controller.BD_Runner.requestItem(); exception: %s' % repr(e).decode(u'utf-8', u'replace'), message_importance=u'high', identifier=self.EB_REQUEST_NUM )
-  #     self.api_result = u'Error'
-  #     self.api_confirmation_code = u''
-  #   return
-
-
   # end class BD_Runner()
-
