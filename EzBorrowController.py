@@ -12,7 +12,7 @@
   - env/bin/activate file sources settings
 """
 
-import json, logging, os, pprint, string, sys
+import datetime, json, logging, os, pprint, random, string, sys
 from easyborrow_controller_code import settings, utility_code
 from easyborrow_controller_code.classes import Item, UtilityCode
 from easyborrow_controller_code.classes.tunneler_runners import BD_Runner, BD_ApiRunner
@@ -26,12 +26,12 @@ class Controller( object ):
     self.LOG_PATH = unicode( os.environ[u'ezbCTL__LOG_PATH'] )
     self.LOG_LEVEL = unicode( os.environ[u'ezbCTL__LOG_LEVEL'] )
     self.logger = None
-    self.log_identifier = None  # ezb-request-number: helps track which log-entries go with which request
+    self.log_identifier = u'temp--%s--%s' % ( datetime.datetime.now().strftime('%Y-%m-%d-%H:%M:%S'), random.randint(1000,9999) )  # will be ezb-request-number: helps track which log-entries go with which request
     self.setup_logger()
 
   def setup_logger( self ):
       """ Configures log path and level.
-          Called by BorrowDirect.__init__() """
+          Called by __init__() """
       log_level = { u'DEBUG': logging.DEBUG, u'INFO': logging.INFO }
       logging.basicConfig(
           filename=self.LOG_PATH, level=log_level[self.LOG_LEVEL],
@@ -41,6 +41,7 @@ class Controller( object ):
       self.logger = logging.getLogger(__name__)
       self.logger.info( u'controller_instance instantiated' )
       return
+
 
   def run_code( self ):
 
@@ -53,7 +54,7 @@ class Controller( object ):
       itemInstance = Item.Item()
       utCdInstance = UtilityCode.UtilityCode()
 
-      self.log_identifier = utility_code.makeIdentifier()  # used until request-number is obtained
+      # self.log_identifier = utility_code.makeIdentifier()  # used until request-number is obtained
       dateAndTimeText = utCdInstance.obtainDate()
       utCdInstance.updateLog( message='EZBorrowController session starting at %s' % dateAndTimeText, identifier=self.log_identifier, message_importance='high' )
 
