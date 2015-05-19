@@ -53,16 +53,14 @@ class Controller( object ):
       itemInstance = Item.Item()
       utCdInstance = UtilityCode.UtilityCode()
 
-      temp_identifier = utility_code.makeIdentifier()  # used until request-number is obtained
-      log_identifier = temp_identifier  # log_identifier used in newer utility_code.updateLog()
-      self.log_identifier = log_identifier
+      self.log_identifier = utility_code.makeIdentifier()  # used until request-number is obtained
       dateAndTimeText = utCdInstance.obtainDate()
-      utCdInstance.updateLog( message='EZBorrowController session starting at %s' % dateAndTimeText, identifier=temp_identifier, message_importance='high' )
+      utCdInstance.updateLog( message='EZBorrowController session starting at %s' % dateAndTimeText, identifier=self.log_identifier, message_importance='high' )
 
-      utCdInstance.updateLog( message='- in controller; checking for request-record...', identifier=temp_identifier, message_importance='low' )
+      utCdInstance.updateLog( message='- in controller; checking for request-record...', identifier=self.log_identifier, message_importance='low' )
       resultInfo = utCdInstance.connectExecuteSelect( self.SELECT_SQL ) ## [ [fieldname01, fieldname02], ( (row01field01_value, row01field02_value), (row02field01_value, row02field02_value) ) ]
       if( resultInfo == None ):
-        utCdInstance.updateLog( message='- in controller; no new request found; quitting', identifier=temp_identifier, message_importance='high' )
+        utCdInstance.updateLog( message='- in controller; no new request found; quitting', identifier=self.log_identifier, message_importance='high' )
         sys.exit()
 
       #######
@@ -74,9 +72,8 @@ class Controller( object ):
 
       itemInstance.fillFromDbRow(resultInfo)
       eb_request_number = itemInstance.itemDbId
-      log_identifier = eb_request_number  # used in newer utility_code.updateLog()
-      self.log_identifier = log_identifier
-      utCdInstance.updateLog( message='- in controller; record grabbed: %s' % resultInfo, message_importance='high', identifier='was_%s_now_%s' % (temp_identifier, eb_request_number) )
+      utCdInstance.updateLog( message='- in controller; record grabbed: %s' % resultInfo, message_importance='high', identifier='was_%s_now_%s' % (self.log_identifier, eb_request_number) )
+      self.log_identifier = eb_request_number  # used in newer utility_code.updateLog()
 
       # update request and history tables
 
@@ -88,7 +85,7 @@ class Controller( object ):
       #######
 
       flowList = itemInstance.determineFlow()
-      utility_code.updateLog( u'- in controller; flowList is: %s' % flowList, log_identifier, message_importance=u'high' )
+      utility_code.updateLog( u'- in controller; flowList is: %s' % flowList, self.log_identifier, message_importance=u'high' )
 
       flowString = string.join( flowList, ', ' )
       itemInstance.updateHistoryNote( "Flow: %s" % flowString )
@@ -224,11 +221,11 @@ class Controller( object ):
             break # break out of the 'for' loop
 
         elif service == u'illiad':
-          utility_code.updateLog( u'- in controller; service is now illiad', log_identifier )
+          utility_code.updateLog( u'- in controller; service is now illiad', self.log_identifier )
           itemInstance.currentlyActiveService = u'illiad'
-          prep_result_dict = utility_code.makeIlliadParametersV2( itemInstance, settings, log_identifier )  # prepare parameters
-          send_result_dict = utility_code.submitIlliadRemoteAuthRequestV2( prep_result_dict[u'parameter_dict'], log_identifier )  # send request to illiad
-          eval_result_dict = utility_code.evaluateIlliadSubmissionV2( itemInstance, send_result_dict, log_identifier )  # evaluate result (update itemInstance, & history & request tables)
+          prep_result_dict = utility_code.makeIlliadParametersV2( itemInstance, settings, self.log_identifier )  # prepare parameters
+          send_result_dict = utility_code.submitIlliadRemoteAuthRequestV2( prep_result_dict[u'parameter_dict'], self.log_identifier )  # send request to illiad
+          eval_result_dict = utility_code.evaluateIlliadSubmissionV2( itemInstance, send_result_dict, self.log_identifier )  # evaluate result (update itemInstance, & history & request tables)
 
       # end of '''for service in flowList:'''
 
@@ -251,11 +248,11 @@ class Controller( object ):
         itemInstance.updateHistoryAction( parameterDict['serviceName'], parameterDict['action'], parameterDict['result'], parameterDict['number'] )
 
       elif( itemInstance.requestSuccessStatus == 'login_failed_possibly_blocked' ):
-        utility_code.updateLog( '- in controller; "blocked" detected; will send user email', log_identifier, message_importance='high' )
-        result_dict = utility_code.makeEbRequest( itemInstance, log_identifier )  # eb_request is a storage-object; NOTE: as code is migrated toward newer architecture; this line will occur near beginning of runCode()
-        utility_code.updateLog( '- in controller; eb_request obtained', log_identifier )
-        result_dict = utility_code.sendEmail( result_dict['eb_request'], log_identifier )
-        utility_code.updateLog( '- in controller; "blocked" detected; sendEmail() was called', log_identifier, message_importance='high' )
+        utility_code.updateLog( '- in controller; "blocked" detected; will send user email', self.log_identifier, message_importance='high' )
+        result_dict = utility_code.makeEbRequest( itemInstance, self.log_identifier )  # eb_request is a storage-object; NOTE: as code is migrated toward newer architecture; this line will occur near beginning of runCode()
+        utility_code.updateLog( '- in controller; eb_request obtained', self.log_identifier )
+        result_dict = utility_code.sendEmail( result_dict['eb_request'], self.log_identifier )
+        utility_code.updateLog( '- in controller; "blocked" detected; sendEmail() was called', self.log_identifier, message_importance='high' )
         #
         parameterDict = {'serviceName':'illiad', 'action':'followup', 'result':'blocked_user_emailed', 'number':''}
         itemInstance.updateHistoryAction( parameterDict['serviceName'], parameterDict['action'], parameterDict['result'], parameterDict['number'] )
@@ -289,14 +286,14 @@ class Controller( object ):
 
     except SystemExit:
       pass
-      # utility_code.updateLog( '- in controller; quitting', log_identifier=log_identifier, message_importance='high' )
+      # utility_code.updateLog( '- in controller; quitting', self.log_identifier=log_identifier, message_importance='high' )
     except:
       try:
         err_msg = u'error-type - %s; error-message-a - %s; line-number - %s' % ( sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2].tb_lineno, )
         print err_msg
         error_message = utility_code.makeErrorString()
         self.logger.error( u'%s- exception message, `%s`' % (self.log_identifier, err_msg) )
-        utility_code.updateLog( '- in controller; EXCEPTION; error: %s' % repr(error_message), log_identifier='exception', message_importance='high' )
+        utility_code.updateLog( '- in controller; EXCEPTION; error: %s' % repr(error_message), self.log_identifier='exception', message_importance='high' )
       except Exception, e:
         print 'ezb controller exception: %s' % e
         err_msg = u'error-type - %s; error-message - %s; line-number - %s' % ( sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2].tb_lineno, )
