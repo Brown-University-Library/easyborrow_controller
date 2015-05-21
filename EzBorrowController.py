@@ -80,6 +80,7 @@ class Controller( object ):
 
             itemInstance.fillFromDbRow(resultInfo)
             eb_request_number = itemInstance.itemDbId
+            self.logger.debug( u'type(eb_request_number), `%s`' % type(eb_request_number) )
             utCdInstance.updateLog( message='- in controller; record grabbed: %s' % resultInfo, message_importance='high', identifier='was_%s_now_%s' % (self.log_identifier, eb_request_number) )
             self.log_identifier = eb_request_number  # used in newer utility_code.updateLog()
 
@@ -138,6 +139,32 @@ class Controller( object ):
                       break # out of the 'for' loop
 
                 elif(service == "bd"):
+
+
+                    # ##
+                    # ## send a request to BorrowDirect
+                    # ##
+
+                    # # setup
+                    # bd_api_runner = BD_ApiRunner( self.logger, self.log_identifier )
+                    # bd_api_runner.setup_api_hit( itemInstance, utCdInstance )
+
+                    # # prepare data
+                    # bd_data = bd_api_runner.prepare_params( itemInstance )
+
+                    # # hit api
+                    # bd_api_runner.hit_bd_api( bd_data[u'isbn'], bd_data[u'user_barcode'] )
+
+                    # # normalize response
+
+                    # # interpret response
+
+                    # # update history table
+
+                    # # update item_instance
+
+                    #     # on success, `break`
+
 
                     ##
                     ## send a request to BorrowDirect

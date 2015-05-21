@@ -21,6 +21,25 @@ class BD_ApiRunner( object ):
             }
         self.bdpyweb_response_dct = None
 
+    # def setup_api_hit( self, item_instance, utCdInstance ):
+    #     """ Sets the currently-active-service and updates weblog.
+    #         Called by controller.run_code() """
+    #     itemInstance.currentlyActiveService = u'borrowDirect'
+    #     utCdInstance.updateLog( message=u'- in controller; checking BorrowDirect...', message_importance=u'high', identifier=self.log_identifier )
+    #     return
+
+    # def prepare_params( self, itemInstance ):
+    #     """ Updates item-instance attributes.
+    #         Called by controller.run_code() """
+    #     if type(itemInstance.patronBarcode) == str:
+    #         itemInstance.patronBarcode = itemInstance.patronBarcode.decode( u'utf-8', u'replace' )
+    #     if type(itemInstance.itemIsbn) == str:
+    #         itemInstance.itemIsbn = itemInstance.itemIsbn.decode( u'utf-8', u'replace' )
+    #     if type(itemInstance.sfxurl) == str:
+    #         itemInstance.sfxurl = itemInstance.sfxurl.decode( u'utf-8', u'replace' )
+    #     bd_data = { u'isbn': itemInstance.itemIsbn, u'user_barcode': itemInstance.patronBarcode }
+    #     return bd_data
+
     def hit_bd_api( self, isbn, user_barcode ):
         """ Handles bdpyweb call.
             Called by Controller.run_code() """
