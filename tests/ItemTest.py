@@ -240,28 +240,28 @@ class ItemTest(unittest.TestCase):
 
 
 
-  def testDetermineFlow(self):
-    ## isbn, quick, no-volumes
-    itemInstance = Item.Item()
-    itemInstance.timePreference = u'quick'
-    itemInstance.itemIsbn = u'1234'
-    itemInstance.volumesPreference = u''
-    self.assertEqual( [u'bd', u'ir', u'illiad'], itemInstance.determineFlow() )
-    ## no-isbn, long, no-volumes
-    itemInstance = Item.Item()
-    itemInstance.timePreference = u'long'
-    self.assertEqual( [u'bd', u'illiad'], itemInstance.determineFlow() )
-    ## no-isbn, quick, no-volumes
-    itemInstance = Item.Item()
-    itemInstance.timePreference = u'quick'
-    itemInstance.itemIsbn = u''
-    self.assertEqual( [u'bd', u'illiad'], itemInstance.determineFlow() )
-    ## isbn, quick, volume-info
-    itemInstance = Item.Item()
-    itemInstance.timePreference = u'quick'
-    itemInstance.itemIsbn = u'1234'
-    itemInstance.volumesPreference = u'some text'
-    self.assertEqual( [u'illiad'], itemInstance.determineFlow() )
+  # def testDetermineFlow(self):
+  #   ## isbn, quick, no-volumes
+  #   itemInstance = Item.Item()
+  #   itemInstance.timePreference = u'quick'
+  #   itemInstance.itemIsbn = u'1234'
+  #   itemInstance.volumesPreference = u''
+  #   self.assertEqual( [u'bd', u'ir', u'illiad'], itemInstance.determineFlow() )
+  #   ## no-isbn, long, no-volumes
+  #   itemInstance = Item.Item()
+  #   itemInstance.timePreference = u'long'
+  #   self.assertEqual( [u'bd', u'illiad'], itemInstance.determineFlow() )
+  #   ## no-isbn, quick, no-volumes
+  #   itemInstance = Item.Item()
+  #   itemInstance.timePreference = u'quick'
+  #   itemInstance.itemIsbn = u''
+  #   self.assertEqual( [u'bd', u'illiad'], itemInstance.determineFlow() )
+  #   ## isbn, quick, volume-info
+  #   itemInstance = Item.Item()
+  #   itemInstance.timePreference = u'quick'
+  #   itemInstance.itemIsbn = u'1234'
+  #   itemInstance.volumesPreference = u'some text'
+  #   self.assertEqual( [u'illiad'], itemInstance.determineFlow() )
 
 
   def testUpdateHistoryWithStart(self):

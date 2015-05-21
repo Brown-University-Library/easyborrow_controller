@@ -59,12 +59,6 @@ class Controller( object ):
             # check for a request-record
             #######
 
-            # itemInstance = Item.Item()
-            # utCdInstance = UtilityCode.UtilityCode()
-
-            # formatted_time = time.strftime( u'%a %b %d %H:%M:%S %Z %Y', time.localtime() )  # eg 'Wed Jul 13 13:41:39 EDT 2005'
-            # utCdInstance.updateLog( message='EZBorrowController session starting at %s' % formatted_time, identifier=self.log_identifier, message_importance='high' )
-
             utCdInstance.updateLog( message='- in controller; checking for request-record...', identifier=self.log_identifier, message_importance='low' )
             resultInfo = utCdInstance.connectExecuteSelect( self.SELECT_SQL ) ## [ [fieldname01, fieldname02], ( (row01field01_value, row01field02_value), (row02field01_value, row02field02_value) ) ]
             if( resultInfo == None ):
@@ -93,7 +87,8 @@ class Controller( object ):
             # process flow
             #######
 
-            flowList = itemInstance.determineFlow()
+            # flowList = itemInstance.determineFlow()
+            flowList = self.determine_flow( itemInstance )
             utility_code.updateLog( u'- in controller; flowList is: %s' % flowList, self.log_identifier, message_importance=u'high' )
 
             flowString = string.join( flowList, ', ' )
@@ -346,10 +341,29 @@ class Controller( object ):
         utCdInstance.updateLog( message='EZBorrowController session starting at %s' % formatted_time, identifier=self.log_identifier, message_importance='high' )
         return ( itemInstance, utCdInstance )
 
-    def endProgram(self):
-        sys.exit()
+    def determine_flow( self, itemInstance ):
+        """ Determines services to try, and order.
+            Called by run_code() """
+        if len( itemInstance.volumesPreference ) > 0:
+          flow = [u'illiad']
+        elif len( itemInstance.itemIsbn ) > 0:
+          flow = [ u'bd', u'illiad' ] # changed on 2015-04-27 at request of BB email
+          # flow = [ u'bd', u'ir', u'illiad' ] # changed on 2012-09-05 at request of BH from 2012-04-02 email
+        else:
+          flow = [ u'bd', u'illiad' ]
+        return flow
 
-  # end class Controller
+    # def determine_flow( self, itemInstance ):
+    #     """ Determines services to try, and order.
+    #         Commented out now but turned on when hitting the BD API in production, since it doesn't allow stirng requesting.
+    #         Called by run_code() """
+    #     flow = [ u'illiad' ]
+    #     if len( itemInstance.volumesPreference ) == 0:
+    #         if len( itemInstance.itemIsbn ) > 0:
+    #             flow = [ u'bd', u'illiad' ] # changed on 2015-04-27 at request of BB email; was [ u'bd', u'ir', u'illiad' ]
+    #     return flow
+
+    # end class Controller
 
 
 

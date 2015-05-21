@@ -502,71 +502,20 @@ class Item:
     self.eppn = rowTuple[ fieldNameList.index('eppn') ]  # new as of 2012-05
 
 
-  def determineFlow(self):
-    if len( self.volumesPreference ) > 0:
-      flow = [u'illiad']
-    elif len( self.itemIsbn ) > 0:
-      flow = [ u'bd', u'illiad' ] # changed on 2015-04-27 at request of BB email
-      # flow = [ u'bd', u'ir', u'illiad' ] # changed on 2012-09-05 at request of BH from 2012-04-02 email
-    else:
-      flow = [ u'bd', u'illiad' ]
-    return flow
-
-
   # def determineFlow(self):
-  #
-  #   if(self.timePreference == "quick"):
-  #
-  #     # isbn=yes & volumes=yes
-  #     if( self.itemIsbn != "" and self.volumesPreference != "" ):
-  #       flow = ['illiad']
-  #     # isbn=yes & volumes=no
-  #     elif( self.itemIsbn != "" and self.volumesPreference == "" ):
-  #       flow = [ 'bd', 'ir', 'illiad' ] # changed on 2012-09-05 at request of BH from 2012-04-02 email
-  #       # flow = [ 'ir', 'bd', 'illiad' ] # changed at requst of BB from HH on 2009-01-12-Mon
-  #       # flow = [ 'bd', 'ir', 'illiad' ] # changed at requst of BH on 2009-01-06-Tue
-  #       # flow = [ 'bd', 'ir', 'vc', 'illiad' ] # changed at requst of HH on 2008-10-27-Mon
-  #       # flow = ['ir', 'bd', 'vc', 'illiad']
-  #
-  #     # isbn=no & volumes=yes
-  #     elif( self.itemIsbn == "" and self.volumesPreference != "" ):
-  #       flow = ['illiad']
-  #     # isbn=no & volumes=no
-  #     elif( self.itemIsbn == "" or self.volumesPreference == "" ):
-  #       flow = [ u'bd', u'illiad']
-  #
-  #     # shouldn't get here
-  #     else:
-  #       flow = ['illiad']
-  #
+  #   if len( self.volumesPreference ) > 0:
+  #     flow = [u'illiad']
+  #   elif len( self.itemIsbn ) > 0:
+  #     flow = [ u'bd', u'illiad' ] # changed on 2015-04-27 at request of BB email
+  #     # flow = [ u'bd', u'ir', u'illiad' ] # changed on 2012-09-05 at request of BH from 2012-04-02 email
   #   else:
-  #
-  #     # isbn=yes & volumes=yes
-  #     if( self.itemIsbn != "" and self.volumesPreference != "" ):
-  #       flow = ['illiad']
-  #     # isbn=yes & volumes=no
-  #     elif( self.itemIsbn != "" and self.volumesPreference == "" ):
-  #       flow = [ u'bd', u'ir', u'illiad']
-  #
-  #     # isbn=no & volumes=yes
-  #     elif( self.itemIsbn == "" and self.volumesPreference != "" ):
-  #       flow = ['illiad']
-  #     # isbn=no & volumes=no
-  #     elif( self.itemIsbn == "" or self.volumesPreference == "" ):
-  #       flow = [ u'bd', u'illiad']
-  #
-  #     # shouldn't get here
-  #     else:
-  #       flow = ['illiad']
-  #
+  #     flow = [ u'bd', u'illiad' ]
   #   return flow
-
 
 
   def updateHistoryNote(self, note):
     import UtilityCode
 
-    # sql = "INSERT INTO history ( request_id, note ) VALUES ( '%s', '%s' )" % ( self.itemDbId, note )
     SQL_PATTERN = unicode( os.environ[u'ezbCTL__INSERT_HISTORY_NOTE_SQL_PATTERN'] )
     sql = SQL_PATTERN % ( self.itemDbId, note )
 
