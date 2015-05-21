@@ -12,7 +12,7 @@
   - env/bin/activate file sources settings
 """
 
-import datetime, json, logging, os, pprint, random, string, sys
+import datetime, json, logging, os, pprint, random, string, sys, time
 from easyborrow_controller_code import settings, utility_code
 from easyborrow_controller_code.classes import Item, UtilityCode
 from easyborrow_controller_code.classes.tunneler_runners import BD_Runner, BD_ApiRunner
@@ -54,9 +54,8 @@ class Controller( object ):
           itemInstance = Item.Item()
           utCdInstance = UtilityCode.UtilityCode()
 
-          # self.log_identifier = utility_code.makeIdentifier()  # used until request-number is obtained
-          dateAndTimeText = utCdInstance.obtainDate()
-          utCdInstance.updateLog( message='EZBorrowController session starting at %s' % dateAndTimeText, identifier=self.log_identifier, message_importance='high' )
+          formatted_time = time.strftime( u'%a %b %d %H:%M:%S %Z %Y', time.localtime() )  # eg 'Wed Jul 13 13:41:39 EDT 2005'
+          utCdInstance.updateLog( message='EZBorrowController session starting at %s' % formatted_time, identifier=self.log_identifier, message_importance='high' )
 
           utCdInstance.updateLog( message='- in controller; checking for request-record...', identifier=self.log_identifier, message_importance='low' )
           resultInfo = utCdInstance.connectExecuteSelect( self.SELECT_SQL ) ## [ [fieldname01, fieldname02], ( (row01field01_value, row01field02_value), (row02field01_value, row02field02_value) ) ]
@@ -302,6 +301,7 @@ class Controller( object ):
             self.logger.error( u'%s- exception message, `%s`' % (self.log_identifier, err_msg) )
 
         # end def run_code()
+
 
     def endProgram(self):
         sys.exit()
