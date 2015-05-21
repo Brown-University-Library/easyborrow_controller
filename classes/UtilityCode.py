@@ -53,41 +53,6 @@ class UtilityCode:
 
 
 
-  # def updateLog( self, message, message_importance, identifier='' ):
-  #
-  #   # print '\n- message is: %s' % message
-  #   # print '\n- message_importance is: %s' % message_importance
-  #   # print '\n- identifier is: %s' % identifier
-  #
-  #   import urllib, urllib2
-  #   import Prefs
-  #
-  #   prefsInstance = Prefs.Prefs()
-  #
-  #   update_log_flag = 'init'
-  #
-  #   if message_importance == 'high':
-  #     update_log_flag = 'yes'
-  #   elif (message_importance == 'low' and prefsInstance.LOGENTRY_MINIMUM_IMPORTANCE_LEVEL == 'low' ):
-  #     update_log_flag = 'yes'
-  #   else:
-  #     pass # there definitely are many other conditions that will get us here -- but the whole point is not to log everything.
-  #
-  #   # print '\n- update_log_flag is: %s' % update_log_flag
-  #     # print '\n- url is: %s' % prefsInstance.LOG_URL
-  #   if update_log_flag == 'yes':
-  #     values = { 'message':message, 'identifier':identifier, 'key':prefsInstance.LOG_KEY }
-  #       # print '\n- values is: %s' % values
-  #     data = urllib.urlencode(values)
-  #     request = urllib2.Request(prefsInstance.LOG_URL, data)
-  #     response = urllib2.urlopen(request)
-  #     returned_data = response.read()
-  #     return returned_data
-  #
-  #   # end def updateLog()
-
-
-
   def obtainDate(self):
     import time
     if( len(self.timeToFormat) == 0):
