@@ -341,27 +341,27 @@ class Controller( object ):
         utCdInstance.updateLog( message='EZBorrowController session starting at %s' % formatted_time, identifier=self.log_identifier, message_importance='high' )
         return ( itemInstance, utCdInstance )
 
-    def determine_flow( self, itemInstance ):
-        """ Determines services to try, and order.
-            Called by run_code() """
-        if len( itemInstance.volumesPreference ) > 0:
-          flow = [u'illiad']
-        elif len( itemInstance.itemIsbn ) > 0:
-          flow = [ u'bd', u'illiad' ] # changed on 2015-04-27 at request of BB email
-          # flow = [ u'bd', u'ir', u'illiad' ] # changed on 2012-09-05 at request of BH from 2012-04-02 email
-        else:
-          flow = [ u'bd', u'illiad' ]
-        return flow
-
     # def determine_flow( self, itemInstance ):
     #     """ Determines services to try, and order.
-    #         Commented out now but turned on when hitting the BD API in production, since it doesn't allow stirng requesting.
     #         Called by run_code() """
-    #     flow = [ u'illiad' ]
-    #     if len( itemInstance.volumesPreference ) == 0:
-    #         if len( itemInstance.itemIsbn ) > 0:
-    #             flow = [ u'bd', u'illiad' ] # changed on 2015-04-27 at request of BB email; was [ u'bd', u'ir', u'illiad' ]
+    #     if len( itemInstance.volumesPreference ) > 0:
+    #       flow = [u'illiad']
+    #     elif len( itemInstance.itemIsbn ) > 0:
+    #       flow = [ u'bd', u'illiad' ] # changed on 2015-04-27 at request of BB email
+    #       # flow = [ u'bd', u'ir', u'illiad' ] # changed on 2012-09-05 at request of BH from 2012-04-02 email
+    #     else:
+    #       flow = [ u'bd', u'illiad' ]
     #     return flow
+
+    def determine_flow( self, itemInstance ):
+        """ Determines services to try, and order.
+            No longer allows for BorrowDirect string requesting since new API doesn't permit it.
+            Called by run_code() """
+        flow = [ u'illiad' ]
+        if len( itemInstance.volumesPreference ) == 0:
+            if len( itemInstance.itemIsbn ) > 0:
+                flow = [ u'bd', u'illiad' ] # changed on 2015-04-27 at request of BB email; was [ u'bd', u'ir', u'illiad' ]
+        return flow
 
     # end class Controller
 
