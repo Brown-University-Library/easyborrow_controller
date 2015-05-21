@@ -47,8 +47,6 @@ class Controller( object ):
 
         try:
 
-              1/0
-
               #######
               # check for a request-record
               #######
