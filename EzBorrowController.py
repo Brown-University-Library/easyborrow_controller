@@ -100,140 +100,140 @@ class Controller( object ):
 
             for service in flowList:
 
-              if (service == 'ir'):
+                if (service == 'ir'):
 
-                ##
-                ## send a request to InRhode
-                ##
+                    ##
+                    ## send a request to InRhode
+                    ##
 
-                itemInstance.currentlyActiveService = 'inRhode'
+                    itemInstance.currentlyActiveService = 'inRhode'
 
-                utCdInstance.updateLog( message='- in controller; checking InRhode...', message_importance='high', identifier=eb_request_number )
-                try:
-                  inRhodeResultData = itemInstance.checkInRhode(eb_request_number)
-                except Exception, e:
-                  print 'checkInRhode() failed, exception is: %s' % e
-                # inRhodeResultData = itemInstance.checkInRhode()
+                    utCdInstance.updateLog( message='- in controller; checking InRhode...', message_importance='high', identifier=eb_request_number )
+                    try:
+                      inRhodeResultData = itemInstance.checkInRhode(eb_request_number)
+                    except Exception, e:
+                      print 'checkInRhode() failed, exception is: %s' % e
+                    # inRhodeResultData = itemInstance.checkInRhode()
 
-                # examine InRhode results
-                try:
-                  utCdInstance.updateLog( message='- in controller; InRhode resultData: %s' % inRhodeResultData, message_importance='high', identifier=eb_request_number )
-                except Exception, e:
-                  print 'updateLog() showing inrhode resultData failed, exception is: %s' % e
-                # utCdInstance.updateLog( message='- InRhode resultData: %s' % inRhodeResultData, message_importance='high', identifier=eb_request_number )
-                inRhodeStatus = inRhodeResultData # simple string
-                utCdInstance.updateLog( message='- in controller; InRhode status: %s' % inRhodeStatus, message_importance='high', identifier=eb_request_number )
+                    # examine InRhode results
+                    try:
+                      utCdInstance.updateLog( message='- in controller; InRhode resultData: %s' % inRhodeResultData, message_importance='high', identifier=eb_request_number )
+                    except Exception, e:
+                      print 'updateLog() showing inrhode resultData failed, exception is: %s' % e
+                    # utCdInstance.updateLog( message='- InRhode resultData: %s' % inRhodeResultData, message_importance='high', identifier=eb_request_number )
+                    inRhodeStatus = inRhodeResultData # simple string
+                    utCdInstance.updateLog( message='- in controller; InRhode status: %s' % inRhodeStatus, message_importance='high', identifier=eb_request_number )
 
-                # update history table
+                    # update history table
 
-                parameterDict = {'serviceName':'inrhode', 'action':'attempt', 'result':inRhodeStatus, 'number':'N.A.'}
-                itemInstance.updateHistoryAction( parameterDict['serviceName'], parameterDict['action'], parameterDict['result'], parameterDict['number'] )
+                    parameterDict = {'serviceName':'inrhode', 'action':'attempt', 'result':inRhodeStatus, 'number':'N.A.'}
+                    itemInstance.updateHistoryAction( parameterDict['serviceName'], parameterDict['action'], parameterDict['result'], parameterDict['number'] )
 
-                # end section
+                    # end section
 
-                if ( inRhodeStatus == 'request_successful' ):
-                  itemInstance.requestSuccessStatus = 'success'
-                  itemInstance.genericAssignedUserEmail = itemInstance.patronEmail
-                  itemInstance.genericAssignedReferenceNumber = 'N.A.'
-                  break # out of the 'for' loop
+                    if ( inRhodeStatus == 'request_successful' ):
+                      itemInstance.requestSuccessStatus = 'success'
+                      itemInstance.genericAssignedUserEmail = itemInstance.patronEmail
+                      itemInstance.genericAssignedReferenceNumber = 'N.A.'
+                      break # out of the 'for' loop
 
-              elif(service == "bd"):
+                elif(service == "bd"):
 
-                ##
-                ## send a request to BorrowDirect
-                ##
+                    ##
+                    ## send a request to BorrowDirect
+                    ##
 
-                itemInstance.currentlyActiveService = u'borrowDirect'
-                utCdInstance.updateLog( message='- in controller; checking BorrowDirect...', message_importance='high', identifier=eb_request_number )
+                    itemInstance.currentlyActiveService = u'borrowDirect'
+                    utCdInstance.updateLog( message='- in controller; checking BorrowDirect...', message_importance='high', identifier=eb_request_number )
 
-                if type(eb_request_number) == int:
-                  eb_request_number = unicode( eb_request_number )
-                if type(itemInstance.patronBarcode) == str:
-                  itemInstance.patronBarcode = itemInstance.patronBarcode.decode( u'utf-8', u'replace' )
-                if type(itemInstance.itemIsbn) == str:
-                  itemInstance.itemIsbn = itemInstance.itemIsbn.decode( u'utf-8', u'replace' )
-                if type(itemInstance.sfxurl) == str:
-                  itemInstance.sfxurl = itemInstance.sfxurl.decode( u'utf-8', u'replace' )
+                    if type(eb_request_number) == int:
+                      eb_request_number = unicode( eb_request_number )
+                    if type(itemInstance.patronBarcode) == str:
+                      itemInstance.patronBarcode = itemInstance.patronBarcode.decode( u'utf-8', u'replace' )
+                    if type(itemInstance.itemIsbn) == str:
+                      itemInstance.itemIsbn = itemInstance.itemIsbn.decode( u'utf-8', u'replace' )
+                    if type(itemInstance.sfxurl) == str:
+                      itemInstance.sfxurl = itemInstance.sfxurl.decode( u'utf-8', u'replace' )
 
-                bd_data = {
-                  u'EB_REQUEST_NUM': eb_request_number,
-                  u'API_URL': settings.BD_API_URL,
-                  u'API_AUTH_CODE': settings.BD_API_AUTHORIZATION_CODE,
-                  u'API_IDENTITY': settings.BD_API_IDENTITY,
-                  u'UNIVERSITY': settings.BD_UNIVERSITY,
-                  u'USER_BARCODE': itemInstance.patronBarcode,
-                  u'ISBN': itemInstance.itemIsbn,
-                  u'WC_URL': itemInstance.sfxurl,
-                  u'OPENURL_PARSER_URL': settings.OPENURL_PARSER_URL,
-                  u'UC_INSTANCE': utCdInstance,  # for logging
-                  }
-                bd_runner = BD_Runner( bd_data )
-                bd_runner.determineSearchType()
-                bd_runner.prepRequestData()
-                if bd_runner.prepared_data_dict == u'skip_to_illiad':  # neither isbn nor good string
-                  bd_runner.updateHistoryTable()
-                else:
-                  ##
-                  ## send a shadow request to BorrowDirect-API test-server; must do it before real request in case real request would change availability
-                  ##
-                  if len( bd_data[u'ISBN'] ) > 0:
-                    bd_api_runner = BD_ApiRunner( self.logger, self.log_identifier )
-                    bd_api_runner.hit_bd_api( bd_data[u'ISBN'], bd_data[u'USER_BARCODE'] )
-                    # bd_api_runner.compare_responses( bd_runner )  # can't run comparison because real request hasn't run yet
-                  else:
-                    self.logger.debug( u'%s- skipping bd_api_runner; no isbn' % self.log_identifier )
-                  ## end shadow
-                  try:  # ensures bd problem doesn't hang full request processing
-                    bd_runner.requestItem()
-                    bd_api_runner.compare_responses( bd_runner )  ## shadow comparison ##
-                  except Exception, e:
-                    bd_runner.api_result == u'FAILURE'  # eventually change this to u'ERROR' after updating code that acts on u'FAILURE'
-                  bd_runner.updateHistoryTable()
-                  if bd_runner.api_result == u'SUCCESS':
-                    ## return to existing flow
-                    itemInstance.requestSuccessStatus = u'success'
-                    itemInstance.genericAssignedUserEmail = itemInstance.patronEmail
-                    itemInstance.genericAssignedReferenceNumber = bd_runner.api_confirmation_code
-                    break  # out of the for-loop
+                    bd_data = {
+                      u'EB_REQUEST_NUM': eb_request_number,
+                      u'API_URL': settings.BD_API_URL,
+                      u'API_AUTH_CODE': settings.BD_API_AUTHORIZATION_CODE,
+                      u'API_IDENTITY': settings.BD_API_IDENTITY,
+                      u'UNIVERSITY': settings.BD_UNIVERSITY,
+                      u'USER_BARCODE': itemInstance.patronBarcode,
+                      u'ISBN': itemInstance.itemIsbn,
+                      u'WC_URL': itemInstance.sfxurl,
+                      u'OPENURL_PARSER_URL': settings.OPENURL_PARSER_URL,
+                      u'UC_INSTANCE': utCdInstance,  # for logging
+                      }
+                    bd_runner = BD_Runner( bd_data )
+                    bd_runner.determineSearchType()
+                    bd_runner.prepRequestData()
+                    if bd_runner.prepared_data_dict == u'skip_to_illiad':  # neither isbn nor good string
+                      bd_runner.updateHistoryTable()
+                    else:
+                      ##
+                      ## send a shadow request to BorrowDirect-API test-server; must do it before real request in case real request would change availability
+                      ##
+                      if len( bd_data[u'ISBN'] ) > 0:
+                        bd_api_runner = BD_ApiRunner( self.logger, self.log_identifier )
+                        bd_api_runner.hit_bd_api( bd_data[u'ISBN'], bd_data[u'USER_BARCODE'] )
+                        # bd_api_runner.compare_responses( bd_runner )  # can't run comparison because real request hasn't run yet
+                      else:
+                        self.logger.debug( u'%s- skipping bd_api_runner; no isbn' % self.log_identifier )
+                      ## end shadow
+                      try:  # ensures bd problem doesn't hang full request processing
+                        bd_runner.requestItem()
+                        bd_api_runner.compare_responses( bd_runner )  ## shadow comparison ##
+                      except Exception, e:
+                        bd_runner.api_result == u'FAILURE'  # eventually change this to u'ERROR' after updating code that acts on u'FAILURE'
+                      bd_runner.updateHistoryTable()
+                      if bd_runner.api_result == u'SUCCESS':
+                        ## return to existing flow
+                        itemInstance.requestSuccessStatus = u'success'
+                        itemInstance.genericAssignedUserEmail = itemInstance.patronEmail
+                        itemInstance.genericAssignedReferenceNumber = bd_runner.api_confirmation_code
+                        break  # out of the for-loop
 
-              elif(service == "vc"):
+                elif(service == "vc"):
 
-                ##
-                ## send request to VirtualCatalog if necessary
-                ##
+                    ##
+                    ## send request to VirtualCatalog if necessary
+                    ##
 
-                itemInstance.currentlyActiveService = "virtualCatalog"
+                    itemInstance.currentlyActiveService = "virtualCatalog"
 
-                utCdInstance.updateLog( message='- in controller; checking VirtualCatalog...', message_importance='high', identifier=eb_request_number )
-                virtualCatalogResultData = itemInstance.checkVirtualCatalog()
+                    utCdInstance.updateLog( message='- in controller; checking VirtualCatalog...', message_importance='high', identifier=eb_request_number )
+                    virtualCatalogResultData = itemInstance.checkVirtualCatalog()
 
-                # examine VirtualCatalog results
+                    # examine VirtualCatalog results
 
-                virtualCatalogStatus = itemInstance.parseVirtualCatalogResultData(virtualCatalogResultData)
-                utCdInstance.updateLog( message="- in controller; virtualCatalog status: '%s'" % virtualCatalogStatus, message_importance='high', identifier=eb_request_number )
+                    virtualCatalogStatus = itemInstance.parseVirtualCatalogResultData(virtualCatalogResultData)
+                    utCdInstance.updateLog( message="- in controller; virtualCatalog status: '%s'" % virtualCatalogStatus, message_importance='high', identifier=eb_request_number )
 
-                # update history table
+                    # update history table
 
-                if( virtualCatalogStatus == "Request_Successful" ):
-                  parameterDict = {'serviceName':'virtualcatalog', 'action':'attempt', 'result':virtualCatalogStatus, 'number':itemInstance.virtualCatalogAssignedReferenceNumber}
-                else:
-                  parameterDict = {'serviceName':'virtualcatalog', 'action':'attempt', 'result':virtualCatalogStatus, 'number':''}
-                itemInstance.updateHistoryAction( parameterDict['serviceName'], parameterDict['action'], parameterDict['result'], parameterDict['number'] )
+                    if( virtualCatalogStatus == "Request_Successful" ):
+                      parameterDict = {'serviceName':'virtualcatalog', 'action':'attempt', 'result':virtualCatalogStatus, 'number':itemInstance.virtualCatalogAssignedReferenceNumber}
+                    else:
+                      parameterDict = {'serviceName':'virtualcatalog', 'action':'attempt', 'result':virtualCatalogStatus, 'number':''}
+                    itemInstance.updateHistoryAction( parameterDict['serviceName'], parameterDict['action'], parameterDict['result'], parameterDict['number'] )
 
-                # end section
+                    # end section
 
-                if( virtualCatalogStatus == "Request_Successful" ):
-                  itemInstance.requestSuccessStatus = "success"
-                  itemInstance.genericAssignedUserEmail = itemInstance.virtualCatalogAssignedUserEmail
-                  itemInstance.genericAssignedReferenceNumber = itemInstance.virtualCatalogAssignedReferenceNumber
-                  break # break out of the 'for' loop
+                    if( virtualCatalogStatus == "Request_Successful" ):
+                      itemInstance.requestSuccessStatus = "success"
+                      itemInstance.genericAssignedUserEmail = itemInstance.virtualCatalogAssignedUserEmail
+                      itemInstance.genericAssignedReferenceNumber = itemInstance.virtualCatalogAssignedReferenceNumber
+                      break # break out of the 'for' loop
 
-              elif service == u'illiad':
-                utility_code.updateLog( u'- in controller; service is now illiad', self.log_identifier )
-                itemInstance.currentlyActiveService = u'illiad'
-                prep_result_dict = utility_code.makeIlliadParametersV2( itemInstance, settings, self.log_identifier )  # prepare parameters
-                send_result_dict = utility_code.submitIlliadRemoteAuthRequestV2( prep_result_dict[u'parameter_dict'], self.log_identifier )  # send request to illiad
-                eval_result_dict = utility_code.evaluateIlliadSubmissionV2( itemInstance, send_result_dict, self.log_identifier )  # evaluate result (update itemInstance, & history & request tables)
+                elif service == u'illiad':
+                    utility_code.updateLog( u'- in controller; service is now illiad', self.log_identifier )
+                    itemInstance.currentlyActiveService = u'illiad'
+                    prep_result_dict = utility_code.makeIlliadParametersV2( itemInstance, settings, self.log_identifier )  # prepare parameters
+                    send_result_dict = utility_code.submitIlliadRemoteAuthRequestV2( prep_result_dict[u'parameter_dict'], self.log_identifier )  # send request to illiad
+                    eval_result_dict = utility_code.evaluateIlliadSubmissionV2( itemInstance, send_result_dict, self.log_identifier )  # evaluate result (update itemInstance, & history & request tables)
 
             # end of '''for service in flowList:'''
 
