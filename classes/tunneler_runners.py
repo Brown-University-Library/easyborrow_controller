@@ -15,10 +15,10 @@ class BD_ApiRunner( object ):
     self.logger = logger
     self.log_identifier = log_identifier
     self.bdpyweb_defaults = {
-      u'url': unicode( os.environ[u'ezbCTL__BDPYWEB_URL'] ),
-      u'api_authorization_code': unicode( os.environ[u'ezbCTL__BDPYWEB_AUTHORIZATION_CODE'] ),
-      u'api_identity': unicode( os.environ[u'ezbCTL__BDPYWEB_IDENTITY'] )
-      }
+        u'url': unicode( os.environ[u'ezbCTL__BDPYWEB_URL'] ),
+        u'api_authorization_code': unicode( os.environ[u'ezbCTL__BDPYWEB_AUTHORIZATION_CODE'] ),
+        u'api_identity': unicode( os.environ[u'ezbCTL__BDPYWEB_IDENTITY'] )
+        }
     self.bdpyweb_response_dct = None
 
   def hit_bd_api( self, isbn, user_barcode ):
@@ -27,21 +27,21 @@ class BD_ApiRunner( object ):
     self.logger.info( u'%s- starting try_request()' % self.log_identifier )
     parameter_dict = self.prepare_bd_api( isbn, user_barcode )
     try:
-      r = requests.post( self.bdpyweb_defaults[u'url'], data=parameter_dict, timeout=300, verify=False )
-      self.logger.debug( u'%s- bdpyweb response content, `%s`' % (self.log_identifier, r.content.decode(u'utf-8')) )
-      self.bdpyweb_response_dct = json.loads( r.content )
+        r = requests.post( self.bdpyweb_defaults[u'url'], data=parameter_dict, timeout=300, verify=False )
+        self.logger.debug( u'%s- bdpyweb response content, `%s`' % (self.log_identifier, r.content.decode(u'utf-8')) )
+        self.bdpyweb_response_dct = json.loads( r.content )
     except Exception, e:
-      self.logger.debug( u'%s- exception on bdpyweb post, `%s`' % (self.log_identifier, pprint.pformat(unicode(repr(e)))) )
+        self.logger.debug( u'%s- exception on bdpyweb post, `%s`' % (self.log_identifier, pprint.pformat(unicode(repr(e)))) )
     return
 
   def prepare_bd_api( self, isbn, user_barcode ):
     """ Prepares bd-api dct for post.
         Called by: hit_bd_api() """
     parameter_dict = {
-      u'api_authorization_code': self.bdpyweb_defaults[u'api_authorization_code'],
-      u'api_identity': self.bdpyweb_defaults[u'api_identity'],
-      u'isbn': isbn,
-      u'user_barcode': user_barcode }
+        u'api_authorization_code': self.bdpyweb_defaults[u'api_authorization_code'],
+        u'api_identity': self.bdpyweb_defaults[u'api_identity'],
+        u'isbn': isbn,
+        u'user_barcode': user_barcode }
     self.logger.debug( u'%s- post parameter_dict, `%s`' % (self.log_identifier, parameter_dict) )
     return parameter_dict
 
@@ -49,15 +49,15 @@ class BD_ApiRunner( object ):
     """ Writes comparison of old-production and new-api runners.
         Called by Controller.run_code() """
     try:
-      comparison_dct = {
-        u'old_api_found': old_runner_instance.api_found,
-        u'old_api_requestable': old_runner_instance.api_requestable,
-        u'new_api_found': self.bdpyweb_response_dct[u'found'],
-        u'new_api_requestable': self.bdpyweb_response_dct[u'requestable']
-        }
-      self.logger.debug( u'%s- bd-runner comparison, `%s`' % (self.log_identifier, pprint.pformat(comparison_dct)) )
+        comparison_dct = {
+          u'old_api_found': old_runner_instance.api_found,
+          u'old_api_requestable': old_runner_instance.api_requestable,
+          u'new_api_found': self.bdpyweb_response_dct[u'found'],
+          u'new_api_requestable': self.bdpyweb_response_dct[u'requestable']
+          }
+        self.logger.debug( u'%s- bd-runner comparison, `%s`' % (self.log_identifier, pprint.pformat(comparison_dct)) )
     except Exception as e:  # handles case where bdpyweb response fails
-      self.logger.debug( u'%s- exception on bdpyweb compare write, `%s`' % (self.log_identifier, pprint.pformat(unicode(repr(e)))) )
+        self.logger.debug( u'%s- exception on bdpyweb compare write, `%s`' % (self.log_identifier, pprint.pformat(unicode(repr(e)))) )
     return
 
   # end class BD_ApiRunner
