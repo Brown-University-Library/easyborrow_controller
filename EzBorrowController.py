@@ -44,18 +44,26 @@ class Controller( object ):
 
 
     def run_code( self ):
+        """ Coordinates processing.
+            Called by `if __name__ == u'__main__':` """
 
         try:
+
+            #######
+            # setup
+            #######
+
+            ( itemInstance, utCdInstance ) = self.setup()
 
             #######
             # check for a request-record
             #######
 
-            itemInstance = Item.Item()
-            utCdInstance = UtilityCode.UtilityCode()
+            # itemInstance = Item.Item()
+            # utCdInstance = UtilityCode.UtilityCode()
 
-            formatted_time = time.strftime( u'%a %b %d %H:%M:%S %Z %Y', time.localtime() )  # eg 'Wed Jul 13 13:41:39 EDT 2005'
-            utCdInstance.updateLog( message='EZBorrowController session starting at %s' % formatted_time, identifier=self.log_identifier, message_importance='high' )
+            # formatted_time = time.strftime( u'%a %b %d %H:%M:%S %Z %Y', time.localtime() )  # eg 'Wed Jul 13 13:41:39 EDT 2005'
+            # utCdInstance.updateLog( message='EZBorrowController session starting at %s' % formatted_time, identifier=self.log_identifier, message_importance='high' )
 
             utCdInstance.updateLog( message='- in controller; checking for request-record...', identifier=self.log_identifier, message_importance='low' )
             resultInfo = utCdInstance.connectExecuteSelect( self.SELECT_SQL ) ## [ [fieldname01, fieldname02], ( (row01field01_value, row01field02_value), (row02field01_value, row02field02_value) ) ]
@@ -301,6 +309,15 @@ class Controller( object ):
 
         # end def run_code()
 
+
+    def setup( self ):
+        """ Calls initial weblog entry and returns class instances.
+            Called by run_code() """
+        itemInstance = Item.Item()
+        utCdInstance = UtilityCode.UtilityCode()
+        formatted_time = time.strftime( u'%a %b %d %H:%M:%S %Z %Y', time.localtime() )  # eg 'Wed Jul 13 13:41:39 EDT 2005'
+        utCdInstance.updateLog( message='EZBorrowController session starting at %s' % formatted_time, identifier=self.log_identifier, message_importance='high' )
+        return ( itemInstance, utCdInstance )
 
     def endProgram(self):
         sys.exit()
