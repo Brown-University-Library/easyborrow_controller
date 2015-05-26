@@ -19,26 +19,31 @@ class BD_ApiRunner( object ):
             u'api_authorization_code': unicode( os.environ[u'ezbCTL__BDPYWEB_AUTHORIZATION_CODE'] ),
             u'api_identity': unicode( os.environ[u'ezbCTL__BDPYWEB_IDENTITY'] )
             }
-        self.bdpyweb_response_dct = None
+        self.api_result = None  # will be dct
+        self.api_confirmation_code = None  # will be str
+        self.api_found = None  # will be boolean
+        self.api_requestable = None  # will be boolean
+        self.HISTORY_SQL_PATTERN = unicode( os.environ[u'ezbCTL__INSERT_HISTORY_FULLACTION_SQL_PATTERN'] )
 
-    # def setup_api_hit( self, item_instance, utCdInstance ):
-    #     """ Sets the currently-active-service and updates weblog.
-    #         Called by controller.run_code() """
-    #     itemInstance.currentlyActiveService = u'borrowDirect'
-    #     utCdInstance.updateLog( message=u'- in controller; checking BorrowDirect...', message_importance=u'high', identifier=self.log_identifier )
-    #     return
+    def setup_api_hit( self, item_instance, utCdInstance ):
+        """ Sets the currently-active-service and updates weblog.
+            Called by controller.run_code() """
+        itemInstance.currentlyActiveService = u'borrowDirect'
+        utCdInstance.updateLog( message=u'- in controller; checking BorrowDirect...', message_importance=u'high', identifier=self.log_identifier )
+        return itemInstance
 
-    # def prepare_params( self, itemInstance ):
-    #     """ Updates item-instance attributes.
-    #         Called by controller.run_code() """
-    #     if type(itemInstance.patronBarcode) == str:
-    #         itemInstance.patronBarcode = itemInstance.patronBarcode.decode( u'utf-8', u'replace' )
-    #     if type(itemInstance.itemIsbn) == str:
-    #         itemInstance.itemIsbn = itemInstance.itemIsbn.decode( u'utf-8', u'replace' )
-    #     if type(itemInstance.sfxurl) == str:
-    #         itemInstance.sfxurl = itemInstance.sfxurl.decode( u'utf-8', u'replace' )
-    #     bd_data = { u'isbn': itemInstance.itemIsbn, u'user_barcode': itemInstance.patronBarcode }
-    #     return bd_data
+    def prepare_params( self, itemInstance ):
+        """ Updates item-instance attributes.
+            Called by controller.run_code()
+            TODO: remove legacy code. """
+        if type(itemInstance.patronBarcode) == str:
+            itemInstance.patronBarcode = itemInstance.patronBarcode.decode( u'utf-8', u'replace' )
+        if type(itemInstance.itemIsbn) == str:
+            itemInstance.itemIsbn = itemInstance.itemIsbn.decode( u'utf-8', u'replace' )
+        if type(itemInstance.sfxurl) == str:
+            itemInstance.sfxurl = itemInstance.sfxurl.decode( u'utf-8', u'replace' )
+        bd_data = { u'isbn': itemInstance.itemIsbn, u'user_barcode': itemInstance.patronBarcode }
+        return bd_data
 
     def hit_bd_api( self, isbn, user_barcode ):
         """ Handles bdpyweb call.
@@ -48,7 +53,7 @@ class BD_ApiRunner( object ):
         try:
             r = requests.post( self.bdpyweb_defaults[u'url'], data=parameter_dict, timeout=300, verify=False )
             self.logger.debug( u'%s- bdpyweb response content, `%s`' % (self.log_identifier, r.content.decode(u'utf-8')) )
-            self.bdpyweb_response_dct = json.loads( r.content )
+            self.api_result = json.loads( r.content )
         except Exception, e:
             self.logger.debug( u'%s- exception on bdpyweb post, `%s`' % (self.log_identifier, pprint.pformat(unicode(repr(e)))) )
         return
@@ -64,6 +69,64 @@ class BD_ApiRunner( object ):
         self.logger.debug( u'%s- post parameter_dict, `%s`' % (self.log_identifier, parameter_dict) )
         return parameter_dict
 
+    def process_response( self ):
+        """ Examines response dict & populates class attributes.
+            Called by controller.run_code() """
+        if u'Request' in self.api_result.keys():
+            if u'RequestNumber' in self.api_result[u'Request'].keys():
+                self.api_confirmation_code = self.api_result[u'Request'][u'RequestNumber']
+                self.api_found = True
+                self.api_requestable = True
+        self.logger.debug( u'%s- process_response complete; code, `%s`; found, `%s`; requestable, `%s`' % (self.log_identifier, self.api_confirmation_code, self.api_found, self.api_requestable) )
+        return
+
+    def update_history_table( self, utility_code_instance ):
+        """ Populates history table based on request result.
+            Called by controller.run_code()
+            TODO: Call a db class. """
+        ( api_confirmation_code, history_table_message ) = self.prep_code_message()
+        utf8_sql = self.prep_history_sql( api_confirmation_code, history_table_message )
+        utility_code_instance.connectExecute( utf8_sql )
+        utility_code_instance.updateLog( message=u'- in tunneler_runners.BD_ApiRunner.update_history_table(); history table updated for ezb#: %s' % self.log_identifier, message_importance=u'low', identifier=self.log_identifier )
+        self.logger.debug( u'%s- update_history_table complete' )
+        return
+
+    def prep_code_message( self ):
+        """ Sets api_confirmation_code and history_table_message vars.
+            Called by update_history_table() """
+        if self.requestable == True:
+            api_confirmation_code = self.api_confirmation_code
+            history_table_message = u'Request_Successful'
+        else:
+            api_confirmation_code = u''
+            history_table_message = u'not_requestable'
+        self.logger.debug( u'%s- prep_code_message complete; local api_confirmation_code, `%s`; history_table_message, `%s`' % (self.log_identifier, api_confirmation_code, history_table_message) )
+        return ( api_confirmation_code, history_table_message )
+
+    def prep_history_sql( self, api_confirmation_code, history_table_message ):
+        """ Prepares history table update sql.
+            Called by update_history_table()
+            TODO: when db class exists, remove utf8 encoding. """
+        sql = SQL_PATTERN % (
+          self.log_identifier,
+          u'borrowdirect',
+          u'attempt',
+          history_table_message,
+          api_confirmation_code
+          )
+        utf8_sql = sql.encode( u'utf-8' )  # old code expects utf-8 string
+        self.logger.debug( u'%s- prep_history_sql complete; utf8_sql, `%s`' % (self.log_identifier, sql.decode(u'utf-8')) )
+        return utf8_sql
+
+    def handle_success( self, itemInstance ):
+        """ Updates item-instance attributes on success.
+            Called by controller.run_code()
+            TODO: remove legacy code. """
+        itemInstance.requestSuccessStatus = u'success'
+        itemInstance.genericAssignedUserEmail = itemInstance.patronEmail
+        itemInstance.genericAssignedReferenceNumber = self.api_confirmation_code
+        return itemInstance
+
     def compare_responses( self, old_runner_instance ):
         """ Writes comparison of old-production and new-api runners.
             Called by Controller.run_code() """
@@ -71,8 +134,8 @@ class BD_ApiRunner( object ):
             comparison_dct = {
               u'old_api_found': old_runner_instance.api_found,
               u'old_api_requestable': old_runner_instance.api_requestable,
-              u'new_api_found': self.bdpyweb_response_dct[u'found'],
-              u'new_api_requestable': self.bdpyweb_response_dct[u'requestable']
+              u'new_api_found': self.api_result[u'found'],
+              u'new_api_requestable': self.api_result[u'requestable']
               }
             self.logger.debug( u'%s- bd-runner comparison, `%s`' % (self.log_identifier, pprint.pformat(comparison_dct)) )
         except Exception as e:  # handles case where bdpyweb response fails

@@ -61,12 +61,6 @@ class Controller( object ):
 
             record_search = self.run_record_search( utCdInstance )
 
-            # utCdInstance.updateLog( message='- in controller; checking for request-record...', identifier=self.log_identifier, message_importance='low' )
-            # record_search = utCdInstance.connectExecuteSelect( self.SELECT_SQL ) ## [ [fieldname01, fieldname02], ( (row01field01_value, row01field02_value), (row02field01_value, row02field02_value) ) ]
-            # if( record_search == None ):
-            #   utCdInstance.updateLog( message='- in controller; no new request found; quitting', identifier=self.log_identifier, message_importance='high' )
-            #   sys.exit()
-
             #######
             # gather info on request and update tables
             # (we won't get here if no record was found)
@@ -76,7 +70,7 @@ class Controller( object ):
 
             itemInstance.fillFromDbRow(record_search)
             eb_request_number = itemInstance.itemDbId
-            self.logger.debug( u'type(eb_request_number), `%s`' % type(eb_request_number) )
+            self.logger.debug( u'type(eb_request_number), `%s`' % type(eb_request_number) )  # it's an int
             utCdInstance.updateLog( message='- in controller; record grabbed: %s' % record_search, message_importance='high', identifier='was_%s_now_%s' % (self.log_identifier, eb_request_number) )
             self.log_identifier = eb_request_number  # used in newer utility_code.updateLog()
 
@@ -137,31 +131,30 @@ class Controller( object ):
 
                 elif(service == "bd"):
 
-
                     # ##
                     # ## send a request to BorrowDirect
                     # ##
 
                     # # setup
                     # bd_api_runner = BD_ApiRunner( self.logger, self.log_identifier )
-                    # bd_api_runner.setup_api_hit( itemInstance, utCdInstance )
+                    # itemInstance = bd_api_runner.setup_api_hit( itemInstance, utCdInstance )
 
                     # # prepare data
                     # bd_data = bd_api_runner.prepare_params( itemInstance )
 
                     # # hit api
-                    # bd_api_runner.hit_bd_api( bd_data[u'isbn'], bd_data[u'user_barcode'] )
+                    # bd_api_runner.hit_bd_api( bd_data[u'isbn'], bd_data[u'user_barcode'] )  # response in bd_api_runner.bdpyweb_response_dct
 
                     # # normalize response
-
-                    # # interpret response
+                    # bd_api_runner.process_response()  # populates class attributes api_confirmation_code, api_found, & api_requestable
 
                     # # update history table
+                    # bd_api_runner.update_history_table( utCdInstance )
 
-                    # # update item_instance
-
-                    #     # on success, `break`
-
+                    # # handle success (processing just continues if request not successful)
+                    # if bd_api_runner.api_requestable == True:
+                    #     itemInstance = bd_api_runner.handle_success( itemInstance )
+                    #     break
 
                     ##
                     ## send a request to BorrowDirect
