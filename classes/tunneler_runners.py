@@ -28,9 +28,10 @@ class BD_ApiRunner( object ):
     def setup_api_hit( self, item_instance, utCdInstance ):
         """ Sets the currently-active-service and updates weblog.
             Called by controller.run_code() """
-        itemInstance.currentlyActiveService = u'borrowDirect'
+        item_instance.currentlyActiveService = u'borrowDirect'
         utCdInstance.updateLog( message=u'- in controller; checking BorrowDirect...', message_importance=u'high', identifier=self.log_identifier )
-        return itemInstance
+        self.logger.debug( u'%s- setup_api_hit() complete' )
+        return item_instance
 
     def prepare_params( self, itemInstance ):
         """ Updates item-instance attributes.
