@@ -131,87 +131,90 @@ class Controller( object ):
 
                 elif(service == "bd"):
 
-                    # ##
-                    # ## send a request to BorrowDirect
-                    # ##
-
-                    # # setup
-                    # bd_api_runner = BD_ApiRunner( self.logger, self.log_identifier )
-                    # itemInstance = bd_api_runner.setup_api_hit( itemInstance, utCdInstance )
-
-                    # # prepare data
-                    # bd_data = bd_api_runner.prepare_params( itemInstance )
-
-                    # # hit api
-                    # bd_api_runner.hit_bd_api( bd_data[u'isbn'], bd_data[u'user_barcode'] )  # response in bd_api_runner.bdpyweb_response_dct
-
-                    # # normalize response
-                    # bd_api_runner.process_response()  # populates class attributes api_confirmation_code, api_found, & api_requestable
-
-                    # # update history table
-                    # bd_api_runner.update_history_table( utCdInstance )
-
-                    # # handle success (processing just continues if request not successful)
-                    # if bd_api_runner.api_requestable == True:
-                    #     itemInstance = bd_api_runner.handle_success( itemInstance )
-                    #     break
 
                     ##
                     ## send a request to BorrowDirect
                     ##
 
-                    itemInstance.currentlyActiveService = u'borrowDirect'
-                    utCdInstance.updateLog( message='- in controller; checking BorrowDirect...', message_importance='high', identifier=eb_request_number )
+                    # setup
+                    bd_api_runner = BD_ApiRunner( self.logger, self.log_identifier )
+                    itemInstance = bd_api_runner.setup_api_hit( itemInstance, utCdInstance )
 
-                    if type(eb_request_number) == int:
-                      eb_request_number = unicode( eb_request_number )
-                    if type(itemInstance.patronBarcode) == str:
-                      itemInstance.patronBarcode = itemInstance.patronBarcode.decode( u'utf-8', u'replace' )
-                    if type(itemInstance.itemIsbn) == str:
-                      itemInstance.itemIsbn = itemInstance.itemIsbn.decode( u'utf-8', u'replace' )
-                    if type(itemInstance.sfxurl) == str:
-                      itemInstance.sfxurl = itemInstance.sfxurl.decode( u'utf-8', u'replace' )
+                    # prepare data
+                    bd_data = bd_api_runner.prepare_params( itemInstance )
 
-                    bd_data = {
-                      u'EB_REQUEST_NUM': eb_request_number,
-                      u'API_URL': settings.BD_API_URL,
-                      u'API_AUTH_CODE': settings.BD_API_AUTHORIZATION_CODE,
-                      u'API_IDENTITY': settings.BD_API_IDENTITY,
-                      u'UNIVERSITY': settings.BD_UNIVERSITY,
-                      u'USER_BARCODE': itemInstance.patronBarcode,
-                      u'ISBN': itemInstance.itemIsbn,
-                      u'WC_URL': itemInstance.sfxurl,
-                      u'OPENURL_PARSER_URL': settings.OPENURL_PARSER_URL,
-                      u'UC_INSTANCE': utCdInstance,  # for logging
-                      }
-                    bd_runner = BD_Runner( bd_data )
-                    bd_runner.determineSearchType()
-                    bd_runner.prepRequestData()
-                    if bd_runner.prepared_data_dict == u'skip_to_illiad':  # neither isbn nor good string
-                      bd_runner.updateHistoryTable()
-                    else:
-                      ##
-                      ## send a shadow request to BorrowDirect-API test-server; must do it before real request in case real request would change availability
-                      ##
-                      if len( bd_data[u'ISBN'] ) > 0:
-                        bd_api_runner = BD_ApiRunner( self.logger, self.log_identifier )
-                        bd_api_runner.hit_bd_api( bd_data[u'ISBN'], bd_data[u'USER_BARCODE'] )
-                        # bd_api_runner.compare_responses( bd_runner )  # can't run comparison because real request hasn't run yet
-                      else:
-                        self.logger.debug( u'%s- skipping bd_api_runner; no isbn' % self.log_identifier )
-                      ## end shadow
-                      try:  # ensures bd problem doesn't hang full request processing
-                        bd_runner.requestItem()
-                        bd_api_runner.compare_responses( bd_runner )  ## shadow comparison ##
-                      except Exception, e:
-                        bd_runner.api_result == u'FAILURE'  # eventually change this to u'ERROR' after updating code that acts on u'FAILURE'
-                      bd_runner.updateHistoryTable()
-                      if bd_runner.api_result == u'SUCCESS':
-                        ## return to existing flow
-                        itemInstance.requestSuccessStatus = u'success'
-                        itemInstance.genericAssignedUserEmail = itemInstance.patronEmail
-                        itemInstance.genericAssignedReferenceNumber = bd_runner.api_confirmation_code
-                        break  # out of the for-loop
+                    # hit api
+                    bd_api_runner.hit_bd_api( bd_data[u'isbn'], bd_data[u'user_barcode'] )  # response in bd_api_runner.bdpyweb_response_dct
+
+                    # normalize response
+                    bd_api_runner.process_response()  # populates class attributes api_confirmation_code, api_found, & api_requestable
+
+                    # update history table
+                    bd_api_runner.update_history_table( utCdInstance )
+
+                    # handle success (processing just continues if request not successful)
+                    if bd_api_runner.api_requestable == True:
+                        itemInstance = bd_api_runner.handle_success( itemInstance )
+                        break
+
+
+                    # ##
+                    # ## send a request to BorrowDirect
+                    # ##
+
+                    # itemInstance.currentlyActiveService = u'borrowDirect'
+                    # utCdInstance.updateLog( message='- in controller; checking BorrowDirect...', message_importance='high', identifier=eb_request_number )
+
+                    # if type(eb_request_number) == int:
+                    #   eb_request_number = unicode( eb_request_number )
+                    # if type(itemInstance.patronBarcode) == str:
+                    #   itemInstance.patronBarcode = itemInstance.patronBarcode.decode( u'utf-8', u'replace' )
+                    # if type(itemInstance.itemIsbn) == str:
+                    #   itemInstance.itemIsbn = itemInstance.itemIsbn.decode( u'utf-8', u'replace' )
+                    # if type(itemInstance.sfxurl) == str:
+                    #   itemInstance.sfxurl = itemInstance.sfxurl.decode( u'utf-8', u'replace' )
+
+                    # bd_data = {
+                    #   u'EB_REQUEST_NUM': eb_request_number,
+                    #   u'API_URL': settings.BD_API_URL,
+                    #   u'API_AUTH_CODE': settings.BD_API_AUTHORIZATION_CODE,
+                    #   u'API_IDENTITY': settings.BD_API_IDENTITY,
+                    #   u'UNIVERSITY': settings.BD_UNIVERSITY,
+                    #   u'USER_BARCODE': itemInstance.patronBarcode,
+                    #   u'ISBN': itemInstance.itemIsbn,
+                    #   u'WC_URL': itemInstance.sfxurl,
+                    #   u'OPENURL_PARSER_URL': settings.OPENURL_PARSER_URL,
+                    #   u'UC_INSTANCE': utCdInstance,  # for logging
+                    #   }
+                    # bd_runner = BD_Runner( bd_data )
+                    # bd_runner.determineSearchType()
+                    # bd_runner.prepRequestData()
+                    # if bd_runner.prepared_data_dict == u'skip_to_illiad':  # neither isbn nor good string
+                    #   bd_runner.updateHistoryTable()
+                    # else:
+                    #   ##
+                    #   ## send a shadow request to BorrowDirect-API test-server; must do it before real request in case real request would change availability
+                    #   ##
+                    #   if len( bd_data[u'ISBN'] ) > 0:
+                    #     bd_api_runner = BD_ApiRunner( self.logger, self.log_identifier )
+                    #     bd_api_runner.hit_bd_api( bd_data[u'ISBN'], bd_data[u'USER_BARCODE'] )
+                    #     # bd_api_runner.compare_responses( bd_runner )  # can't run comparison because real request hasn't run yet
+                    #   else:
+                    #     self.logger.debug( u'%s- skipping bd_api_runner; no isbn' % self.log_identifier )
+                    #   ## end shadow
+                    #   try:  # ensures bd problem doesn't hang full request processing
+                    #     bd_runner.requestItem()
+                    #     bd_api_runner.compare_responses( bd_runner )  ## shadow comparison ##
+                    #   except Exception, e:
+                    #     bd_runner.api_result == u'FAILURE'  # eventually change this to u'ERROR' after updating code that acts on u'FAILURE'
+                    #   bd_runner.updateHistoryTable()
+                    #   if bd_runner.api_result == u'SUCCESS':
+                    #     ## return to existing flow
+                    #     itemInstance.requestSuccessStatus = u'success'
+                    #     itemInstance.genericAssignedUserEmail = itemInstance.patronEmail
+                    #     itemInstance.genericAssignedReferenceNumber = bd_runner.api_confirmation_code
+                    #     break  # out of the for-loop
+
 
                 elif(service == "vc"):
 
