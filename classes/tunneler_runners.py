@@ -108,7 +108,7 @@ class BD_ApiRunner( object ):
         """ Prepares history table update sql.
             Called by update_history_table()
             TODO: when db class exists, remove utf8 encoding. """
-        sql = HISTORY_SQL_PATTERN % (
+        sql = self.HISTORY_SQL_PATTERN % (
           self.log_identifier,
           u'borrowdirect',
           u'attempt',
