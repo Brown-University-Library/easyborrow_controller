@@ -59,11 +59,13 @@ class Controller( object ):
             # check for a request-record
             #######
 
-            utCdInstance.updateLog( message='- in controller; checking for request-record...', identifier=self.log_identifier, message_importance='low' )
-            resultInfo = utCdInstance.connectExecuteSelect( self.SELECT_SQL ) ## [ [fieldname01, fieldname02], ( (row01field01_value, row01field02_value), (row02field01_value, row02field02_value) ) ]
-            if( resultInfo == None ):
-              utCdInstance.updateLog( message='- in controller; no new request found; quitting', identifier=self.log_identifier, message_importance='high' )
-              sys.exit()
+            record_search = self.run_record_search( utCdInstance )
+
+            # utCdInstance.updateLog( message='- in controller; checking for request-record...', identifier=self.log_identifier, message_importance='low' )
+            # record_search = utCdInstance.connectExecuteSelect( self.SELECT_SQL ) ## [ [fieldname01, fieldname02], ( (row01field01_value, row01field02_value), (row02field01_value, row02field02_value) ) ]
+            # if( record_search == None ):
+            #   utCdInstance.updateLog( message='- in controller; no new request found; quitting', identifier=self.log_identifier, message_importance='high' )
+            #   sys.exit()
 
             #######
             # gather info on request and update tables
@@ -72,10 +74,10 @@ class Controller( object ):
 
             # setup data
 
-            itemInstance.fillFromDbRow(resultInfo)
+            itemInstance.fillFromDbRow(record_search)
             eb_request_number = itemInstance.itemDbId
             self.logger.debug( u'type(eb_request_number), `%s`' % type(eb_request_number) )
-            utCdInstance.updateLog( message='- in controller; record grabbed: %s' % resultInfo, message_importance='high', identifier='was_%s_now_%s' % (self.log_identifier, eb_request_number) )
+            utCdInstance.updateLog( message='- in controller; record grabbed: %s' % record_search, message_importance='high', identifier='was_%s_now_%s' % (self.log_identifier, eb_request_number) )
             self.log_identifier = eb_request_number  # used in newer utility_code.updateLog()
 
             # update request and history tables
@@ -339,19 +341,19 @@ class Controller( object ):
         utCdInstance = UtilityCode.UtilityCode()
         formatted_time = time.strftime( u'%a %b %d %H:%M:%S %Z %Y', time.localtime() )  # eg 'Wed Jul 13 13:41:39 EDT 2005'
         utCdInstance.updateLog( message='EZBorrowController session starting at %s' % formatted_time, identifier=self.log_identifier, message_importance='high' )
+        self.logger.debug( u'setup() complete' )
         return ( itemInstance, utCdInstance )
 
-    # def determine_flow( self, itemInstance ):
-    #     """ Determines services to try, and order.
-    #         Called by run_code() """
-    #     if len( itemInstance.volumesPreference ) > 0:
-    #       flow = [u'illiad']
-    #     elif len( itemInstance.itemIsbn ) > 0:
-    #       flow = [ u'bd', u'illiad' ] # changed on 2015-04-27 at request of BB email
-    #       # flow = [ u'bd', u'ir', u'illiad' ] # changed on 2012-09-05 at request of BH from 2012-04-02 email
-    #     else:
-    #       flow = [ u'bd', u'illiad' ]
-    #     return flow
+    def run_record_search( self, utCdInstance ):
+        """ Updates weblog & searches for new request.
+            Called by run_code() """
+        utCdInstance.updateLog( message='- in controller; checking for request-record...', identifier=self.log_identifier, message_importance='low' )
+        record_search = utCdInstance.connectExecuteSelect( self.SELECT_SQL ) ## [ [fieldname01, fieldname02], ( (row01field01_value, row01field02_value), (row02field01_value, row02field02_value) ) ]
+        if( record_search == None ):
+          utCdInstance.updateLog( message='- in controller; no new request found; quitting', identifier=self.log_identifier, message_importance='high' )
+          sys.exit()
+        self.logger.debug( u'run_record_search() complete' )
+        return record_search
 
     def determine_flow( self, itemInstance ):
         """ Determines services to try, and order.
@@ -361,6 +363,7 @@ class Controller( object ):
         if len( itemInstance.volumesPreference ) == 0:
             if len( itemInstance.itemIsbn ) > 0:
                 flow = [ u'bd', u'illiad' ] # changed on 2015-04-27 at request of BB email; was [ u'bd', u'ir', u'illiad' ]
+        self.logger.debug( u'determine_flow() complete' )
         return flow
 
     # end class Controller
