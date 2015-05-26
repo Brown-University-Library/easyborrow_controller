@@ -95,7 +95,7 @@ class BD_ApiRunner( object ):
     def prep_code_message( self ):
         """ Sets api_confirmation_code and history_table_message vars.
             Called by update_history_table() """
-        if self.requestable == True:
+        if self.api_requestable == True:
             api_confirmation_code = self.api_confirmation_code
             history_table_message = u'Request_Successful'
         else:
