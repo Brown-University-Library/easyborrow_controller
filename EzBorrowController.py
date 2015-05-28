@@ -14,7 +14,7 @@
 
 import datetime, json, logging, os, pprint, random, string, sys, time
 from easyborrow_controller_code import settings, utility_code
-from easyborrow_controller_code.classes import Item, UtilityCode
+from easyborrow_controller_code.classes import db_handler, Item, UtilityCode
 from easyborrow_controller_code.classes.tunneler_runners import BD_Runner, BD_ApiRunner
 
 
@@ -53,7 +53,7 @@ class Controller( object ):
             # setup
             #######
 
-            ( itemInstance, utCdInstance ) = self.setup()
+            ( dbh, itemInstance, utCdInstance ) = self.setup()
 
             #######
             # check for a request-record
@@ -333,12 +333,29 @@ class Controller( object ):
     def setup( self ):
         """ Calls initial weblog entry and returns class instances.
             Called by run_code() """
+        self.logger.debug( u'starting setup' )
+        try:
+            dbh = db_handler.Db_Handler( self.logger )
+        except Exception as e:
+            self.logger.error( u'e, `%s`' % e )
+        self.logger.debug( u'db_handler instantiated' )
         itemInstance = Item.Item()
         utCdInstance = UtilityCode.UtilityCode()
         formatted_time = time.strftime( u'%a %b %d %H:%M:%S %Z %Y', time.localtime() )  # eg 'Wed Jul 13 13:41:39 EDT 2005'
         utCdInstance.updateLog( message='EZBorrowController session starting at %s' % formatted_time, identifier=self.log_identifier, message_importance='high' )
         self.logger.debug( u'setup() complete' )
-        return ( itemInstance, utCdInstance )
+        return ( dbh, itemInstance, utCdInstance )
+
+    # def run_record_search( self, utCdInstance ):
+    #     """ Updates weblog & searches for new request.
+    #         Called by run_code() """
+    #     utCdInstance.updateLog( message='- in controller; checking for request-record...', identifier=self.log_identifier, message_importance='low' )
+    #     record_search = db_instance.run_select( self.SELECT_SQL ) ## [ {row01field01_key: row01field01_value}, fieldname02], ( (row01field01_value, row01field02_value), (row02field01_value, row02field02_value) ) ]
+    #     if( record_search == None ):
+    #       utCdInstance.updateLog( message='- in controller; no new request found; quitting', identifier=self.log_identifier, message_importance='high' )
+    #       sys.exit()
+    #     self.logger.debug( u'run_record_search() complete' )
+    #     return record_search
 
     def run_record_search( self, utCdInstance ):
         """ Updates weblog & searches for new request.
