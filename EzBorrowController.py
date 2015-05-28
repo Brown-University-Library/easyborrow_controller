@@ -375,7 +375,7 @@ class Controller( object ):
         flow = [ u'illiad' ]
         if len( itemInstance.volumesPreference ) == 0:
             if len( itemInstance.itemIsbn ) > 0:
-                flow = [ u'bd', u'illiad' ] # changed on 2015-04-27 at request of BB email; was [ u'bd', u'ir', u'illiad' ]
+                flow = [ u'bd', u'ir', u'illiad' ] # changed on 2015-05-28 at request of BB email; was [ u'bd', u'illiad' ]
         self.logger.debug( u'determine_flow() complete' )
         return flow
 
