@@ -73,21 +73,21 @@ class BD_ApiRunner( object ):
     def process_response( self ):
         """ Examines response dict & populates class attributes.
             Called by controller.run_code() """
-        if self.api_result[u'requestable'] == True:
-            self.api_confirmation_code = self.api_result[u'bd_confirmation_code']
-            self.api_found = True
-            self.api_requestable = True
+        if self.api_result and ( type(self.api_result) == dict ) and ( u'requestable' in self.api_result.keys() ):
+            if self.api_result[u'requestable'] == True:
+                self.api_confirmation_code = self.api_result[u'bd_confirmation_code']
+                self.api_found = True
+                self.api_requestable = True
         self.logger.debug( u'%s- process_response complete; code, `%s`; found, `%s`; requestable, `%s`' % (self.log_identifier, self.api_confirmation_code, self.api_found, self.api_requestable) )
         return
 
     # def process_response( self ):
     #     """ Examines response dict & populates class attributes.
     #         Called by controller.run_code() """
-    #     if u'Request' in self.api_result.keys():
-    #         if u'RequestNumber' in self.api_result[u'Request'].keys():
-    #             self.api_confirmation_code = self.api_result[u'Request'][u'RequestNumber']
-    #             self.api_found = True
-    #             self.api_requestable = True
+    #     if self.api_result[u'requestable'] == True:
+    #         self.api_confirmation_code = self.api_result[u'bd_confirmation_code']
+    #         self.api_found = True
+    #         self.api_requestable = True
     #     self.logger.debug( u'%s- process_response complete; code, `%s`; found, `%s`; requestable, `%s`' % (self.log_identifier, self.api_confirmation_code, self.api_found, self.api_requestable) )
     #     return
 
