@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 
-import os
-print u'hello'
-# import MySQLdb
+import os, pprint
+import MySQLdb
 
 
 class Db_Handler(object):
@@ -20,8 +19,73 @@ class Db_Handler(object):
         self.logger = logger
         self.logger.debug( u'DB_Handler instantiated' )
 
-    def foo(self):
-        pass
+    ## main functions ##
+
+    def run_select( self, sql ):
+        """ Executes sql, returns key-value dict.
+            Called by controller.run_record_search() """
+        try:
+            dict_list = None
+            self._setup_db_connection()
+            if self.cursor_object:
+                dict_list = _run_execute( sql )
+                dict_list = _unicodify_resultset( dict_list )
+            return dict_list
+        except Exception as e:
+            self.logger.error( u'error: %s' % unicode(repr(e).decode(u'utf8', u'replace')) )
+            return None
+        finally:
+            self._close_db_connection()
+
+    ## helper functions ##
+
+    def _setup_db_connection( self ):
+        """ Sets up connection; populates instance attributes.
+            Called by run_select() """
+        try:
+            self.connection_object = MySQLdb.connect(
+                host=self.DB_HOST, port=self.DB_PORT, user=self.DB_USERNAME, passwd=self.DB_PASSWORD, db=self.DB_NAME )
+            self.cursor_object = self.connection_object.cursor( MySQLdb.cursors.DictCursor )
+            return
+        except Exception as e:
+            self.logger.error( u'error: %s' % unicode(repr(e).decode(u'utf8', u'replace')) )
+            return
+
+    def _run_execute( self, sql ):
+        """ Executes select; returns tuple of row-dicts.
+            Example return data: ( {row1field1key: row1field1value, row1field2key: row1field2value}, {row2field1key: row2field1value, row2field2key: row2field2value} )
+            Called by run_select() """
+        self.cursor_object.execute( sql )
+        dict_list = self.cursor_object.fetchall()  # really a tuple of row-dicts
+        self.logger.debug( u'dict_list unicodified, ```%s```' % pprint.pformat(dict_list) )
+        return dict_list
+
+    def _unicodify_resultset( self, dict_list ):
+        """ Ensures result-set's keys & values are unicode-strings.
+            Called by run_select() """
+        try:
+            result_list = []
+            for row_dict in dict_list:
+                new_row_dict = {}
+                for key,value in row_dict.items():
+                    if type(value) == datetime.datetime:
+                        value = unicode(value)
+                    new_row_dict[ unicode(key) ] = unicode(value)
+                result_list.append( new_row_dict )
+            return result_list
+        except Exception as e:
+            self.logger.error( u'error: %s' % unicode(repr(e).decode(u'utf8', u'replace')) )
+
+    def _close_db_connection( self ):
+        """ Closes db connection.
+            Called by run_select() """
+        try:
+            self.cursor_object.close()
+            self.connection_object.close()
+            self.logger.debug( u'db connection closed' )
+            return
+        except Exception as e:
+            self.logger.error( u'error: %s' % unicode(repr(e).decode(u'utf8', u'replace')) )
 
   # def execute_sql(self, sql):
   #   """ Executes sql; returns tuple of row-dicts.
