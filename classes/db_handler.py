@@ -10,7 +10,7 @@ class Db_Handler(object):
     def __init__(self, logger ):
         """ Sets up basics. """
         self.DB_HOST = unicode( os.environ[u'ezbCTL__DB_HOST'] )
-        self.DB_PORT = unicode( os.environ[u'ezbCTL__DB_PORT'] )
+        self.DB_PORT = int( os.environ[u'ezbCTL__DB_PORT'] )
         self.DB_USERNAME = unicode( os.environ[u'ezbCTL__DB_USERNAME'] )
         self.DB_PASSWORD = unicode( os.environ[u'ezbCTL__DB_PASSWORD'] )
         self.DB_NAME = unicode( os.environ[u'ezbCTL__DB_NAME'] )
