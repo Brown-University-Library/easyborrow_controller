@@ -57,7 +57,7 @@ class Db_Handler(object):
             Called by run_select() """
         self.cursor_object.execute( sql )
         dict_list = self.cursor_object.fetchall()  # really a tuple of row-dicts
-        self.logger.debug( u'dict_list unicodified, ```%s```' % pprint.pformat(dict_list) )
+        self.logger.debug( u'dict_list, ```%s```' % pprint.pformat(dict_list) )
         return dict_list
 
     def _unicodify_resultset( self, dict_list ):
