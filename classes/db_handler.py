@@ -29,7 +29,7 @@ class Db_Handler(object):
             self._setup_db_connection()
             if self.cursor_object:
                 dict_list = self._run_execute( sql )
-                dict_list = _unicodify_resultset( dict_list )
+                dict_list = self._unicodify_resultset( dict_list )
             return dict_list
         except Exception as e:
             self.logger.error( u'error: %s' % unicode(repr(e).decode(u'utf8', u'replace')) )
