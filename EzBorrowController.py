@@ -59,7 +59,7 @@ class Controller( object ):
             # check for a request-record
             #######
 
-            test_record_search = self.run_record_search()
+            test_record_search = self.run_record_search( dbh )
             self.logger.debug( u'test_record_search, `%s`' % test_record_search )
             record_search = self.run_old_record_search( utCdInstance )
             self.logger.debug( u'record_search, `%s`' % record_search )
@@ -289,11 +289,10 @@ class Controller( object ):
         self.logger.debug( u'setup() complete' )
         return ( dbh, itemInstance, utCdInstance )
 
-    def run_record_search( self ):
+    def run_record_search( self, dbh ):
         """ Searches for new request.
             Called by run_code() """
-        self.logger.debug( u'setup() complete' )
-        record_search = db_instance.run_select( self.SELECT_SQL ) ## [ {row01field01_key: row01field01_value}, fieldname02], ( (row01field01_value, row01field02_value), (row02field01_value, row02field02_value) ) ]
+        record_search = dbh.run_select( self.SELECT_SQL ) ## [ {row01field01_key: row01field01_value}, fieldname02], ( (row01field01_value, row01field02_value), (row02field01_value, row02field02_value) ) ]
         self.logger.debug( u'(new) record_search, `%s`' % record_search )
         # if( record_search == None ):
         #   sys.exit()
