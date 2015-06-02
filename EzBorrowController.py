@@ -58,8 +58,11 @@ class Controller( object ):
             #######
             # check for a request-record
             #######
-
-            record_search = self.run_record_search( utCdInstance )
+            1/0
+            record_search = self.run_old_record_search( utCdInstance )
+            self.logger.debug( u'record_search, `%s`' % record_search )
+            test_record_search = self.run_record_search()
+            self.logger.debug( u'test_record_search, `%s`' % test_record_search )
 
             #######
             # gather info on request and update tables
@@ -286,18 +289,17 @@ class Controller( object ):
         self.logger.debug( u'setup() complete' )
         return ( dbh, itemInstance, utCdInstance )
 
-    # def run_record_search( self, utCdInstance ):
-    #     """ Updates weblog & searches for new request.
-    #         Called by run_code() """
-    #     utCdInstance.updateLog( message='- in controller; checking for request-record...', identifier=self.log_identifier, message_importance='low' )
-    #     record_search = db_instance.run_select( self.SELECT_SQL ) ## [ {row01field01_key: row01field01_value}, fieldname02], ( (row01field01_value, row01field02_value), (row02field01_value, row02field02_value) ) ]
-    #     if( record_search == None ):
-    #       utCdInstance.updateLog( message='- in controller; no new request found; quitting', identifier=self.log_identifier, message_importance='high' )
-    #       sys.exit()
-    #     self.logger.debug( u'run_record_search() complete' )
-    #     return record_search
+    def run_record_search( self ):
+        """ Searches for new request.
+            Called by run_code() """
+        self.logger.debug( u'setup() complete' )
+        record_search = db_instance.run_select( self.SELECT_SQL ) ## [ {row01field01_key: row01field01_value}, fieldname02], ( (row01field01_value, row01field02_value), (row02field01_value, row02field02_value) ) ]
+        self.logger.debug( u'record_search, `%s`' % record_search )
+        if( record_search == None ):
+          sys.exit()
+        return record_search
 
-    def run_record_search( self, utCdInstance ):
+    def run_old_record_search( self, utCdInstance ):
         """ Updates weblog & searches for new request.
             Called by run_code() """
         utCdInstance.updateLog( message='- in controller; checking for request-record...', identifier=self.log_identifier, message_importance='low' )
