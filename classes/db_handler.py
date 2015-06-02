@@ -28,7 +28,7 @@ class Db_Handler(object):
             dict_list = None
             self._setup_db_connection()
             if self.cursor_object:
-                dict_list = _run_execute( sql )
+                dict_list = self._run_execute( sql )
                 dict_list = _unicodify_resultset( dict_list )
             return dict_list
         except Exception as e:
