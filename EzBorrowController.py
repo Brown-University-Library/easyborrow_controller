@@ -58,7 +58,7 @@ class Controller( object ):
             #######
             # check for a request-record
             #######
-            1/0
+
             record_search = self.run_old_record_search( utCdInstance )
             self.logger.debug( u'record_search, `%s`' % record_search )
             test_record_search = self.run_record_search()
