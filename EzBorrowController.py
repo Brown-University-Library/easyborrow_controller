@@ -59,8 +59,8 @@ class Controller( object ):
             # check for a request-record
             #######
 
-            test_record_search = self.run_record_search( dbh )
-            self.logger.debug( u'test_record_search, `%s`' % test_record_search )
+            record_search = self.run_record_search( dbh )
+            self.logger.debug( u'record_search, `%s`' % record_search )
             # record_search = self.run_old_record_search( utCdInstance )
             # self.logger.debug( u'record_search, `%s`' % record_search )
 
@@ -71,12 +71,12 @@ class Controller( object ):
 
             # setup data
 
-            itemInstance.fill_from_db_row( test_record_search )
+            itemInstance.fill_from_db_row( record_search )
             # itemInstance.fillFromDbRow(record_search)
 
             eb_request_number = itemInstance.itemDbId
             self.logger.debug( u'type(eb_request_number), `%s`' % type(eb_request_number) )  # it's an int
-            utCdInstance.updateLog( message='- in controller; record grabbed: %s' % test_record_search, message_importance='high', identifier='was_%s_now_%s' % (self.log_identifier, eb_request_number) )
+            utCdInstance.updateLog( message='- in controller; record grabbed: %s' % record_search, message_importance='high', identifier='was_%s_now_%s' % (self.log_identifier, eb_request_number) )
             self.log_identifier = eb_request_number  # used in newer utility_code.updateLog()
 
             # update request and history tables
@@ -302,25 +302,16 @@ class Controller( object ):
         record_search = result_dcts[0]
         return record_search
 
-    # def run_record_search( self, dbh ):
-    #     """ Searches for new request.
+    # def run_old_record_search( self, utCdInstance ):
+    #     """ Updates weblog & searches for new request.
     #         Called by run_code() """
-    #     record_search = dbh.run_select( self.SELECT_SQL ) ## [ {row01field01_key: row01field01_value}, fieldname02], ( (row01field01_value, row01field02_value), (row02field01_value, row02field02_value) ) ]
-    #     self.logger.debug( u'(new) record_search, `%s`' % record_search )
-    #     # if( record_search == None ):
-    #     #   sys.exit()
+    #     utCdInstance.updateLog( message='- in controller; checking for request-record...', identifier=self.log_identifier, message_importance='low' )
+    #     record_search = utCdInstance.connectExecuteSelect( self.SELECT_SQL ) ## [ [fieldname01, fieldname02], ( (row01field01_value, row01field02_value), (row02field01_value, row02field02_value) ) ]
+    #     if( record_search == None ):
+    #       utCdInstance.updateLog( message='- in controller; no new request found; quitting', identifier=self.log_identifier, message_importance='high' )
+    #       sys.exit()
+    #     self.logger.debug( u'run_record_search() complete' )
     #     return record_search
-
-    def run_old_record_search( self, utCdInstance ):
-        """ Updates weblog & searches for new request.
-            Called by run_code() """
-        utCdInstance.updateLog( message='- in controller; checking for request-record...', identifier=self.log_identifier, message_importance='low' )
-        record_search = utCdInstance.connectExecuteSelect( self.SELECT_SQL ) ## [ [fieldname01, fieldname02], ( (row01field01_value, row01field02_value), (row02field01_value, row02field02_value) ) ]
-        if( record_search == None ):
-          utCdInstance.updateLog( message='- in controller; no new request found; quitting', identifier=self.log_identifier, message_importance='high' )
-          sys.exit()
-        self.logger.debug( u'run_record_search() complete' )
-        return record_search
 
     def determine_flow( self, itemInstance ):
         """ Determines services to try, and order.
