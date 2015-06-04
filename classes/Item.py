@@ -474,6 +474,33 @@ class Item:
 
 
 
+  def fill_from_db_row( self, db_dct ):
+    """ Updates attributes from found record data.
+        Called by controller.run_code() """
+    self.itemDbId = db_dct['id']
+    self.requestNumber = db_dct['id']
+    self.itemTitle = db_dct['title']
+    self.itemIsbn = db_dct['isbn']
+    self.timePreference = db_dct['pref']
+    self.locationPreference = db_dct['loc']
+    self.alternateEditionPreference = db_dct['alt_edition']
+    self.volumesPreference = db_dct['volumes']
+    self.sfxurl = db_dct['sfxurl']
+    self.patronName = db_dct['name']
+    self.patronBarcode = db_dct['barcode']
+    self.patronEmail = db_dct['email']
+    self.patronId = db_dct['patronId']
+    tempFirstname = db_dct['firstname']
+    self.firstname = tempFirstname.strip()
+    tempLastname = db_dct['lastname']
+    self.lastname = tempLastname.strip()
+    self.patronStatus = db_dct['group'] # for temp ILL staff manual new-user registration
+    self.oclcNumber = db_dct['wc_accession'] # for temp ILL staff manual new-user registration
+    self.eppn = db_dct['eppn']  # new as of 2012-05
+    return
+
+
+
   def fillFromDbRow(self, resultInfo):
 
     fieldNameList = resultInfo[0]

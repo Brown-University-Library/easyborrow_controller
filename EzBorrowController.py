@@ -61,8 +61,8 @@ class Controller( object ):
 
             test_record_search = self.run_record_search( dbh )
             self.logger.debug( u'test_record_search, `%s`' % test_record_search )
-            record_search = self.run_old_record_search( utCdInstance )
-            self.logger.debug( u'record_search, `%s`' % record_search )
+            # record_search = self.run_old_record_search( utCdInstance )
+            # self.logger.debug( u'record_search, `%s`' % record_search )
 
             #######
             # gather info on request and update tables
@@ -71,7 +71,9 @@ class Controller( object ):
 
             # setup data
 
-            itemInstance.fillFromDbRow(record_search)
+            itemInstance.fill_from_db_row( test_record_search )
+            # itemInstance.fillFromDbRow(record_search)
+
             eb_request_number = itemInstance.itemDbId
             self.logger.debug( u'type(eb_request_number), `%s`' % type(eb_request_number) )  # it's an int
             utCdInstance.updateLog( message='- in controller; record grabbed: %s' % record_search, message_importance='high', identifier='was_%s_now_%s' % (self.log_identifier, eb_request_number) )
