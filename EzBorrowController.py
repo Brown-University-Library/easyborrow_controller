@@ -294,11 +294,22 @@ class Controller( object ):
     def run_record_search( self, dbh ):
         """ Searches for new request.
             Called by run_code() """
-        record_search = dbh.run_select( self.SELECT_SQL ) ## [ {row01field01_key: row01field01_value}, fieldname02], ( (row01field01_value, row01field02_value), (row02field01_value, row02field02_value) ) ]
-        self.logger.debug( u'(new) record_search, `%s`' % record_search )
-        # if( record_search == None ):
-        #   sys.exit()
+        result_dcts = dbh.run_select( self.SELECT_SQL )  # [ {row01field01_key: row01field01_value}, fieldname02], ( (row01field01_value, row01field02_value), (row02field01_value, row02field02_value) ) ]
+        self.logger.debug( u'(new) record_search, `%s`' % result_dcts )
+        if not result_dcts:
+            self.logger.info( u'no new record; quitting' )
+            sys.exit()
+        record_search = result_dcts[0]
         return record_search
+
+    # def run_record_search( self, dbh ):
+    #     """ Searches for new request.
+    #         Called by run_code() """
+    #     record_search = dbh.run_select( self.SELECT_SQL ) ## [ {row01field01_key: row01field01_value}, fieldname02], ( (row01field01_value, row01field02_value), (row02field01_value, row02field02_value) ) ]
+    #     self.logger.debug( u'(new) record_search, `%s`' % record_search )
+    #     # if( record_search == None ):
+    #     #   sys.exit()
+    #     return record_search
 
     def run_old_record_search( self, utCdInstance ):
         """ Updates weblog & searches for new request.
