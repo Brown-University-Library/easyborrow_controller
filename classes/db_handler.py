@@ -68,13 +68,21 @@ class Db_Handler(object):
             for row_dict in dict_list:
                 new_row_dict = {}
                 for key,value in row_dict.items():
-                    if type(value) == datetime.datetime:
-                        value = unicode(value)
-                    new_row_dict[ unicode(key) ] = unicode(value)
+                    new_row_dict[ unicode(key) ] = self._unicodify_value( value )
                 result_list.append( new_row_dict )
             return result_list
         except Exception as e:
             self.logger.error( u'error: %s' % unicode(repr(e).decode(u'utf8', u'replace')) )
+            raise Exception( unicode(repr(e)) )
+
+    def _unicodify_value( self, value ):
+        """ Ensures value is unicode.
+            Called by _unicodify_value() """
+        if type(value) == datetime.datetime or type(value) == int:
+            value = unicode(value)
+        else:
+            value = value.decode( 'utf-8', 'replace' )
+        return value
 
     def _close_db_connection( self ):
         """ Closes db connection.
