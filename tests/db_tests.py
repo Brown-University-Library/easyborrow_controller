@@ -16,13 +16,18 @@ dbh = db_handler.Db_Handler( logger )
 
 class Db_HandlerTest(unittest.TestCase):
 
-  def test__unicodify_resultset(self):
-    dict_list = [ {'title': 'réd' } ]
-    self.assertNotEqual( [ {'title': 'réd' } ], dbh._unicodify_resultset(dict_list) )
-    self.assertEqual( [ {u'title': u'réd' } ], dbh._unicodify_resultset(dict_list) )
+    def test__unicodify_resultset_unicode(self):
+        dict_list = [ {'title': 'réd' } ]
+        self.assertNotEqual( [ {'title': 'réd' } ], dbh._unicodify_resultset(dict_list) )
+        self.assertEqual( [ {u'title': u'réd' } ], dbh._unicodify_resultset(dict_list) )
+
+    def test__unicodify_resultset_unicode(self):
+        dict_list = [ {'title': 'réd', 'wc': long( 123 ) } ]
+        self.assertEqual( [ {u'title': u'réd', u'wc': u'123' } ], dbh._unicodify_resultset(dict_list) )
+
 
 
 
 
 if __name__ == "__main__":
-  unittest.main()
+    unittest.main()

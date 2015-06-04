@@ -78,7 +78,7 @@ class Db_Handler(object):
     def _unicodify_value( self, value ):
         """ Ensures value is unicode.
             Called by _unicodify_value() """
-        if type(value) == datetime.datetime or type(value) == int:
+        if type(value) in [ datetime.datetime, int, long ]:
             value = unicode(value)
         else:
             value = value.decode( 'utf-8', 'replace' )
