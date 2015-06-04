@@ -33,7 +33,7 @@ class Db_Handler(object):
             return dict_list
         except Exception as e:
             self.logger.error( u'error: %s' % unicode(repr(e).decode(u'utf8', u'replace')) )
-            return None
+            raise Exception( unicode(repr(e)) )
         finally:
             self._close_db_connection()
 
@@ -49,7 +49,7 @@ class Db_Handler(object):
             return
         except Exception as e:
             self.logger.error( u'error: %s' % unicode(repr(e).decode(u'utf8', u'replace')) )
-            return
+            raise Exception( unicode(repr(e)) )
 
     def _run_execute( self, sql ):
         """ Executes select; returns tuple of row-dicts.
