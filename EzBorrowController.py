@@ -76,7 +76,7 @@ class Controller( object ):
 
             eb_request_number = itemInstance.itemDbId
             self.logger.debug( u'type(eb_request_number), `%s`' % type(eb_request_number) )  # it's an int
-            utCdInstance.updateLog( message='- in controller; record grabbed: %s' % record_search, message_importance='high', identifier='was_%s_now_%s' % (self.log_identifier, eb_request_number) )
+            utCdInstance.updateLog( message='- in controller; record grabbed: %s' % test_record_search, message_importance='high', identifier='was_%s_now_%s' % (self.log_identifier, eb_request_number) )
             self.log_identifier = eb_request_number  # used in newer utility_code.updateLog()
 
             # update request and history tables
