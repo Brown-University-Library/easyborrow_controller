@@ -278,12 +278,10 @@ class Controller( object ):
     def setup( self ):
         """ Calls initial weblog entry and returns class instances.
             Called by run_code() """
-        self.logger.debug( u'starting setup' )
         try:
             dbh = db_handler.Db_Handler( self.logger )
         except Exception as e:
             self.logger.error( u'e, `%s`' % e )
-        self.logger.debug( u'db_handler instantiated' )
         itemInstance = Item.Item()
         utCdInstance = UtilityCode.UtilityCode()
         formatted_time = time.strftime( u'%a %b %d %H:%M:%S %Z %Y', time.localtime() )  # eg 'Wed Jul 13 13:41:39 EDT 2005'
