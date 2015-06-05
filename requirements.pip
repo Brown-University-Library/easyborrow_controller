@@ -1,2 +1,2 @@
-MySQL-python==1.2.3
+MySQL-python==1.2.5
 requests==0.12.1
