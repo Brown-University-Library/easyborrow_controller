@@ -229,8 +229,8 @@ If you have any questions, please contact the Rockefeller Library Gateway staff 
     ''' % (
       itemInstance.firstname,
       itemInstance.lastname,
-      itemInstance.itemTitle,
-      itemInstance.itemTitle,
+      itemInstance.itemTitle.encode( 'utf-8', 'replace' ),
+      itemInstance.itemTitle.encode( 'utf-8', 'replace' ),
       itemInstance.requestNumber,
       itemInstance.genericAssignedUserEmail )
 
@@ -699,8 +699,8 @@ The easyBorrow automated borrowing encountered a problem requesting via Illiad t
     smtpServer = "mail-relay.brown.edu"
     mailSession = smtplib.SMTP(smtpServer)
 
-    ## hack the title to avoid encoding issues -- TO-DO: handle this appropriately ##
-    itemInstance.itemTitle = itemInstance.itemTitle.decode( 'ascii', 'ignore' ).encode('ascii')
+    # ## hack the title to avoid encoding issues -- TO-DO: handle this appropriately ##
+    # itemInstance.itemTitle = itemInstance.itemTitle.decode( 'ascii', 'ignore' ).encode('ascii')
 
     ## header info ##
 
