@@ -302,17 +302,6 @@ class Controller( object ):
         record_search = result_dcts[0]
         return record_search
 
-    # def run_old_record_search( self, utCdInstance ):
-    #     """ Updates weblog & searches for new request.
-    #         Called by run_code() """
-    #     utCdInstance.updateLog( message='- in controller; checking for request-record...', identifier=self.log_identifier, message_importance='low' )
-    #     record_search = utCdInstance.connectExecuteSelect( self.SELECT_SQL ) ## [ [fieldname01, fieldname02], ( (row01field01_value, row01field02_value), (row02field01_value, row02field02_value) ) ]
-    #     if( record_search == None ):
-    #       utCdInstance.updateLog( message='- in controller; no new request found; quitting', identifier=self.log_identifier, message_importance='high' )
-    #       sys.exit()
-    #     self.logger.debug( u'run_record_search() complete' )
-    #     return record_search
-
     def determine_flow( self, itemInstance ):
         """ Determines services to try, and order.
             No longer allows for BorrowDirect string requesting since new API doesn't permit it.
