@@ -27,6 +27,14 @@ class WebLoggerTest(unittest.TestCase):
         importance = u'debug'
         self.assertEqual( 200, wlgr.post_message(message, identifier, importance) )
 
+    def test__evaluate_importance(self):
+        wlgr.WEBLOGENTRY_MINIMUM_IMPORTANCE_LEVEL = u'debug'
+        self.assertEqual( True, wlgr.evaluate_importance(u'debug') )
+        wlgr.WEBLOGENTRY_MINIMUM_IMPORTANCE_LEVEL = u'info'
+        self.assertEqual( False, wlgr.evaluate_importance(u'debug') )
+        wlgr.WEBLOGENTRY_MINIMUM_IMPORTANCE_LEVEL = u'info'
+        self.assertEqual( True, wlgr.evaluate_importance(u'info') )
+
     # end class WebLoggerTest
 
 
