@@ -62,8 +62,6 @@ class Controller( object ):
 
             record_search = self.run_record_search( dbh, web_logger )
             self.logger.debug( u'record_search, `%s`' % record_search )
-            # record_search = self.run_old_record_search( utCdInstance )
-            # self.logger.debug( u'record_search, `%s`' % record_search )
 
             #######
             # gather info on request and update tables
@@ -288,7 +286,6 @@ class Controller( object ):
         web_logger = WebLogger( self.logger )
         formatted_time = time.strftime( u'%a %b %d %H:%M:%S %Z %Y', time.localtime() )  # eg 'Wed Jul 13 13:41:39 EDT 2005'
         web_logger.post_message( message=u'EZBorrowController session starting at %s' % formatted_time, identifier=self.log_identifier, importance='info' )
-        # utCdInstance.updateLog( message='EZBorrowController session starting at %s' % formatted_time, identifier=self.log_identifier, message_importance='high' )
         self.logger.debug( u'setup() complete' )
         return ( dbh, itemInstance, utCdInstance, web_logger )
 
@@ -302,6 +299,7 @@ class Controller( object ):
             self.logger.info( u'no new record; quitting' )
             sys.exit()
         record_search = result_dcts[0]
+        web_logger.post_message( message=u'- in controller; new request found, ```%s```' % pprint.pformat(record_search), identifier=self.log_identifier, importance='info' )
         return record_search
 
     def determine_flow( self, itemInstance ):

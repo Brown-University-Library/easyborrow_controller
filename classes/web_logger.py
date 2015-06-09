@@ -35,17 +35,6 @@ class WebLogger( object ):
             assessed_importance = True
         return assessed_importance
 
-    # def evaluate_importance( self, stated_importance ):
-    #     """ Determines whether to send message based on stated message performance vs env filter setting.
-    #         Returns boolean.
-    #         Called by post_message() """
-    #     assessed_importance = False
-    #     if self.WEBLOGENTRY_MINIMUM_IMPORTANCE_LEVEL == u'debug':
-    #         assessed_importance = True
-    #     elif self.WEBLOGENTRY_MINIMUM_IMPORTANCE_LEVEL == u'info' and stated_importance == u'info':
-    #         assessed_importance = True
-    #     return assessed_importance
-
     def run_post( self, message, identifier ):
         """ Executes post.
             Called by post_message() """
