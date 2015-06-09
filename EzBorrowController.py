@@ -16,6 +16,7 @@ import datetime, json, logging, os, pprint, random, string, sys, time
 from easyborrow_controller_code import settings, utility_code
 from easyborrow_controller_code.classes import db_handler, Item, UtilityCode
 from easyborrow_controller_code.classes.tunneler_runners import BD_Runner, BD_ApiRunner
+from easyborrow_controller_code.classes.web_logger import WebLogger
 
 
 class Controller( object ):
@@ -53,13 +54,13 @@ class Controller( object ):
             # setup
             #######
 
-            ( dbh, itemInstance, utCdInstance ) = self.setup()
+            ( dbh, itemInstance, utCdInstance, web_logger ) = self.setup()
 
             #######
             # check for a request-record
             #######
 
-            record_search = self.run_record_search( dbh )
+            record_search = self.run_record_search( dbh, web_logger )
             self.logger.debug( u'record_search, `%s`' % record_search )
             # record_search = self.run_old_record_search( utCdInstance )
             # self.logger.debug( u'record_search, `%s`' % record_search )
@@ -284,17 +285,20 @@ class Controller( object ):
             self.logger.error( u'e, `%s`' % e )
         itemInstance = Item.Item()
         utCdInstance = UtilityCode.UtilityCode()
+        web_logger = WebLogger( self.logger )
         formatted_time = time.strftime( u'%a %b %d %H:%M:%S %Z %Y', time.localtime() )  # eg 'Wed Jul 13 13:41:39 EDT 2005'
-        utCdInstance.updateLog( message='EZBorrowController session starting at %s' % formatted_time, identifier=self.log_identifier, message_importance='high' )
+        web_logger.post_message( message=u'EZBorrowController session starting at %s' % formatted_time, identifier=self.log_identifier, importance='info' )
+        # utCdInstance.updateLog( message='EZBorrowController session starting at %s' % formatted_time, identifier=self.log_identifier, message_importance='high' )
         self.logger.debug( u'setup() complete' )
-        return ( dbh, itemInstance, utCdInstance )
+        return ( dbh, itemInstance, utCdInstance, web_logger )
 
-    def run_record_search( self, dbh ):
+    def run_record_search( self, dbh, web_logger ):
         """ Searches for new request.
             Called by run_code() """
         result_dcts = dbh.run_select( self.SELECT_SQL )  # [ {row01field01_key: row01field01_value}, fieldname02], ( (row01field01_value, row01field02_value), (row02field01_value, row02field02_value) ) ]
         self.logger.debug( u'(new) record_search, `%s`' % result_dcts )
         if not result_dcts:
+            web_logger.post_message( message=u'- in controller; no new request found; quitting', identifier=self.log_identifier, importance='info' )
             self.logger.info( u'no new record; quitting' )
             sys.exit()
         record_search = result_dcts[0]
