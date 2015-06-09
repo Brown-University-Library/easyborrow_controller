@@ -311,7 +311,7 @@ class Controller( object ):
         """ Sets the identifier with the db id.
             Called by run_code() """
         eb_request_number = record_search['id']
-        web_logger.post_message( message=u'- in controller; updating identifier' % pprint.pformat(record_search), identifier=u'was_%s_now_%s' % (self.log_identifier, eb_request_number), importance='info' )
+        web_logger.post_message( message=u'- in controller; updating identifier', identifier=u'was_%s_now_%s' % (self.log_identifier, eb_request_number), importance='info' )
         self.log_identifier = record_search['id']
         return eb_request_number
 
