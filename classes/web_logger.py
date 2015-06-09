@@ -17,10 +17,10 @@ class WebLogger( object ):
 
     def post_message( self, message, identifier, importance ):
         """ Sends weblog message based on importance. """
+        self.logger.debug( u'identifier, `%s`; message, `%s`; importance, `%s`' % (identifier, message, importance) )
         status_code = None
         important_enough = self.evaluate_importance( importance )
         if important_enough:
-            self.logger.debug( u'identifier, `%s`; message, `%s`; importance, `%s`' % (identifier, message, importance) )
             status_code = self.run_post( message, identifier )
         return status_code
 

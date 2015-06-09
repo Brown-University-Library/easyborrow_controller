@@ -61,7 +61,12 @@ class Controller( object ):
             #######
 
             record_search = self.run_record_search( dbh, web_logger )
-            self.logger.debug( u'record_search, `%s`' % record_search )
+
+            #######
+            # set identifier
+            #######
+
+            eb_request_number = self.set_identifier( record_search, web_logger )  # also updates self.log_identifier
 
             #######
             # gather info on request and update tables
@@ -73,10 +78,10 @@ class Controller( object ):
             itemInstance.fill_from_db_row( record_search )
             # itemInstance.fillFromDbRow(record_search)
 
-            eb_request_number = itemInstance.itemDbId
-            self.logger.debug( u'type(eb_request_number), `%s`' % type(eb_request_number) )  # it's an int
-            utCdInstance.updateLog( message='- in controller; record grabbed: %s' % record_search, message_importance='high', identifier='was_%s_now_%s' % (self.log_identifier, eb_request_number) )
-            self.log_identifier = eb_request_number  # used in newer utility_code.updateLog()
+            # eb_request_number = itemInstance.itemDbId
+            # self.logger.debug( u'type(eb_request_number), `%s`' % type(eb_request_number) )  # it's an int
+            # utCdInstance.updateLog( message='- in controller; record grabbed: %s' % record_search, message_importance='high', identifier='was_%s_now_%s' % (self.log_identifier, eb_request_number) )
+            # self.log_identifier = eb_request_number  # used in newer utility_code.updateLog()
 
             # update request and history tables
 
@@ -301,6 +306,14 @@ class Controller( object ):
         record_search = result_dcts[0]
         web_logger.post_message( message=u'- in controller; new request found, ```%s```' % pprint.pformat(record_search), identifier=self.log_identifier, importance='info' )
         return record_search
+
+    def set_identifier( self, record_search, web_logger ):
+        """ Sets the identifier with the db id.
+            Called by run_code() """
+        eb_request_number = record_search['id']
+        web_logger.post_message( message=u'- in controller; updating identifier' % pprint.pformat(record_search), identifier=u'was_%s_now_%s' % (self.log_identifier, eb_request_number), importance='info' )
+        self.log_identifier = record_search['id']
+        return eb_request_number
 
     def determine_flow( self, itemInstance ):
         """ Determines services to try, and order.
