@@ -74,17 +74,9 @@ class Controller( object ):
             #######
 
             # setup data
-
             itemInstance.fill_from_db_row( record_search )
-            # itemInstance.fillFromDbRow(record_search)
-
-            # eb_request_number = itemInstance.itemDbId
-            # self.logger.debug( u'type(eb_request_number), `%s`' % type(eb_request_number) )  # it's an int
-            # utCdInstance.updateLog( message='- in controller; record grabbed: %s' % record_search, message_importance='high', identifier='was_%s_now_%s' % (self.log_identifier, eb_request_number) )
-            # self.log_identifier = eb_request_number  # used in newer utility_code.updateLog()
 
             # update request and history tables
-
             itemInstance.updateRequestStatus("in_process")
             itemInstance.updateHistoryNote( "Processing started" )
 
@@ -92,7 +84,6 @@ class Controller( object ):
             # process flow
             #######
 
-            # flowList = itemInstance.determineFlow()
             flowList = self.determine_flow( itemInstance )
             utility_code.updateLog( u'- in controller; flowList is: %s' % flowList, self.log_identifier, message_importance=u'high' )
 
@@ -310,9 +301,9 @@ class Controller( object ):
     def set_identifier( self, record_search, web_logger ):
         """ Sets the identifier with the db id.
             Called by run_code() """
-        eb_request_number = record_search['id']
+        eb_request_number = record_search['id']  # older identifier, still used
         web_logger.post_message( message=u'- in controller; updating identifier', identifier=u'was_%s_now_%s' % (self.log_identifier, eb_request_number), importance='info' )
-        self.log_identifier = record_search['id']
+        self.log_identifier = record_search['id']  # newer identifier
         return eb_request_number
 
     def determine_flow( self, itemInstance ):
