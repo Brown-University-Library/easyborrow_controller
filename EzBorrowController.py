@@ -85,7 +85,8 @@ class Controller( object ):
             #######
 
             flowList = self.determine_flow( itemInstance )
-            utility_code.updateLog( u'- in controller; flowList is: %s' % flowList, self.log_identifier, message_importance=u'high' )
+            # utility_code.updateLog( u'- in controller; flowList is: %s' % flowList, self.log_identifier, message_importance=u'high' )
+            web_logger.post_message( message=u'- in controller; flowList is: %s' % flowList, identifier=self.log_identifier, importance='info' )
 
             flowString = string.join( flowList, ', ' )
             itemInstance.updateHistoryNote( "Flow: %s" % flowString )
@@ -100,23 +101,18 @@ class Controller( object ):
 
                     itemInstance.currentlyActiveService = 'inRhode'
 
-                    # utCdInstance.updateLog( message='- in controller; checking InRhode...', message_importance='high', identifier=eb_request_number )
                     web_logger.post_message( message=u'- in controller; checking InRhode...', identifier=self.log_identifier, importance='info' )
                     try:
                       inRhodeResultData = itemInstance.checkInRhode(eb_request_number)
                     except Exception, e:
                       print 'checkInRhode() failed, exception is: %s' % e
-                    # inRhodeResultData = itemInstance.checkInRhode()
 
                     # examine InRhode results
                     try:
-                      # utCdInstance.updateLog( message='- in controller; InRhode resultData: %s' % inRhodeResultData, message_importance='high', identifier=eb_request_number )
                       web_logger.post_message( message=u'- in controller; InRhode resultData: %s' % inRhodeResultData, identifier=self.log_identifier, importance='info' )
                     except Exception, e:
                       print 'updateLog() showing inrhode resultData failed, exception is: %s' % e
-                    # utCdInstance.updateLog( message='- InRhode resultData: %s' % inRhodeResultData, message_importance='high', identifier=eb_request_number )
                     inRhodeStatus = inRhodeResultData # simple string
-                    # utCdInstance.updateLog( message='- in controller; InRhode status: %s' % inRhodeStatus, message_importance='high', identifier=eb_request_number )
                     web_logger.post_message( message=u'- in controller; InRhode status: %s' % inRhodeStatus, identifier=self.log_identifier, importance='info' )
                     # update history table
 
@@ -162,38 +158,9 @@ class Controller( object ):
 
                     pass
 
-                    # ##
-                    # ## send request to VirtualCatalog if necessary
-                    # ##
-
-                    # itemInstance.currentlyActiveService = "virtualCatalog"
-
-                    # utCdInstance.updateLog( message='- in controller; checking VirtualCatalog...', message_importance='high', identifier=eb_request_number )
-                    # virtualCatalogResultData = itemInstance.checkVirtualCatalog()
-
-                    # # examine VirtualCatalog results
-
-                    # virtualCatalogStatus = itemInstance.parseVirtualCatalogResultData(virtualCatalogResultData)
-                    # utCdInstance.updateLog( message="- in controller; virtualCatalog status: '%s'" % virtualCatalogStatus, message_importance='high', identifier=eb_request_number )
-
-                    # # update history table
-
-                    # if( virtualCatalogStatus == "Request_Successful" ):
-                    #   parameterDict = {'serviceName':'virtualcatalog', 'action':'attempt', 'result':virtualCatalogStatus, 'number':itemInstance.virtualCatalogAssignedReferenceNumber}
-                    # else:
-                    #   parameterDict = {'serviceName':'virtualcatalog', 'action':'attempt', 'result':virtualCatalogStatus, 'number':''}
-                    # itemInstance.updateHistoryAction( parameterDict['serviceName'], parameterDict['action'], parameterDict['result'], parameterDict['number'] )
-
-                    # # end section
-
-                    # if( virtualCatalogStatus == "Request_Successful" ):
-                    #   itemInstance.requestSuccessStatus = "success"
-                    #   itemInstance.genericAssignedUserEmail = itemInstance.virtualCatalogAssignedUserEmail
-                    #   itemInstance.genericAssignedReferenceNumber = itemInstance.virtualCatalogAssignedReferenceNumber
-                    #   break # break out of the 'for' loop
-
                 elif service == u'illiad':
-                    utility_code.updateLog( u'- in controller; service is now illiad', self.log_identifier )
+                    # utility_code.updateLog( u'- in controller; service is now illiad', self.log_identifier )
+                    web_logger.post_message( message=u'- in controller; service is now illiad', identifier=self.log_identifier, importance='info' )
                     itemInstance.currentlyActiveService = u'illiad'
                     prep_result_dict = utility_code.makeIlliadParametersV2( itemInstance, settings, self.log_identifier )  # prepare parameters
                     send_result_dict = utility_code.submitIlliadRemoteAuthRequestV2( prep_result_dict[u'parameter_dict'], self.log_identifier )  # send request to illiad
@@ -205,31 +172,24 @@ class Controller( object ):
             # update 'requests' table & send email on success ('for' loop is over)
             #######
 
-            # utCdInstance.updateLog( message="- in controller; itemInstance.requestSuccessStatus is: %s" % itemInstance.requestSuccessStatus, message_importance='high', identifier=eb_request_number )
             web_logger.post_message( message=u'- in controller; itemInstance.requestSuccessStatus is: %s' % itemInstance.requestSuccessStatus, identifier=self.log_identifier, importance='info' )
 
             if( itemInstance.requestSuccessStatus == "success" ):
               itemInstance.updateRequestStatus("processed")
-              # utCdInstance.updateLog( message="- in controller; request successful; preparing to send email", message_importance='high', identifier=eb_request_number )
               web_logger.post_message( message=u'- in controller; request successful; preparing to send email', identifier=self.log_identifier, importance='info' )
               utCdInstance.sendEmail( itemInstance, eb_request_number )
 
             elif( itemInstance.requestSuccessStatus == "create_illiad_user_failed" ):
-              # itemInstance.updateRequestStatus("processed") -- No, let's leave it as in_process so we get that 'try_again' button
-              # utCdInstance.updateLog( message="- in controller; create_illiad_user_failed detected; preparing to send email to staff", message_importance='high', identifier=eb_request_number )
               web_logger.post_message( message=u'- in controller; create_illiad_user_failed detected; preparing to send email to staff', identifier=self.log_identifier, importance='info' )
               utCdInstance.sendEmail( itemInstance, eb_request_number )
               parameterDict = {'serviceName':'illiad', 'action':'followup', 'result':'ill_staff_emailed', 'number':''}
               itemInstance.updateHistoryAction( parameterDict['serviceName'], parameterDict['action'], parameterDict['result'], parameterDict['number'] )
 
             elif( itemInstance.requestSuccessStatus == 'login_failed_possibly_blocked' ):
-              # utility_code.updateLog( '- in controller; "blocked" detected; will send user email', self.log_identifier, message_importance='high' )
               web_logger.post_message( message=u'- in controller; "blocked" detected; will send user email', identifier=self.log_identifier, importance='info' )
               result_dict = utility_code.makeEbRequest( itemInstance, self.log_identifier )  # eb_request is a storage-object; NOTE: as code is migrated toward newer architecture; this line will occur near beginning of runCode()
-              # utility_code.updateLog( '- in controller; eb_request obtained', self.log_identifier )
               web_logger.post_message( message=u'- in controller; eb_request obtained', identifier=self.log_identifier, importance='info' )
               result_dict = utility_code.sendEmail( result_dict['eb_request'], self.log_identifier )
-              # utility_code.updateLog( '- in controller; "blocked" detected; sendEmail() was called', self.log_identifier, message_importance='high' )
               web_logger.post_message( message=u'- in controller; "blocked" detected; sendEmail() was called', identifier=self.log_identifier, importance='info' )
               #
               parameterDict = {'serviceName':'illiad', 'action':'followup', 'result':'blocked_user_emailed', 'number':''}
@@ -240,22 +200,18 @@ class Controller( object ):
 
             elif( itemInstance.requestSuccessStatus == "failure_no_sfx-link_to_illiad" ):
               itemInstance.updateRequestStatus("processed")
-              # utCdInstance.updateLog( message="- in controller; illiad 'no sfx link' message detected; preparing to send email to staff", message_importance='high', identifier=eb_request_number )
               web_logger.post_message( message=u'- in controller; illiad "no sfx link" message detected; preparing to send email to staff', identifier=self.log_identifier, importance='info' )
               utCdInstance.sendEmail( itemInstance, eb_request_number )
               parameterDict = {'serviceName':'illiad', 'action':'followup', 'result':'ill_staff_emailed', 'number':''}
               itemInstance.updateHistoryAction( parameterDict['serviceName'], parameterDict['action'], parameterDict['result'], parameterDict['number'] )
 
             elif( itemInstance.requestSuccessStatus == "unknown_illiad_failure" ):
-            #     itemInstance.updateRequestStatus("processed")
-              # utCdInstance.updateLog( message="- in controller; illiad request #2 failed for unknown reason", message_importance='high', identifier=eb_request_number )
               web_logger.post_message( message=u'- in controller; illiad request #2 failed for unknown reason', identifier=self.log_identifier, importance='info' )
               utCdInstance.sendEmail( itemInstance, eb_request_number )
               parameterDict = {'serviceName':'illiad', 'action':'followup', 'result':'admin_emailed', 'number':''}
               itemInstance.updateHistoryAction( parameterDict['serviceName'], parameterDict['action'], parameterDict['result'], parameterDict['number'] )
 
             else:
-              # utCdInstance.updateLog( message="- in controller; unknown itemInstance.requestSuccessStatus; it is: %s" % itemInstance.requestSuccessStatus, message_importance='high', identifier=eb_request_number )
               web_logger.post_message( message=u'- in controller; unknown itemInstance.requestSuccessStatus; it is: %s' % itemInstance.requestSuccessStatus, identifier=self.log_identifier, importance='info' )
               utCdInstance.sendEmail( itemInstance, eb_request_number )
               parameterDict = {'serviceName':'illiad', 'action':'followup', 'result':'admin_emailed', 'number':''}
@@ -273,7 +229,6 @@ class Controller( object ):
                   print err_msg
                   error_message = utility_code.makeErrorString()
                   self.logger.error( u'%s- exception message, `%s`' % (self.log_identifier, err_msg) )
-                  # utility_code.updateLog( '- in controller; EXCEPTION; error: %s' % repr(error_message), log_identifier='exception', message_importance='high' )
                   web_logger.post_message( message=u'- in controller; EXCEPTION; error: %s' % unicode(repr(error_message)), identifier=self.log_identifier, importance='info' )
             except Exception, e:
                   print 'ezb controller exception: %s' % e
