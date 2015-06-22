@@ -135,7 +135,8 @@ class Controller( object ):
 
                     # setup
                     bd_api_runner = BD_ApiRunner( self.logger, self.log_identifier )
-                    itemInstance = bd_api_runner.setup_api_hit( itemInstance, utCdInstance )
+                    itemInstance = bd_api_runner.setup_api_hit( itemInstance, web_logger )
+                    # itemInstance = bd_api_runner.setup_api_hit( itemInstance, utCdInstance )
 
                     # prepare data
                     bd_data = bd_api_runner.prepare_params( itemInstance )

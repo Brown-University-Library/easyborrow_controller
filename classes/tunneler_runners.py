@@ -5,7 +5,6 @@ import requests
 from types import InstanceType, ModuleType, NoneType
 
 
-
 class BD_ApiRunner( object ):
     """ Handles bdpyweb calls. """
 
@@ -25,13 +24,21 @@ class BD_ApiRunner( object ):
         self.api_requestable = None  # will be boolean
         self.HISTORY_SQL_PATTERN = unicode( os.environ[u'ezbCTL__INSERT_HISTORY_FULLACTION_SQL_PATTERN'] )
 
-    def setup_api_hit( self, item_instance, utCdInstance ):
+    def setup_api_hit( self, item_instance, web_logger ):
         """ Sets the currently-active-service and updates weblog.
             Called by controller.run_code() """
         item_instance.currentlyActiveService = u'borrowDirect'
-        utCdInstance.updateLog( message=u'- in controller; checking BorrowDirect...', message_importance=u'high', identifier=self.log_identifier )
+        web_logger.post_message( message=u'- in controller; checking BorrowDirect...', identifier=self.log_identifier, importance='info' )
         self.logger.debug( u'- identifier, %s; setup_api_hit() complete' % self.log_identifier )
         return item_instance
+
+    # def setup_api_hit( self, item_instance, utCdInstance ):
+    #     """ Sets the currently-active-service and updates weblog.
+    #         Called by controller.run_code() """
+    #     item_instance.currentlyActiveService = u'borrowDirect'
+    #     utCdInstance.updateLog( message=u'- in controller; checking BorrowDirect...', message_importance=u'high', identifier=self.log_identifier )
+    #     self.logger.debug( u'- identifier, %s; setup_api_hit() complete' % self.log_identifier )
+    #     return item_instance
 
     def prepare_params( self, itemInstance ):
         """ Updates item-instance attributes.
