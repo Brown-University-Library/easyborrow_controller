@@ -38,7 +38,11 @@ class WebLogger( object ):
     def run_post( self, message, identifier ):
         """ Executes post.
             Called by post_message() """
+        status_code = None
         params = { 'message': message, 'identifier': identifier, 'key': self.WEBLOG_KEY }
-        r = requests.post( self.WEBLOG_URL, data=params )
-        status_code = r.status_code
+        try:
+            r = requests.post( self.WEBLOG_URL, data=params )
+            status_code = r.status_code
+        except Exception as e:
+            self.logger.error( 'failure on weblog post; exception, `%s`' % unicode(repr(e)) )
         return status_code

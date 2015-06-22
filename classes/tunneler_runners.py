@@ -30,7 +30,7 @@ class BD_ApiRunner( object ):
             Called by controller.run_code() """
         item_instance.currentlyActiveService = u'borrowDirect'
         utCdInstance.updateLog( message=u'- in controller; checking BorrowDirect...', message_importance=u'high', identifier=self.log_identifier )
-        self.logger.debug( u'%s- setup_api_hit() complete' )
+        self.logger.debug( u'- identifier, %s; setup_api_hit() complete' % self.log_identifier )
         return item_instance
 
     def prepare_params( self, itemInstance ):
