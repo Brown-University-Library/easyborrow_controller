@@ -12,7 +12,6 @@ class UtilityCode( object ):
     self.log = ""
     self.log_identifier = u''  # set by controller.run_code()
     self.logger = logger  # set by Controller() or Item()
-    self.logger.debug( u'%s -- UtilityCode instantiated' % self.log_identifier )
 
 
   def updateLog( self, message, message_importance, identifier='' ):
@@ -770,6 +769,9 @@ The easyBorrow automated borrowing encountered a problem requesting via Illiad t
 
     fullMessage = headerInfo + "\n" + message
     self.updateLog( message="- in controller.uc.sendEmail(); fullMessage prepared", message_importance='low', identifier=eb_request_number)
+
+    self.logger.debug( u'%s -- type(message), `%s`' % (itemInstance.log_identifier, type(message)) )
+    self.logger.debug( u'%s -- type(fullMessage), `%s`' % (itemInstance.log_identifier, type(fullMessage)) )
 
     ## non-display info -- NOTE: this really controls who it goes to, not the 'To:' info above. ##
 
