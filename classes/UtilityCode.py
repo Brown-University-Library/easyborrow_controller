@@ -1,16 +1,16 @@
-# top
-
+# -*- coding: utf-8 -*-
 
 import os, sys
 
 
-class UtilityCode:
+
+class UtilityCode( object ):
 
 
-
-  timeToFormat = ""
-  log = ""
-
+  def __init__( self ):
+    self.timeToFormat = ""
+    self.log = ""
+    self.log_identifier = ''  # set by controller.run_code()
 
 
   def updateLog( self, message, message_importance, identifier='' ):
