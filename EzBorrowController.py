@@ -8,7 +8,7 @@
 - Called by: cron script running every two minutes.
 - Assumes:
   - virtual environment set up
-  - site-packages .pth file adds settings directory and easyborrow_controller_code-enclosing-directory to sys path.
+  - site-packages `requirements.pth` file adds settings directory and easyborrow_controller_code-enclosing-directory to sys path.
   - env/bin/activate file sources settings
 """
 

@@ -1,15 +1,24 @@
-# get the project's enclosing directory
+# -*- coding: utf-8 -*-
+
 import json, os, sys
-current_script_name = sys.argv[0] # may or may not include path
-directory_path = os.path.dirname( current_script_name )
-full_directory_path = os.path.abspath( directory_path )
-directory_list = full_directory_path.split('/')
-last_element_string = directory_list[-2] + '/' + directory_list[-1]
-enclosing_directory = full_directory_path.replace( '/' + last_element_string, '' ) # strip off the slash plus the current directory
-# print '\n- enclosing_directory is: %s' % enclosing_directory
-sys.path.append( enclosing_directory )
-import easyborrow_controller_code.settings
-sys.path.append( easyborrow_controller_code.settings.INRHODE_TUNNELER_ENCLOSING_DIRECTORY_PATH )
+from xml.dom import minidom
+#
+from easyborrow_controller_code import settings
+from easyborrow_controller_code.classes import Prefs, UtilityCode
+from inrhode_tunneler.inrhode_controller import InRhodeController
+
+# # get the project's enclosing directory
+# import json, os, sys
+# current_script_name = sys.argv[0] # may or may not include path
+# directory_path = os.path.dirname( current_script_name )
+# full_directory_path = os.path.abspath( directory_path )
+# directory_list = full_directory_path.split('/')
+# last_element_string = directory_list[-2] + '/' + directory_list[-1]
+# enclosing_directory = full_directory_path.replace( '/' + last_element_string, '' ) # strip off the slash plus the current directory
+# # print '\n- enclosing_directory is: %s' % enclosing_directory
+# sys.path.append( enclosing_directory )
+# import easyborrow_controller_code.settings
+# sys.path.append( easyborrow_controller_code.settings.INRHODE_TUNNELER_ENCLOSING_DIRECTORY_PATH )
 
 
 
