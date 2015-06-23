@@ -93,14 +93,14 @@ class Item( object ):
     SQL_PATTERN = unicode( os.environ[u'ezbCTL__INSERT_HISTORY_REFERENCENUM_SQL_PATTERN'] )
     sql = SQL_PATTERN % ( self.itemDbId, number )
 
-    utCdInstance = UtilityCode.UtilityCode()
+    utCdInstance = UtilityCode.UtilityCode( self.logger )
     utCdInstance.connectExecute(sql)
 
 
 
   def grabConvertedPatronApiInfo( self, patronApiInfo ):
 
-    utCdInstance = UtilityCode.UtilityCode()
+    utCdInstance = UtilityCode.UtilityCode( self.logger )
 
     try:
 
@@ -205,7 +205,7 @@ class Item( object ):
 
   def checkIlliad( self, eb_request_number ):
 
-    utCdInstance = UtilityCode.UtilityCode()
+    utCdInstance = UtilityCode.UtilityCode( self.logger )
 
     # prepare segments
     openurlSegment = self.convertSfxurlToOpenurlSegment(self.sfxurl)
@@ -261,7 +261,7 @@ class Item( object ):
     SQL_PATTERN = unicode( os.environ[u'ezbCTL__INSERT_HISTORY_FULLACTION_SQL_PATTERN'] )
     sql = SQL_PATTERN % ( self.itemDbId, serviceName, action, result, number )
 
-    utCdInstance = UtilityCode.UtilityCode()
+    utCdInstance = UtilityCode.UtilityCode( self.logger )
     recordId = utCdInstance.connectExecute(sql)
 
     return recordId
@@ -270,7 +270,7 @@ class Item( object ):
   def checkInRhode(self, eb_request_number):
 
     try:
-      utCdInstance = UtilityCode.UtilityCode()
+      utCdInstance = UtilityCode.UtilityCode( self.logger )
       ir_controller = InRhodeController()
       inRhodeResultData = 'init'
       inRhodeResultData = ir_controller.runCode( self.itemIsbn, self.lastname, self.patronBarcode )
@@ -289,7 +289,7 @@ class Item( object ):
     SQL_PATTERN = unicode( os.environ[u'ezbCTL__UPDATE_REQUEST_STATUS_SQL_PATTERN'] )
     sql = SQL_PATTERN % ( newStatus, self.itemDbId )
 
-    utCdInstance = UtilityCode.UtilityCode()
+    utCdInstance = UtilityCode.UtilityCode( self.logger )
     utCdInstance.connectExecute(sql)
 
 
@@ -352,7 +352,7 @@ class Item( object ):
     SQL_PATTERN = unicode( os.environ[u'ezbCTL__INSERT_HISTORY_NOTE_SQL_PATTERN'] )
     sql = SQL_PATTERN % ( self.itemDbId, note )
 
-    utCdInstance = UtilityCode.UtilityCode()
+    utCdInstance = UtilityCode.UtilityCode( self.logger )
     utCdInstance.connectExecute(sql)
 
 

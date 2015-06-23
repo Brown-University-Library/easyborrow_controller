@@ -7,10 +7,12 @@ import os, sys
 class UtilityCode( object ):
 
 
-  def __init__( self ):
+  def __init__( self, logger ):
     self.timeToFormat = ""
     self.log = ""
     self.log_identifier = u''  # set by controller.run_code()
+    self.logger = logger  # set by Controller() or Item()
+    self.logger.debug( u'%s -- UtilityCode instantiated' % self.log_identifier )
 
 
   def updateLog( self, message, message_importance, identifier='' ):

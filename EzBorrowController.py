@@ -87,7 +87,6 @@ class Controller( object ):
             #######
 
             flowList = self.determine_flow( itemInstance )
-            # utility_code.updateLog( u'- in controller; flowList is: %s' % flowList, self.log_identifier, message_importance=u'high' )
             web_logger.post_message( message=u'- in controller; flowList is: %s' % flowList, identifier=self.log_identifier, importance='info' )
 
             flowString = string.join( flowList, ', ' )
@@ -162,7 +161,6 @@ class Controller( object ):
                     pass
 
                 elif service == u'illiad':
-                    # utility_code.updateLog( u'- in controller; service is now illiad', self.log_identifier )
                     web_logger.post_message( message=u'- in controller; service is now illiad', identifier=self.log_identifier, importance='info' )
                     itemInstance.currentlyActiveService = u'illiad'
                     prep_result_dict = utility_code.makeIlliadParametersV2( itemInstance, settings, self.log_identifier )  # prepare parameters
@@ -250,7 +248,7 @@ class Controller( object ):
         except Exception as e:
             self.logger.error( u'e, `%s`' % e )
         itemInstance = Item.Item( self.logger )
-        utCdInstance = UtilityCode.UtilityCode()
+        utCdInstance = UtilityCode.UtilityCode( self.logger )
         web_logger = WebLogger( self.logger )
         formatted_time = time.strftime( u'%a %b %d %H:%M:%S %Z %Y', time.localtime() )  # eg 'Wed Jul 13 13:41:39 EDT 2005'
         web_logger.post_message( message=u'EZBorrowController session starting at %s' % formatted_time, identifier=self.log_identifier, importance='info' )
