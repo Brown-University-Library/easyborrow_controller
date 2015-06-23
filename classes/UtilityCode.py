@@ -10,7 +10,7 @@ class UtilityCode( object ):
   def __init__( self ):
     self.timeToFormat = ""
     self.log = ""
-    self.log_identifier = ''  # set by controller.run_code()
+    self.log_identifier = u''  # set by controller.run_code()
 
 
   def updateLog( self, message, message_importance, identifier='' ):

@@ -249,7 +249,7 @@ class Controller( object ):
             dbh = db_handler.Db_Handler( self.logger )
         except Exception as e:
             self.logger.error( u'e, `%s`' % e )
-        itemInstance = Item.Item()
+        itemInstance = Item.Item( self.logger )
         utCdInstance = UtilityCode.UtilityCode()
         web_logger = WebLogger( self.logger )
         formatted_time = time.strftime( u'%a %b %d %H:%M:%S %Z %Y', time.localtime() )  # eg 'Wed Jul 13 13:41:39 EDT 2005'

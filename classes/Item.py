@@ -13,7 +13,7 @@ from inrhode_tunneler.inrhode_controller import InRhodeController
 class Item( object ):
 
 
-  def __init__( self ):
+  def __init__( self, logger ):
     # from db
     self.itemDbId = ""
     self.itemTitle = ""
@@ -60,7 +60,9 @@ class Item( object ):
     self.patron_api_pcode3 = ''
 
     # from controller.run_code()
-    self.log_identifier = ''
+    self.logger = logger
+    self.log_identifier = u''
+    self.logger.debug( u'item-instance instantiated' )
 
 
   def constructPasswordHolderUrl( self ):
