@@ -13,7 +13,7 @@ sys.path.append( easyborrow_controller_code.settings.INRHODE_TUNNELER_ENCLOSING_
 
 
 
-class Item:
+class Item( object ):
 
   # from db
   itemDbId = ""
@@ -78,26 +78,26 @@ class Item:
 
 
 
-  def createIlliadUserViaPasswordHolder( self, eb_request_number ):
+  # def createIlliadUserViaPasswordHolder( self, eb_request_number ):
 
-    import sys
-    import urllib
-    import UtilityCode
-    utCdInstance = UtilityCode.UtilityCode()
+  #   import sys
+  #   import urllib
+  #   import UtilityCode
+  #   utCdInstance = UtilityCode.UtilityCode()
 
-    # variables in url below should all be filled in from controller call of patron_api and convert_patron_api -- though perhaps that logic should go here.
-    utCdInstance.updateLog( message="- In 'Item->createIlliadUserViaPasswordHolder()'; preparing url to 'TODO - delete this old function'", message_importance='high', identifier=eb_request_number )
-    url = self.constructPasswordHolderUrl() # broke this simple step out as part of troubleshooting
-    utCdInstance.updateLog( message="- In 'Item->createIlliadUserViaPasswordHolder()'; sent url is: %s" % url, message_importance='high', identifier=eb_request_number )
+  #   # variables in url below should all be filled in from controller call of patron_api and convert_patron_api -- though perhaps that logic should go here.
+  #   utCdInstance.updateLog( message="- In 'Item->createIlliadUserViaPasswordHolder()'; preparing url to 'TODO - delete this old function'", message_importance='high', identifier=eb_request_number )
+  #   url = self.constructPasswordHolderUrl() # broke this simple step out as part of troubleshooting
+  #   utCdInstance.updateLog( message="- In 'Item->createIlliadUserViaPasswordHolder()'; sent url is: %s" % url, message_importance='high', identifier=eb_request_number )
 
-    try:
-      create_illiad_user_result = urllib.urlopen(url).read()
-      utCdInstance.updateLog( message="- In 'Item->createIlliadUserViaPasswordHolder()'; create_illiad_user_result is: %s" % create_illiad_user_result, message_importance='high', identifier=eb_request_number )
-    except:
-      create_illiad_user_result = 'unable_to_call_create_illiad_user_service'
-      utCdInstance.updateLog( message="- In 'Item->createIlliadUserViaPasswordHolder()'; passwordHolder GET didn\'t go through", message_importance='high', identifier=eb_request_number )
+  #   try:
+  #     create_illiad_user_result = urllib.urlopen(url).read()
+  #     utCdInstance.updateLog( message="- In 'Item->createIlliadUserViaPasswordHolder()'; create_illiad_user_result is: %s" % create_illiad_user_result, message_importance='high', identifier=eb_request_number )
+  #   except:
+  #     create_illiad_user_result = 'unable_to_call_create_illiad_user_service'
+  #     utCdInstance.updateLog( message="- In 'Item->createIlliadUserViaPasswordHolder()'; passwordHolder GET didn\'t go through", message_importance='high', identifier=eb_request_number )
 
-    return create_illiad_user_result
+  #   return create_illiad_user_result
 
 
 
@@ -204,18 +204,6 @@ class Item:
 
 
 
-  ## function not used
-  # def makeTinyUrl(self, urlToConvert):
-  #
-  #   import urllib
-  #
-  #   baseUrl = 'http://tinyurl.com/api-create.php?url='
-  #   fullUrl = baseUrl + urlToConvert
-  #   data = urllib.urlopen(fullUrl).read()
-  #   return data
-
-
-
   def convertSfxurlToOpenurlSegment(self, sfxurl):
 
     import urllib
@@ -228,36 +216,6 @@ class Item:
     encodedString = urllib.urlencode(dataDict)
 
     return encodedString
-
-
-
-  # def parseIlliadResultData(self, illiadDataString):
-  #
-  #   from xml.dom import minidom
-  #   import urllib
-  #
-  #   illiadXmlDoc = minidom.parseString(illiadDataString)
-  #
-  #   statusElements = illiadXmlDoc.getElementsByTagName('status')
-  #   status = statusElements[0].firstChild.data
-  #
-  #   self.illiadAssignedUserEmail = self.patronEmail
-  #
-  #   referenceNumberElements = illiadXmlDoc.getElementsByTagName('transaction_number')
-  #   if( referenceNumberElements != [] ):
-  #     self.illiadAssignedReferenceNumber = referenceNumberElements[0].firstChild.data
-  #
-  #   sfxUrlElements = illiadXmlDoc.getElementsByTagName('sfx_url')
-  #   if( sfxUrlElements != [] ):
-  #     initialUrl = sfxUrlElements[0].firstChild.data
-  #     decodedUrl = urllib.unquote(initialUrl)
-  #     self.illiadAssignedSfxUrl = decodedUrl
-  #
-  #   authIdElements = illiadXmlDoc.getElementsByTagName('authId')
-  #   if( authIdElements != [] ):
-  #     self.illiadAssignedAuthId = authIdElements[0].firstChild.data
-  #
-  #   return status
 
 
 
@@ -370,73 +328,73 @@ class Item:
 
 
 
-  def parseBorrowDirectResultData( self, borrowDirectDataString, eb_request_number ):
-    '''
-    - Purpose: parse returned api data
-    - Called by: controller
-    '''
+  # def parseBorrowDirectResultData( self, borrowDirectDataString, eb_request_number ):
+  #   '''
+  #   - Purpose: parse returned api data
+  #   - Called by: controller
+  #   '''
 
-    import UtilityCode
-    utCdInstance = UtilityCode.UtilityCode()  # for logging
+  #   import UtilityCode
+  #   utCdInstance = UtilityCode.UtilityCode()  # for logging
 
-    import Prefs
-    prefs_instance = Prefs.Prefs()
+  #   import Prefs
+  #   prefs_instance = Prefs.Prefs()
 
-    try:
-      utCdInstance.updateLog( message='- in controller.Item.parseBorrowDirectResultData(); about to parse returned bd_data, which is: %s' % borrowDirectDataString, message_importance='high', identifier=eb_request_number )
-      data = json.loads( borrowDirectDataString )
-      status = data['response']['search_result']
-      if status == 'SUCCESS':
-        status = 'Request_Successful'  # for logic of calling code
-      borrowdirect_email = ''  # not captured by borrowdirect-api; would update self.borrowDirectAssignedUserEmail
-      self.borrowDirectAssignedReferenceNumber = data['response']['bd_confirmation_code']
-      # borrowdirect_reference_number = ''  # not captured by borrowdirect-api; would update self.borrowDirectAssignedReferenceNumber
-      utCdInstance.updateLog( message='- in controller.Item.parseBorrowDirectResultData(); status is: %s' % status, message_importance='high', identifier=eb_request_number )
-      return status
-    except Exception, e:
-      utCdInstance.updateLog( message='- in controller.Item.parseBorrowDirectResultData(); Exception is: %s' % e.__dict__, message_importance='high', identifier=eb_request_number )
-      return 'FAILURE'
-
-
-
-  def checkBorrowDirect( self, eb_request_number ):
-    '''
-    - Purpose: hit new (2010-August) borrow-direct web-services
-    - Called by: controller
-    '''
-
-    import sys, urllib, urllib2
-    import UtilityCode
+  #   try:
+  #     utCdInstance.updateLog( message='- in controller.Item.parseBorrowDirectResultData(); about to parse returned bd_data, which is: %s' % borrowDirectDataString, message_importance='high', identifier=eb_request_number )
+  #     data = json.loads( borrowDirectDataString )
+  #     status = data['response']['search_result']
+  #     if status == 'SUCCESS':
+  #       status = 'Request_Successful'  # for logic of calling code
+  #     borrowdirect_email = ''  # not captured by borrowdirect-api; would update self.borrowDirectAssignedUserEmail
+  #     self.borrowDirectAssignedReferenceNumber = data['response']['bd_confirmation_code']
+  #     # borrowdirect_reference_number = ''  # not captured by borrowdirect-api; would update self.borrowDirectAssignedReferenceNumber
+  #     utCdInstance.updateLog( message='- in controller.Item.parseBorrowDirectResultData(); status is: %s' % status, message_importance='high', identifier=eb_request_number )
+  #     return status
+  #   except Exception, e:
+  #     utCdInstance.updateLog( message='- in controller.Item.parseBorrowDirectResultData(); Exception is: %s' % e.__dict__, message_importance='high', identifier=eb_request_number )
+  #     return 'FAILURE'
 
 
-    try:
 
-      utCdInstance = UtilityCode.UtilityCode()  # for logging
+  # def checkBorrowDirect( self, eb_request_number ):
+  #   '''
+  #   - Purpose: hit new (2010-August) borrow-direct web-services
+  #   - Called by: controller
+  #   '''
 
-      url = easyborrow_controller_code.settings.BD_API_URL
+  #   import sys, urllib, urllib2
+  #   import UtilityCode
 
-      values_dict = {
-      'api_authorization_code': easyborrow_controller_code.settings.BD_API_AUTHORIZATION_CODE,
-      'api_identity': easyborrow_controller_code.settings.BD_API_IDENTITY,
-      'university': easyborrow_controller_code.settings.BD_UNIVERSITY,
-      'user_barcode': self.patronBarcode,
-      'isbn': self.itemIsbn,
-      'command': 'request',
-      }
 
-      utCdInstance.updateLog( message='- in controller.Item.checkBorrowDirect(); about to access BD-API at url %s' % url, message_importance='high', identifier=eb_request_number )
-      data = urllib.urlencode( values_dict )
-      utCdInstance.updateLog( message='- in controller.Item.checkBorrowDirect(); sending data: %s' % data, message_importance='high', identifier=eb_request_number )
-      request = urllib2.Request( url, data )
-      response = urllib2.urlopen( request )
-      return_val = response.read()
-      return return_val  # this will be json
+  #   try:
 
-    except Exception, e:
-      utCdInstance.updateLog( message='- in controller.Item.checkBorrowDirect(); Exception is: %s' % e.__dict__, message_importance='high', identifier=eb_request_number )
-      return 'FAILURE'
+  #     utCdInstance = UtilityCode.UtilityCode()  # for logging
 
-    # end def checkBorrowDirect()
+  #     url = easyborrow_controller_code.settings.BD_API_URL
+
+  #     values_dict = {
+  #     'api_authorization_code': easyborrow_controller_code.settings.BD_API_AUTHORIZATION_CODE,
+  #     'api_identity': easyborrow_controller_code.settings.BD_API_IDENTITY,
+  #     'university': easyborrow_controller_code.settings.BD_UNIVERSITY,
+  #     'user_barcode': self.patronBarcode,
+  #     'isbn': self.itemIsbn,
+  #     'command': 'request',
+  #     }
+
+  #     utCdInstance.updateLog( message='- in controller.Item.checkBorrowDirect(); about to access BD-API at url %s' % url, message_importance='high', identifier=eb_request_number )
+  #     data = urllib.urlencode( values_dict )
+  #     utCdInstance.updateLog( message='- in controller.Item.checkBorrowDirect(); sending data: %s' % data, message_importance='high', identifier=eb_request_number )
+  #     request = urllib2.Request( url, data )
+  #     response = urllib2.urlopen( request )
+  #     return_val = response.read()
+  #     return return_val  # this will be json
+
+  #   except Exception, e:
+  #     utCdInstance.updateLog( message='- in controller.Item.checkBorrowDirect(); Exception is: %s' % e.__dict__, message_importance='high', identifier=eb_request_number )
+  #     return 'FAILURE'
+
+  #   # end def checkBorrowDirect()
 
 
 
@@ -541,12 +499,16 @@ class Item:
 
 
 
-##
-## to run doctests
+  # end class Item
 
-def _test():
-    import doctest
-    doctest.testmod()
 
-if __name__ == "__main__":
-    _test()
+
+# ##
+# ## to run doctests
+
+# def _test():
+#     import doctest
+#     doctest.testmod()
+
+# if __name__ == "__main__":
+#     _test()

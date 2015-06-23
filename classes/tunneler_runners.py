@@ -32,14 +32,6 @@ class BD_ApiRunner( object ):
         self.logger.debug( u'- identifier, %s; setup_api_hit() complete' % self.log_identifier )
         return item_instance
 
-    # def setup_api_hit( self, item_instance, utCdInstance ):
-    #     """ Sets the currently-active-service and updates weblog.
-    #         Called by controller.run_code() """
-    #     item_instance.currentlyActiveService = u'borrowDirect'
-    #     utCdInstance.updateLog( message=u'- in controller; checking BorrowDirect...', message_importance=u'high', identifier=self.log_identifier )
-    #     self.logger.debug( u'- identifier, %s; setup_api_hit() complete' % self.log_identifier )
-    #     return item_instance
-
     def prepare_params( self, itemInstance ):
         """ Updates item-instance attributes.
             Called by controller.run_code()
