@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import json, os, sys
+import json, os, sys, urllib
 from xml.dom import minidom
 #
 from easyborrow_controller_code import settings
@@ -76,7 +76,7 @@ class Item( object ):
     '''
     Seems unnecessary, but I was having problems figuring out why the construction of the url was failing; tests above helped.
     '''
-    import urllib
+    # import urllib
     url = '''TODO - delete this function''' % (self.itemDbId, urllib.quote(self.firstname), urllib.quote(self.lastname), urllib.quote(self.patronEmail), urllib.quote(self.patron_api_telephone), urllib.quote(self.patron_api_address), urllib.quote(self.patron_api_pcode3), urllib.quote(self.patron_api_dept) )
     return url
 
@@ -113,7 +113,7 @@ class Item( object ):
 
   def encodeTextForUrl(self, keyText, valueText):
 
-    import urllib
+    # import urllib
 
     dataDict = {}
     dataDict[keyText] = valueText
@@ -125,7 +125,7 @@ class Item( object ):
 
 
   def updateHistoryReferenceNumber(self, number):
-    import UtilityCode
+    # import UtilityCode
 
     SQL_PATTERN = unicode( os.environ[u'ezbCTL__INSERT_HISTORY_REFERENCENUM_SQL_PATTERN'] )
     sql = SQL_PATTERN % ( self.itemDbId, number )
@@ -138,18 +138,18 @@ class Item( object ):
   def grabConvertedPatronApiInfo( self, patronApiInfo ):
 
 
-    import UtilityCode
+    # import UtilityCode
     utCdInstance = UtilityCode.UtilityCode()
 
 
     try:
 
-      import Prefs
+      # import Prefs
       prefs_instance = Prefs.Prefs()
 
-      import sys
+      # import sys
 
-      import urllib
+      # import urllib
 
       dataDict = {}
       dataDict['patron_info'] = '''%s''' % (patronApiInfo,)
@@ -199,7 +199,7 @@ class Item( object ):
 
   def grabPatronApiInfo(self, id):
 
-    import urllib
+    # import urllib
     if( id == None ):
       id = self.patronId # allows for testing
     url = '%s%s/dump' % ( easyborrow_controller_code.settings.PATRON_API_URL_ROOT, id, )
@@ -216,7 +216,7 @@ class Item( object ):
 
   def convertSfxurlToOpenurlSegment(self, sfxurl):
 
-    import urllib
+    # import urllib
 
     segmentWithoutPrefix = sfxurl[36:]
 
@@ -231,8 +231,8 @@ class Item( object ):
 
   def parseIlliadResultData(self, illiadDataString):
 
-    from xml.dom import minidom
-    import urllib
+    # from xml.dom import minidom
+    # import urllib
 
     illiadXmlDoc = minidom.parseString(illiadDataString)
 
@@ -265,9 +265,9 @@ class Item( object ):
 
   def checkIlliad( self, eb_request_number ):
 
-    import sys
-    import urllib
-    import UtilityCode
+    # import sys
+    # import urllib
+    # import UtilityCode
     utCdInstance = UtilityCode.UtilityCode()
 
     # prepare segments
@@ -293,7 +293,7 @@ class Item( object ):
 
   def parseVirtualCatalogResultData(self, virtualCatalogDataString):
 
-    from xml.dom import minidom
+    # from xml.dom import minidom
     vcXmlDoc = minidom.parseString(virtualCatalogDataString)
 
     statusElements = vcXmlDoc.getElementsByTagName('Status')
@@ -316,7 +316,7 @@ class Item( object ):
 
   def checkVirtualCatalog(self):
 
-    import urllib
+    # import urllib
     virtualCatalogUrl = "TODO - delete this old function" % (self.patronBarcode, self.itemIsbn,)
     virtualCatalogResultData = urllib.urlopen(virtualCatalogUrl).read()
 
@@ -326,7 +326,7 @@ class Item( object ):
 
   def updateHistoryAction(self, serviceName, action, result, number):
 
-    import UtilityCode
+    # import UtilityCode
 
     SQL_PATTERN = unicode( os.environ[u'ezbCTL__INSERT_HISTORY_FULLACTION_SQL_PATTERN'] )
     sql = SQL_PATTERN % ( self.itemDbId, serviceName, action, result, number )
@@ -410,12 +410,12 @@ class Item( object ):
 
   def checkInRhode(self, eb_request_number):
 
-    import sys
-    import UtilityCode
+    # import sys
+    # import UtilityCode
 
     try:
       utCdInstance = UtilityCode.UtilityCode()
-      from inrhode_tunneler.inrhode_controller import InRhodeController
+      # from inrhode_tunneler.inrhode_controller import InRhodeController
       ir_controller = InRhodeController()
       inRhodeResultData = 'init'
       inRhodeResultData = ir_controller.runCode( self.itemIsbn, self.lastname, self.patronBarcode )
@@ -432,7 +432,7 @@ class Item( object ):
 
   def updateRequestStatus(self, newStatus):
 
-    import UtilityCode
+    # import UtilityCode
 
     SQL_PATTERN = unicode( os.environ[u'ezbCTL__UPDATE_REQUEST_STATUS_SQL_PATTERN'] )
     sql = SQL_PATTERN % ( newStatus, self.itemDbId )
@@ -499,7 +499,7 @@ class Item( object ):
 
 
   def updateHistoryNote(self, note):
-    import UtilityCode
+    # import UtilityCode
 
     SQL_PATTERN = unicode( os.environ[u'ezbCTL__INSERT_HISTORY_NOTE_SQL_PATTERN'] )
     sql = SQL_PATTERN % ( self.itemDbId, note )
