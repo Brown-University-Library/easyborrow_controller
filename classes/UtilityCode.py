@@ -770,8 +770,9 @@ The easyBorrow automated borrowing encountered a problem requesting via Illiad t
     fullMessage = headerInfo + "\n" + message
     self.updateLog( message="- in controller.uc.sendEmail(); fullMessage prepared", message_importance='low', identifier=eb_request_number)
 
-    self.logger.debug( u'%s -- type(message), `%s`' % (itemInstance.log_identifier, type(message)) )
-    self.logger.debug( u'%s -- type(fullMessage), `%s`' % (itemInstance.log_identifier, type(fullMessage)) )
+    self.logger.debug( u'%s -- type(message), `%s`' % (itemInstance.log_identifier, type(message)) )  # unicode -- TODO, remove these log-entries 2015-June-30 if problem solved
+    self.logger.debug( u'%s -- type(fullMessage), `%s`' % (itemInstance.log_identifier, type(fullMessage)) )  # unicode
+    fullMessage = fullMessage.encode( 'utf-8', 'ignore' )
 
     ## non-display info -- NOTE: this really controls who it goes to, not the 'To:' info above. ##
 
