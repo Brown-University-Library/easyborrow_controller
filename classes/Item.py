@@ -7,22 +7,10 @@ from easyborrow_controller_code import settings
 from easyborrow_controller_code.classes import Prefs, UtilityCode
 from inrhode_tunneler.inrhode_controller import InRhodeController
 
-# # get the project's enclosing directory
-# import json, os, sys
-# current_script_name = sys.argv[0] # may or may not include path
-# directory_path = os.path.dirname( current_script_name )
-# full_directory_path = os.path.abspath( directory_path )
-# directory_list = full_directory_path.split('/')
-# last_element_string = directory_list[-2] + '/' + directory_list[-1]
-# enclosing_directory = full_directory_path.replace( '/' + last_element_string, '' ) # strip off the slash plus the current directory
-# # print '\n- enclosing_directory is: %s' % enclosing_directory
-# sys.path.append( enclosing_directory )
-# import easyborrow_controller_code.settings
-# sys.path.append( easyborrow_controller_code.settings.INRHODE_TUNNELER_ENCLOSING_DIRECTORY_PATH )
-
 
 
 class Item( object ):
+
 
   def __init__( self ):
     # from db
@@ -71,15 +59,12 @@ class Item( object ):
     self.patron_api_pcode3 = ''
 
 
-
   def constructPasswordHolderUrl( self ):
     '''
     Seems unnecessary, but I was having problems figuring out why the construction of the url was failing; tests above helped.
     '''
-    # import urllib
     url = '''TODO - delete this function''' % (self.itemDbId, urllib.quote(self.firstname), urllib.quote(self.lastname), urllib.quote(self.patronEmail), urllib.quote(self.patron_api_telephone), urllib.quote(self.patron_api_address), urllib.quote(self.patron_api_pcode3), urllib.quote(self.patron_api_dept) )
     return url
-
 
 
   def filterEmail( self, email_string ):
@@ -87,33 +72,7 @@ class Item( object ):
     return new_string
 
 
-
-  # def createIlliadUserViaPasswordHolder( self, eb_request_number ):
-
-  #   import sys
-  #   import urllib
-  #   import UtilityCode
-  #   utCdInstance = UtilityCode.UtilityCode()
-
-  #   # variables in url below should all be filled in from controller call of patron_api and convert_patron_api -- though perhaps that logic should go here.
-  #   utCdInstance.updateLog( message="- In 'Item->createIlliadUserViaPasswordHolder()'; preparing url to 'TODO - delete this old function'", message_importance='high', identifier=eb_request_number )
-  #   url = self.constructPasswordHolderUrl() # broke this simple step out as part of troubleshooting
-  #   utCdInstance.updateLog( message="- In 'Item->createIlliadUserViaPasswordHolder()'; sent url is: %s" % url, message_importance='high', identifier=eb_request_number )
-
-  #   try:
-  #     create_illiad_user_result = urllib.urlopen(url).read()
-  #     utCdInstance.updateLog( message="- In 'Item->createIlliadUserViaPasswordHolder()'; create_illiad_user_result is: %s" % create_illiad_user_result, message_importance='high', identifier=eb_request_number )
-  #   except:
-  #     create_illiad_user_result = 'unable_to_call_create_illiad_user_service'
-  #     utCdInstance.updateLog( message="- In 'Item->createIlliadUserViaPasswordHolder()'; passwordHolder GET didn\'t go through", message_importance='high', identifier=eb_request_number )
-
-  #   return create_illiad_user_result
-
-
-
   def encodeTextForUrl(self, keyText, valueText):
-
-    # import urllib
 
     dataDict = {}
     dataDict[keyText] = valueText
@@ -123,9 +82,7 @@ class Item( object ):
     return encodedString
 
 
-
   def updateHistoryReferenceNumber(self, number):
-    # import UtilityCode
 
     SQL_PATTERN = unicode( os.environ[u'ezbCTL__INSERT_HISTORY_REFERENCENUM_SQL_PATTERN'] )
     sql = SQL_PATTERN % ( self.itemDbId, number )
@@ -137,19 +94,11 @@ class Item( object ):
 
   def grabConvertedPatronApiInfo( self, patronApiInfo ):
 
-
-    # import UtilityCode
     utCdInstance = UtilityCode.UtilityCode()
-
 
     try:
 
-      # import Prefs
       prefs_instance = Prefs.Prefs()
-
-      # import sys
-
-      # import urllib
 
       dataDict = {}
       dataDict['patron_info'] = '''%s''' % (patronApiInfo,)
@@ -158,12 +107,8 @@ class Item( object ):
       url_root = unicode( os.environ[u'ezbCTL__PATRON_API_CONVERTER_URL'] )
       url = u'%s?%s' % ( url_root, encodedString )
 
-      # print '\n- url is: %s' % url
-  #   data = urllib.urlopen(url).read()
       data = json.load( urllib.urlopen(url) )
       utCdInstance.updateLog( message="- in controller.Item.grabConvertedPatronApiInfo(); data is: %s" % data, message_importance='high', identifier='NA' )
-
-  #   print '''data is: %s''' % (data,)
 
       self.patron_api_address = data['ADDRESS']
       self.patron_api_telephone = data['TELEPHONE']
@@ -196,10 +141,8 @@ class Item( object ):
     # end def grabConvertedPatronApiInfo()
 
 
-
   def grabPatronApiInfo(self, id):
 
-    # import urllib
     if( id == None ):
       id = self.patronId # allows for testing
     url = '%s%s/dump' % ( easyborrow_controller_code.settings.PATRON_API_URL_ROOT, id, )
@@ -208,15 +151,11 @@ class Item( object ):
     return data
 
 
-
   def parsePatronApiInfo(self, patronApiString):
     return 'blah'
 
 
-
   def convertSfxurlToOpenurlSegment(self, sfxurl):
-
-    # import urllib
 
     segmentWithoutPrefix = sfxurl[36:]
 
@@ -228,11 +167,7 @@ class Item( object ):
     return encodedString
 
 
-
   def parseIlliadResultData(self, illiadDataString):
-
-    # from xml.dom import minidom
-    # import urllib
 
     illiadXmlDoc = minidom.parseString(illiadDataString)
 
@@ -262,12 +197,8 @@ class Item( object ):
     return status
 
 
-
   def checkIlliad( self, eb_request_number ):
 
-    # import sys
-    # import urllib
-    # import UtilityCode
     utCdInstance = UtilityCode.UtilityCode()
 
     # prepare segments
@@ -290,10 +221,8 @@ class Item( object ):
     return illiadResultData
 
 
-
   def parseVirtualCatalogResultData(self, virtualCatalogDataString):
 
-    # from xml.dom import minidom
     vcXmlDoc = minidom.parseString(virtualCatalogDataString)
 
     statusElements = vcXmlDoc.getElementsByTagName('Status')
@@ -313,20 +242,15 @@ class Item( object ):
     return status
 
 
-
   def checkVirtualCatalog(self):
 
-    # import urllib
     virtualCatalogUrl = "TODO - delete this old function" % (self.patronBarcode, self.itemIsbn,)
     virtualCatalogResultData = urllib.urlopen(virtualCatalogUrl).read()
 
     return virtualCatalogResultData
 
 
-
   def updateHistoryAction(self, serviceName, action, result, number):
-
-    # import UtilityCode
 
     SQL_PATTERN = unicode( os.environ[u'ezbCTL__INSERT_HISTORY_FULLACTION_SQL_PATTERN'] )
     sql = SQL_PATTERN % ( self.itemDbId, serviceName, action, result, number )
@@ -337,85 +261,10 @@ class Item( object ):
     return recordId
 
 
-
-  # def parseBorrowDirectResultData( self, borrowDirectDataString, eb_request_number ):
-  #   '''
-  #   - Purpose: parse returned api data
-  #   - Called by: controller
-  #   '''
-
-  #   import UtilityCode
-  #   utCdInstance = UtilityCode.UtilityCode()  # for logging
-
-  #   import Prefs
-  #   prefs_instance = Prefs.Prefs()
-
-  #   try:
-  #     utCdInstance.updateLog( message='- in controller.Item.parseBorrowDirectResultData(); about to parse returned bd_data, which is: %s' % borrowDirectDataString, message_importance='high', identifier=eb_request_number )
-  #     data = json.loads( borrowDirectDataString )
-  #     status = data['response']['search_result']
-  #     if status == 'SUCCESS':
-  #       status = 'Request_Successful'  # for logic of calling code
-  #     borrowdirect_email = ''  # not captured by borrowdirect-api; would update self.borrowDirectAssignedUserEmail
-  #     self.borrowDirectAssignedReferenceNumber = data['response']['bd_confirmation_code']
-  #     # borrowdirect_reference_number = ''  # not captured by borrowdirect-api; would update self.borrowDirectAssignedReferenceNumber
-  #     utCdInstance.updateLog( message='- in controller.Item.parseBorrowDirectResultData(); status is: %s' % status, message_importance='high', identifier=eb_request_number )
-  #     return status
-  #   except Exception, e:
-  #     utCdInstance.updateLog( message='- in controller.Item.parseBorrowDirectResultData(); Exception is: %s' % e.__dict__, message_importance='high', identifier=eb_request_number )
-  #     return 'FAILURE'
-
-
-
-  # def checkBorrowDirect( self, eb_request_number ):
-  #   '''
-  #   - Purpose: hit new (2010-August) borrow-direct web-services
-  #   - Called by: controller
-  #   '''
-
-  #   import sys, urllib, urllib2
-  #   import UtilityCode
-
-
-  #   try:
-
-  #     utCdInstance = UtilityCode.UtilityCode()  # for logging
-
-  #     url = easyborrow_controller_code.settings.BD_API_URL
-
-  #     values_dict = {
-  #     'api_authorization_code': easyborrow_controller_code.settings.BD_API_AUTHORIZATION_CODE,
-  #     'api_identity': easyborrow_controller_code.settings.BD_API_IDENTITY,
-  #     'university': easyborrow_controller_code.settings.BD_UNIVERSITY,
-  #     'user_barcode': self.patronBarcode,
-  #     'isbn': self.itemIsbn,
-  #     'command': 'request',
-  #     }
-
-  #     utCdInstance.updateLog( message='- in controller.Item.checkBorrowDirect(); about to access BD-API at url %s' % url, message_importance='high', identifier=eb_request_number )
-  #     data = urllib.urlencode( values_dict )
-  #     utCdInstance.updateLog( message='- in controller.Item.checkBorrowDirect(); sending data: %s' % data, message_importance='high', identifier=eb_request_number )
-  #     request = urllib2.Request( url, data )
-  #     response = urllib2.urlopen( request )
-  #     return_val = response.read()
-  #     return return_val  # this will be json
-
-  #   except Exception, e:
-  #     utCdInstance.updateLog( message='- in controller.Item.checkBorrowDirect(); Exception is: %s' % e.__dict__, message_importance='high', identifier=eb_request_number )
-  #     return 'FAILURE'
-
-  #   # end def checkBorrowDirect()
-
-
-
   def checkInRhode(self, eb_request_number):
-
-    # import sys
-    # import UtilityCode
 
     try:
       utCdInstance = UtilityCode.UtilityCode()
-      # from inrhode_tunneler.inrhode_controller import InRhodeController
       ir_controller = InRhodeController()
       inRhodeResultData = 'init'
       inRhodeResultData = ir_controller.runCode( self.itemIsbn, self.lastname, self.patronBarcode )
@@ -429,17 +278,13 @@ class Item( object ):
         identifier=eb_request_number )
 
 
-
   def updateRequestStatus(self, newStatus):
-
-    # import UtilityCode
 
     SQL_PATTERN = unicode( os.environ[u'ezbCTL__UPDATE_REQUEST_STATUS_SQL_PATTERN'] )
     sql = SQL_PATTERN % ( newStatus, self.itemDbId )
 
     utCdInstance = UtilityCode.UtilityCode()
     utCdInstance.connectExecute(sql)
-
 
 
   def fill_from_db_row( self, db_dct ):
@@ -466,7 +311,6 @@ class Item( object ):
     self.oclcNumber = db_dct['wc_accession'] # for temp ILL staff manual new-user registration
     self.eppn = db_dct['eppn']  # new as of 2012-05
     return
-
 
 
   def fillFromDbRow(self, resultInfo):
@@ -497,9 +341,7 @@ class Item( object ):
     self.eppn = rowTuple[ fieldNameList.index('eppn') ]  # new as of 2012-05
 
 
-
   def updateHistoryNote(self, note):
-    # import UtilityCode
 
     SQL_PATTERN = unicode( os.environ[u'ezbCTL__INSERT_HISTORY_NOTE_SQL_PATTERN'] )
     sql = SQL_PATTERN % ( self.itemDbId, note )
@@ -508,17 +350,4 @@ class Item( object ):
     utCdInstance.connectExecute(sql)
 
 
-
   # end class Item
-
-
-
-# ##
-# ## to run doctests
-
-# def _test():
-#     import doctest
-#     doctest.testmod()
-
-# if __name__ == "__main__":
-#     _test()
