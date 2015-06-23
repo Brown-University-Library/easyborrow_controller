@@ -15,50 +15,51 @@ sys.path.append( easyborrow_controller_code.settings.INRHODE_TUNNELER_ENCLOSING_
 
 class Item( object ):
 
-  # from db
-  itemDbId = ""
-  itemTitle = ""
-  itemIsbn = ""
-  eppn = ""
-  patronName = ""
-  patronBarcode = ""
-  patronEmail = ""
-  patronStatus = ""
-  patronId = ''
-  requestNumber = ""
-  sfxurl = ""
-  openurl = ""
-  firstname = ''
-  lastname = ''
-  phone = '123-4567' # not yet saved to db
-  address = 'address_here' # not yet saved to db
-  timePreference = "" # quick or long
-  locationPreference = "" # rock or sci
-  alternateEditionPreference = "" # y or n
-  volumesPreference = "" # varchar(30) field
+  def __init__( self ):
+    # from db
+    self.itemDbId = ""
+    self.itemTitle = ""
+    self.itemIsbn = ""
+    self.eppn = ""
+    self.patronName = ""
+    self.patronBarcode = ""
+    self.patronEmail = ""
+    self.patronStatus = ""
+    self.patronId = ''
+    self.requestNumber = ""
+    self.sfxurl = ""
+    self.openurl = ""
+    self.firstname = ''
+    self.lastname = ''
+    self.phone = '123-4567' # not yet saved to db
+    self.address = 'address_here' # not yet saved to db
+    self.timePreference = "" # quick or long
+    self.locationPreference = "" # rock or sci
+    self.alternateEditionPreference = "" # y or n
+    self.volumesPreference = "" # varchar(30) field
 
-  # from returned xml
-  borrowDirectAssignedUserEmail = ""
-  borrowDirectAssignedReferenceNumber = ""
-  virtualCatalogAssignedUserEmail = ""
-  virtualCatalogAssignedReferenceNumber = ""
-  illiadAssignedReferenceNumber = ''
-  illiadAssignedSfxUrl = ''
-  illiadAssignedAuthId = ''
+    # from returned xml
+    self.borrowDirectAssignedUserEmail = ""
+    self.borrowDirectAssignedReferenceNumber = ""
+    self.virtualCatalogAssignedUserEmail = ""
+    self.virtualCatalogAssignedReferenceNumber = ""
+    self.illiadAssignedReferenceNumber = ''
+    self.illiadAssignedSfxUrl = ''
+    self.illiadAssignedAuthId = ''
 
-  # from internal calculations
-  illiadTinySfxUrl = ''
-  genericAssignedUserEmail = ""
-  genericAssignedReferenceNumber = ""
-  currentlyActiveService = "" # controller flag property, so when success hits, I know which properties to use for the email.
-  requestSuccessStatus = ""
-  illiadUrl = ""
-  oclcNumber = ''
-  patron_api_home_libr = ''
-  patron_api_address = ''
-  patron_api_telephone = ''
-  patron_api_dept = ''
-  patron_api_pcode3 = ''
+    # from internal calculations
+    self.illiadTinySfxUrl = ''
+    self.genericAssignedUserEmail = ""
+    self.genericAssignedReferenceNumber = ""
+    self.currentlyActiveService = "" # controller flag property, so when success hits, I know which properties to use for the email.
+    self.requestSuccessStatus = ""
+    self.illiadUrl = ""
+    self.oclcNumber = ''
+    self.patron_api_home_libr = ''
+    self.patron_api_address = ''
+    self.patron_api_telephone = ''
+    self.patron_api_dept = ''
+    self.patron_api_pcode3 = ''
 
 
 
