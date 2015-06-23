@@ -67,6 +67,7 @@ class Controller( object ):
             #######
 
             eb_request_number = self.set_identifier( record_search, web_logger )  # also updates self.log_identifier
+            itemInstance.log_identifier = eb_request_number
 
             #######
             # gather info on request and update tables

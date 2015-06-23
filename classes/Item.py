@@ -5,6 +5,7 @@ from xml.dom import minidom
 #
 from easyborrow_controller_code import settings
 from easyborrow_controller_code.classes import Prefs, UtilityCode
+from easyborrow_controller_code.classes.web_logger import WebLogger
 from inrhode_tunneler.inrhode_controller import InRhodeController
 
 
@@ -57,6 +58,9 @@ class Item( object ):
     self.patron_api_telephone = ''
     self.patron_api_dept = ''
     self.patron_api_pcode3 = ''
+
+    # from controller.run_code()
+    self.log_identifier = ''
 
 
   def constructPasswordHolderUrl( self ):
