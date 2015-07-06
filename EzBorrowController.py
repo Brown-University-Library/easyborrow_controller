@@ -35,25 +35,7 @@ class Controller( object ):
     def __init__( self ):
         """ Grabs settings from environment and sets up logger. """
         self.SELECT_SQL = unicode( os.environ[u'ezbCTL__SELECT_SQL'] )
-        # self.LOG_PATH = unicode( os.environ[u'ezbCTL__LOG_PATH'] )
-        # self.LOG_LEVEL = unicode( os.environ[u'ezbCTL__LOG_LEVEL'] )
-        # self.logger = None
         self.log_identifier = u'temp--%s--%s' % ( datetime.datetime.now().strftime('%Y-%m-%d-%H:%M:%S'), random.randint(1000,9999) )    # will be ezb-request-number: helps track which log-entries go with which request
-        # self.setup_logger()
-
-    # def setup_logger( self ):
-    #     """ Configures log path and level.
-    #         Called by __init__() """
-    #     log_level = { u'DEBUG': logging.DEBUG, u'INFO': logging.INFO }
-    #     logging.basicConfig(
-    #         filename=self.LOG_PATH, level=log_level[self.LOG_LEVEL],
-    #         format=u'[%(asctime)s] %(levelname)s [%(module)s-%(funcName)s()::%(lineno)d] %(message)s',
-    #         datefmt=u'%d/%b/%Y %H:%M:%S'
-    #         )
-    #     self.logger = logging.getLogger(__name__)
-    #     self.logger.info( u'controller_instance instantiated' )
-    #     return
-
 
     def run_code( self ):
         """ Coordinates processing.
