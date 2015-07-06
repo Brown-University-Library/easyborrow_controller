@@ -19,29 +19,40 @@ from easyborrow_controller_code.classes.tunneler_runners import BD_Runner, BD_Ap
 from easyborrow_controller_code.classes.web_logger import WebLogger
 
 
+## set up file logger
+LOG_PATH = unicode( os.environ[u'ezbCTL__LOG_PATH'] )
+LOG_LEVEL = unicode( os.environ[u'ezbCTL__LOG_LEVEL'] )
+level_dct = { 'DEBUG': logging.DEBUG, 'INFO': logging.INFO }
+logging.basicConfig(
+    filename=LOG_PATH, level=level_dct[LOG_LEVEL],
+    format=u'[%(asctime)s] %(levelname)s [%(module)s-%(funcName)s()::%(lineno)d] %(message)s', datefmt=u'%d/%b/%Y %H:%M:%S' )
+logger = logging.getLogger(__name__)
+logger.info( u'controller log started' )
+
+
 class Controller( object ):
 
     def __init__( self ):
         """ Grabs settings from environment and sets up logger. """
         self.SELECT_SQL = unicode( os.environ[u'ezbCTL__SELECT_SQL'] )
-        self.LOG_PATH = unicode( os.environ[u'ezbCTL__LOG_PATH'] )
-        self.LOG_LEVEL = unicode( os.environ[u'ezbCTL__LOG_LEVEL'] )
-        self.logger = None
+        # self.LOG_PATH = unicode( os.environ[u'ezbCTL__LOG_PATH'] )
+        # self.LOG_LEVEL = unicode( os.environ[u'ezbCTL__LOG_LEVEL'] )
+        # self.logger = None
         self.log_identifier = u'temp--%s--%s' % ( datetime.datetime.now().strftime('%Y-%m-%d-%H:%M:%S'), random.randint(1000,9999) )    # will be ezb-request-number: helps track which log-entries go with which request
-        self.setup_logger()
+        # self.setup_logger()
 
-    def setup_logger( self ):
-        """ Configures log path and level.
-            Called by __init__() """
-        log_level = { u'DEBUG': logging.DEBUG, u'INFO': logging.INFO }
-        logging.basicConfig(
-            filename=self.LOG_PATH, level=log_level[self.LOG_LEVEL],
-            format=u'[%(asctime)s] %(levelname)s [%(module)s-%(funcName)s()::%(lineno)d] %(message)s',
-            datefmt=u'%d/%b/%Y %H:%M:%S'
-            )
-        self.logger = logging.getLogger(__name__)
-        self.logger.info( u'controller_instance instantiated' )
-        return
+    # def setup_logger( self ):
+    #     """ Configures log path and level.
+    #         Called by __init__() """
+    #     log_level = { u'DEBUG': logging.DEBUG, u'INFO': logging.INFO }
+    #     logging.basicConfig(
+    #         filename=self.LOG_PATH, level=log_level[self.LOG_LEVEL],
+    #         format=u'[%(asctime)s] %(levelname)s [%(module)s-%(funcName)s()::%(lineno)d] %(message)s',
+    #         datefmt=u'%d/%b/%Y %H:%M:%S'
+    #         )
+    #     self.logger = logging.getLogger(__name__)
+    #     self.logger.info( u'controller_instance instantiated' )
+    #     return
 
 
     def run_code( self ):
@@ -135,7 +146,7 @@ class Controller( object ):
                     ##
 
                     # setup
-                    bd_api_runner = BD_ApiRunner( self.logger, self.log_identifier )
+                    bd_api_runner = BD_ApiRunner( logger, self.log_identifier )
                     itemInstance = bd_api_runner.setup_api_hit( itemInstance, web_logger )
                     # itemInstance = bd_api_runner.setup_api_hit( itemInstance, utCdInstance )
 
@@ -229,13 +240,13 @@ class Controller( object ):
                   err_msg = u'error-type - %s; error-message-a - %s; line-number - %s' % ( sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2].tb_lineno, )
                   print err_msg
                   error_message = utility_code.makeErrorString()
-                  self.logger.error( u'%s- exception message, `%s`' % (self.log_identifier, err_msg) )
+                  logger.error( u'%s- exception message, `%s`' % (self.log_identifier, err_msg) )
                   web_logger.post_message( message=u'- in controller; EXCEPTION; error: %s' % unicode(repr(error_message)), identifier=self.log_identifier, importance='info' )
             except Exception, e:
                   print 'ezb controller exception: %s' % e
                   err_msg = u'error-type - %s; error-message - %s; line-number - %s' % ( sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2].tb_lineno, )
                   print err_msg
-                  self.logger.error( u'%s- exception message, `%s`' % (self.log_identifier, err_msg) )
+                  logger.error( u'%s- exception message, `%s`' % (self.log_identifier, err_msg) )
 
         # end def run_code()
 
@@ -244,25 +255,25 @@ class Controller( object ):
         """ Calls initial weblog entry and returns class instances.
             Called by run_code() """
         try:
-            dbh = db_handler.Db_Handler( self.logger )
+            dbh = db_handler.Db_Handler( logger )
         except Exception as e:
-            self.logger.error( u'e, `%s`' % e )
-        itemInstance = Item.Item( self.logger )
-        utCdInstance = UtilityCode.UtilityCode( self.logger )
-        web_logger = WebLogger( self.logger )
+            logger.error( u'e, `%s`' % e )
+        itemInstance = Item.Item( logger )
+        utCdInstance = UtilityCode.UtilityCode( logger )
+        web_logger = WebLogger( logger )
         formatted_time = time.strftime( u'%a %b %d %H:%M:%S %Z %Y', time.localtime() )  # eg 'Wed Jul 13 13:41:39 EDT 2005'
         web_logger.post_message( message=u'EZBorrowController session starting at %s' % formatted_time, identifier=self.log_identifier, importance='info' )
-        self.logger.debug( u'setup() complete' )
+        logger.debug( u'setup() complete' )
         return ( dbh, itemInstance, utCdInstance, web_logger )
 
     def run_record_search( self, dbh, web_logger ):
         """ Searches for new request.
             Called by run_code() """
         result_dcts = dbh.run_select( self.SELECT_SQL )  # [ {row01field01_key: row01field01_value}, fieldname02], ( (row01field01_value, row01field02_value), (row02field01_value, row02field02_value) ) ]
-        self.logger.debug( u'(new) record_search, `%s`' % result_dcts )
+        logger.debug( u'(new) record_search, `%s`' % result_dcts )
         if not result_dcts:
             web_logger.post_message( message=u'- in controller; no new request found; quitting', identifier=self.log_identifier, importance='info' )
-            self.logger.info( u'no new record; quitting' )
+            logger.info( u'no new record; quitting' )
             sys.exit()
         record_search = result_dcts[0]
         web_logger.post_message( message=u'- in controller; new request found, ```%s```' % pprint.pformat(record_search), identifier=self.log_identifier, importance='info' )
@@ -284,7 +295,7 @@ class Controller( object ):
         if len( itemInstance.volumesPreference ) == 0:
             if len( itemInstance.itemIsbn ) > 0:
                 flow = [ u'bd', u'ir', u'illiad' ] # changed on 2015-05-28 at request of BB email; was [ u'bd', u'illiad' ]
-        self.logger.debug( u'determine_flow() complete' )
+        logger.debug( u'determine_flow() complete' )
         return flow
 
     # end class Controller
