@@ -11,13 +11,14 @@ In 2005 ago the [Library](http://library.brown.edu) made a decision to privilege
 
 We encouraged them to start at [WorldCat](http://www.worldcat.org) to browse and search -- our job would be to get them their chosen books with no more effort on their part.
 
-We repurposed the WorldCat openUrl link-resolver to take a patron to a landing page under our control. (Now openUrls reach the landing page from numerous sources.) If the requested item is a book which is not available locally, it goes into an [easyBorrow](http://library.brown.edu/borrowing/easyBorrow.php) flow. This code manages that flow. The basic overview is that this code:
+We repurposed the WorldCat [openUrl](https://en.wikipedia.org/wiki/OpenURL) link-resolver to take a patron to a landing page under our control. (Now openUrls reach the landing page from numerous sources.) If the requested item is a book which is not available locally, it goes into an [easyBorrow](http://library.brown.edu/borrowing/easyBorrow.php) flow. This code manages that flow. The basic overview is that this code:
 - checks to see if a new request exists, and if so
-- attempts to request the book on behalf of the patron from a series of consortial library-borrowing partners (currently inRhode and BorrowDirect)
-- if none of the attempts succeeds, the book request is auto-submitted to our ILLiad interlibrary-loan service
-- then an email is sent to the patron, letting her know the book is on its way, along with contact and transaction numbers
+- attempts to request the book on behalf of the patron from consortial library-borrowing partners
+    - partners: originally [VirtualCatalog](http://www.massvc.org), [inRhode](http://inrhode.uri.edu) and [BorrowDirect](http://www.borrowdirect.org) -- now BorrowDirect
+- auto-submits, if none of the attempts succeeds, the book request to our [ILLiad](http://www.atlas-sys.com/illiad/) interlibrary-loan service
+- finally, sends an email to the patron, letting her know the book is on its way, along with contact and transaction numbers
 
-Each book-borrowing service has its own code-base (links will be added here); this code manages the calls to the other book-borrowing services and the final email to the user.
+Each book-borrowing service has its own code-base; this code manages the calls to the other book-borrowing services and the final email to the user.
 
 code contact: birkin_diana@brown.edu
 
