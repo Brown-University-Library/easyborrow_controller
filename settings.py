@@ -4,7 +4,7 @@
 - Note: existing Prefs.py file/class and PrivatePrefs.py file/class will be moved to flatter django-like settings files.
 '''
 
-
+import os
 from easyborrow_project_local_settings.eb_controller_local_settings import settings_local
 
 
@@ -42,7 +42,9 @@ ILLIAD_REMOTEAUTH_KEY = settings_local.ILLIAD_REMOTEAUTH_KEY  # u-string; key fo
 ILLIAD_REQUEST_URL = settings_local.ILLIAD_REQUEST_URL  # string
 ILLIAD_REQUEST_AUTHORIZATION_KEY = settings_local.ILLIAD_REQUEST_AUTHORIZATION_KEY  # string
 ILLIAD_NEWUSER_WEBSERVICE_URL = settings_local.ILLIAD_NEWUSER_WEBSERVICE_URL  # string
-
+#
+ILLIAD_API_URL = os.environ['ezbCTL__ILLIAD_API_URL']
+ILLIAD_API_KEY = os.environ['ezbCTL__ILLIAD_API_KEY']
 
 
 # tests
