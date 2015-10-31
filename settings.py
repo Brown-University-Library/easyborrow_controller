@@ -12,9 +12,9 @@ from easyborrow_project_local_settings.eb_controller_local_settings import setti
 
 
 ## general settings
-LOG_URL = os.environ['ezb_ctl__DB_LOG_URL']  # url used to web-log various parts of easyBorrow apps
-LOG_KEY = os.environ['ezb_ctl__DB_LOG_URL_KEY']
-LOGENTRY_MINIMUM_IMPORTANCE_LEVEL = settings_local.LOGENTRY_MINIMUM_IMPORTANCE_LEVEL  # string; low for dev, high for production
+LOG_URL = os.environ['ezbCTL__WEBLOG_URL']  # url used to web-log various parts of easyBorrow apps
+LOG_KEY = os.environ['ezbCTL__WEBLOG_KEY']
+LOGENTRY_MINIMUM_IMPORTANCE_LEVEL = os.environ['ezbCTL__WEBLOGENTRY_MINIMUM_IMPORTANCE_LEVEL'] # 'low' for dev, 'high' for production
 MAIL_APPARENT_SENDER = settings_local.MAIL_APPARENT_SENDER  # string; this will appear as the sender to the end-user
 MAIL_SENDER = settings_local.MAIL_SENDER  # string; this won't appear as the sender to the end-user
 MAIL_SMTP_SERVER = settings_local.MAIL_SMTP_SERVER  # string
