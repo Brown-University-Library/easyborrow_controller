@@ -15,9 +15,9 @@ from easyborrow_project_local_settings.eb_controller_local_settings import setti
 LOG_URL = os.environ['ezbCTL__WEBLOG_URL']  # url used to web-log various parts of easyBorrow apps
 LOG_KEY = os.environ['ezbCTL__WEBLOG_KEY']
 LOGENTRY_MINIMUM_IMPORTANCE_LEVEL = os.environ['ezbCTL__WEBLOGENTRY_MINIMUM_IMPORTANCE_LEVEL'] # 'debug', etc.
-MAIL_APPARENT_SENDER = settings_local.MAIL_APPARENT_SENDER  # string; this will appear as the sender to the end-user
-MAIL_SENDER = settings_local.MAIL_SENDER  # string; this won't appear as the sender to the end-user
-MAIL_SMTP_SERVER = settings_local.MAIL_SMTP_SERVER  # string
+MAIL_APPARENT_SENDER = os.environ['ezbCTL__MAIL_APPARENT_SENDER']  # this will appear as the sender to the end-user
+MAIL_SENDER = os.environ['ezbCTL__MAIL_SENDER']  # true sender; won't appear to the end-user
+MAIL_SMTP_SERVER = os.environ['ezbCTL__MAIL_SMTP_SERVER']
 
 
 ## inrhode tunneler settings
