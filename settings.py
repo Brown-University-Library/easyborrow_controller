@@ -21,7 +21,7 @@ MAIL_SMTP_SERVER = os.environ['ezbCTL__MAIL_SMTP_SERVER']
 
 
 ## inrhode tunneler settings
-INRHODE_TUNNELER_ENCLOSING_DIRECTORY_PATH = settings_local.INRHODE_TUNNELER_ENCLOSING_DIRECTORY_PATH  # string
+# INRHODE_TUNNELER_ENCLOSING_DIRECTORY_PATH = settings_local.INRHODE_TUNNELER_ENCLOSING_DIRECTORY_PATH  # no longer needed
 
 
 ## borrowdirect web-service settings
