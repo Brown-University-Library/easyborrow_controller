@@ -2,7 +2,6 @@
 
 import datetime, json, os, pprint, sys
 import requests
-# from easyborrow_project_local_settings import ezb_controller_local_settings as ezb_settings  # new style
 from easyborrow_controller_code import settings
 
 
@@ -192,18 +191,6 @@ def makeErrorString():
 
 
 
-# def makeIdentifier():
-#   '''
-#   - Purpose: temp identifier for logging, until request number is availablet.
-#   - Called by controller()
-#   '''
-
-#   import datetime, random
-#   identifier = 'temp--%s--%s' % ( datetime.datetime.now().strftime('%Y-%m-%d-%H:%M:%S'), random.randint(1000,9999) )
-#   return identifier
-
-
-
 def make_datetime_string():
   """ Returns time-string like 'Wed Oct 23 14:49:38 EDT 2013'. """
   import time
@@ -244,38 +231,6 @@ def makeIlliadParametersV2( itemInstance, settings, log_identifier ):
     message = u'- in controller.uc.makeIlliadParametersV2(); error detail: %s' % makeErrorString()
     updateLog( message, log_identifier, message_importance='high' )
     return { u'error_message': message }
-
-# def makeIlliadParametersV2( itemInstance, settings, log_identifier ):
-#   try:
-#     updateLog( u'- in controller.uc.makeIlliadParametersV2(); starting...', log_identifier, message_importance='high' )  # TODO: lower hardcoded message_importance
-#     try:
-#       patron_info = itemInstance.grabPatronApiInfo( itemInstance.patronId )
-#       itemInstance.grabConvertedPatronApiInfo( patron_info) # grabs converted info and stores it to attributes
-#       updateLog( u'- in controller.uc.makeIlliadParametersV2(); patron-api work done; ii.patronId is: %s; ii.patronEmail is: %s' % (itemInstance.patronId, itemInstance.patronEmail), log_identifier, message_importance='low' )
-#     except Exception, e:
-#       updateLog( u'- in controller.uc.makeIlliadParametersV2(); patron-api work failed; exception is: %s' % e, log_identifier, message_importance='high' )
-#     parameter_dict = {
-#       u'auth_key': settings.ILLIAD_REMOTEAUTH_KEY,
-#       u'request_id': log_identifier,
-#       u'first_name': itemInstance.firstname,  # used for new_user registration
-#       u'last_name': itemInstance.lastname,  # used for new_user registration
-#       u'username': itemInstance.eppn,  # for login _and_ new_user registration
-#       u'address': '',  # used for new_user registration
-#       u'email': itemInstance.patronEmail,  # used for new_user registration
-#       u'oclc_number': itemInstance.oclcNumber,
-#       u'openurl': makeOpenUrlSegment( itemInstance.sfxurl, log_identifier )['openurl_segment'],
-#       u'patron_barcode': itemInstance.patronBarcode,
-#       u'patron_department': itemInstance.patron_api_dept,  # used for new_user registration
-#       u'patron_status': itemInstance.patronStatus,  # used for new_user registration
-#       u'phone': '',  # used for new_user registration
-#       u'volumes': '',  # perceived but not handled by dj_ill_submission
-#       }
-#     updateLog( u'- in controller.uc.makeIlliadParametersV2(); parameter_dict: %s' % parameter_dict, log_identifier, message_importance='high' )  # TODO: lower hardcoded message_importance
-#     return { u'parameter_dict': parameter_dict }
-#   except:
-#     message = u'- in controller.uc.makeIlliadParametersV2(); error detail: %s' % makeErrorString()
-#     updateLog( message, log_identifier, message_importance='high' )
-#     return { u'error_message': message }
 
 
 
@@ -441,23 +396,6 @@ def submitIlliadRemoteAuthRequestV2( parameter_dict, log_identifier ):
     return { u'error_message': message }
   # end def submitIlliadRemoteAuthRequestV2()
 
-# def submitIlliadRemoteAuthRequestV2( parameter_dict, log_identifier ):
-#   try:
-#     import json, pprint
-#     import requests
-#     url = u'%s://127.0.0.1/easyborrow/ill/v2/make_request/' % settings.ILLIAD_HTTP_S_SEGMENT
-#     headers = { u'Content-Type': u'application/x-www-form-urlencoded; charset=utf-8' }
-#     r = requests.post( url, data=parameter_dict, headers=headers, timeout=60, verify=False )
-#     updateLog( u'- in controller.uc.submitIlliadRequestV2(); ws response text: %s' % r.text, log_identifier )
-#     return_dict = json.loads( r.text )
-#     updateLog( u'- in controller.uc.submitIlliadRequestV2(); return_dict: %s' % return_dict, log_identifier, message_importance=u'high' )  # TODO: remove hardcoded importance
-#     return return_dict
-#   except:
-#     message = u'- in controller.uc.submitIlliadRequestV2(); error detail: %s' % makeErrorString()
-#     updateLog( message, log_identifier, message_importance=u'high' )
-#     return { u'error_message': message }
-#   # end def submitIlliadRemoteAuthRequestV2()
-
 
 
 def updateLog( message, log_identifier, message_importance='low' ):
@@ -498,144 +436,3 @@ def jsonify_db_data( data_dict ):
   data_dict[u'created'] = unicode( data_dict[u'created'] )
   jstring = json.dumps( data_dict, sort_keys=True, indent=2 )
   return jstring
-
-
-
-# class DB_Logger(object):
-#   """ Manages databaselogging.
-#       All database log entries, as well as failure attempts, also populate a file-log.
-#       self.session_identifier is populated early, and logger instance is passed to other classes. """
-
-#   def __init__( self, file_logger, LOG_URL, LOG_KEY, LOGENTRY_MINIMUM_IMPORTANCE_LEVEL ):
-#     """ Holds a bit of state. """
-#     self.file_logger = file_logger
-#     self.LOG_URL = LOG_URL
-#     self.LOG_KEY = LOG_KEY
-#     self.LOGENTRY_MINIMUM_IMPORTANCE_LEVEL = LOGENTRY_MINIMUM_IMPORTANCE_LEVEL
-#     self.session_identifier = makeIdentifier()  # used until request-number is obtained
-
-#   def update_log( self, message, message_importance=u'low' ):
-#     """ Updates database log. And file log. """
-#     try:
-#       assert message_importance in [u'low', u'high']
-#       update_log_flag = False
-#       if message_importance == u'high':
-#         update_log_flag = True
-#       elif ( message_importance == u'low' and self.LOGENTRY_MINIMUM_IMPORTANCE_LEVEL == u'low' ):
-#         update_log_flag = True
-#       if update_log_flag:
-#         values = { u'message': message, u'identifier': self.session_identifier, u'key': self.LOG_KEY }
-#         r = requests.post( self.LOG_URL, data=values, verify=False )
-#       self.file_logger.info( u'session, %s; message, %s' % (self.session_identifier, message) )
-#       return
-#     except:
-#       message = u'- in uc.DB_Logger.update_log(); error detail: %s' % makeErrorString()
-#       print message
-#       self.file_logger.error( u'session, %s; message, %s' % (self.session_identifier, message) )
-#       return
-
-#   # end class DB_Logger()
-
-
-
-# class DB_Handler(object):
-
-#   def __init__(self, db_host, db_port, db_username, db_password, db_name, db_logger ):
-#     """ Sets up basics. """
-#     self.db_host = db_host
-#     self.db_port = db_port
-#     self.db_username = db_username
-#     self.db_password = db_password
-#     self.db_name = db_name
-#     self.connection_object = None  # populated during queries
-#     self.cursor_object = None  # populated during queries
-#     self.db_logger = db_logger
-
-#   def execute_sql(self, sql):
-#     """ Executes sql; returns tuple of row-dicts.
-#         Example return data: ( {row1field1key: row1field1value, row1field2key: row1field2value}, {row2field1key: row2field1value, row2field2key: row2field2value} )
-#         Called by Controller.get_new_data(), self.update_request_status() """
-#     try:
-#       self._setup_db_connection()
-#       if not self.cursor_object:
-#         return
-#       self.cursor_object.execute( sql )
-#       dict_list = self.cursor_object.fetchall()  # really a tuple of row-dicts
-
-#       self.db_logger.update_log( message=u'- in dev_ezb_controller.py; uc.DB_Handler.execute_sql(); dict_list: %s' % dict_list, message_importance='low' )
-#       dict_list = self._unicodify_resultset( dict_list )
-#       self.db_logger.update_log( message=u'- in dev_ezb_controller.py; uc.DB_Handler.execute_sql(); dict_list NOW: %s' % dict_list, message_importance='low' )
-
-#       return dict_list
-#     except Exception as e:
-#       message = u'- in dev_ezb_controller.py; uc.DB_Handler.execute_sql(); error: %s' % unicode( repr(e).decode(u'utf8', u'replace') )
-#       self.db_logger.update_log( message=message, message_importance='high' )
-#       return None
-#     finally:
-#       self._close_db_connection()
-
-#   def _setup_db_connection( self ):
-#     """ Sets up connection; populates instance attributes.
-#         Called by run_select() """
-#     try:
-#       import MySQLdb
-#       self.connection_object = MySQLdb.connect(
-#         host=self.db_host, port=self.db_port, user=self.db_username, passwd=self.db_password, db=self.db_name )
-#       self.cursor_object = self.connection_object.cursor(MySQLdb.cursors.DictCursor)
-#       return
-#     except Exception as e:
-#       message = u'- in dev_ezb_controller.py; uc.DB_Handler._setup_db_connection(); error: %s' % unicode( repr(e).decode(u'utf8', u'replace') )
-#       self.db_logger.update_log( message=message, message_importance='high' )
-
-#   def _unicodify_resultset( self, dict_list ):
-#     """ Returns dict with keys and values as unicode-strings. """
-#     try:
-#       result_list = []
-#       for row_dict in dict_list:
-#         new_row_dict = {}
-#         for key,value in row_dict.items():
-#           if type(value) == datetime.datetime:
-#             value = unicode(value)
-#           new_row_dict[ unicode(key) ] = unicode(value)
-#         result_list.append( new_row_dict )
-#       return result_list
-#     except Exception as e:
-#       message = u'- in dev_ezb_controller.py; uc.DB_Handler._unicodify_resultset(); error: %s' % unicode( repr(e).decode(u'utf8', u'replace') )
-#       self.db_logger.update_log( message=message, message_importance='high' )
-
-#   def _close_db_connection( self ):
-#     """ Closes db connection.
-#         Called by run_select() """
-#     try:
-#       self.cursor_object.close()
-#       self.connection_object.close()
-#       message = u'- in dev_ezb_controller.py; uc.DB_Handler._close_db_connection(); db connection closed'
-#       self.db_logger.update_log( message=message, message_importance='low' )
-#       return
-#     except Exception as e:
-#       message = u'- in dev_ezb_controller.py; uc.DB_Handler._close_db_connection(); error: %s' % unicode( repr(e).decode(u'utf8', u'replace') )
-#       self.db_logger.update_log( message=message, message_importance='high' )
-
-#   def update_request_status( self, row_id, status ):
-#     """ Updates request table status field.
-#         Called by ezb_controller.py """
-#     SQL_PATTERN = unicode( os.environ[u'ezbCTL__UPDATE_REQUEST_STATUS_SQL_PATTERN'] )
-#     sql = SQL_PATTERN % ( status, row_id )
-#     result = self.execute_sql( sql )
-#     self.db_logger.update_log(
-#       message=u'- in dev_ezb_controller.py; uc.DB_Handler.update_request_status(); status updated to %s' % status, message_importance=u'low' )
-#     return
-
-#   def update_history_note( self, request_id, note ):
-#     """ Updates history table note field.
-#         Called by ezb_controller.py """
-
-#     SQL_PATTERN = unicode( os.environ[u'ezbCTL__INSERT_HISTORY_NOTE_SQL_PATTERN'] )
-#     sql = SQL_PATTERN % ( request_id, note )
-
-#     result = self.execute_sql( sql )
-#     self.db_logger.update_log(
-#       message=u'- in dev_ezb_controller.py; uc.DB_Handler.update_history_note(); note updated', message_importance=u'low' )
-#     return
-
-#   # end class DB_Handler()
