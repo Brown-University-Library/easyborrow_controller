@@ -12,12 +12,12 @@ from easyborrow_project_local_settings.eb_controller_local_settings import setti
 
 
 ## general settings
-LOG_URL = os.environ['ezbCTL__WEBLOG_URL']  # url used to web-log various parts of easyBorrow apps
-LOG_KEY = os.environ['ezbCTL__WEBLOG_KEY']
-LOGENTRY_MINIMUM_IMPORTANCE_LEVEL = os.environ['ezbCTL__WEBLOGENTRY_MINIMUM_IMPORTANCE_LEVEL'] # 'debug', etc.
-MAIL_APPARENT_SENDER = os.environ['ezbCTL__MAIL_APPARENT_SENDER']  # this will appear as the sender to the end-user
-MAIL_SENDER = os.environ['ezbCTL__MAIL_SENDER']  # true sender; won't appear to the end-user
-MAIL_SMTP_SERVER = os.environ['ezbCTL__MAIL_SMTP_SERVER']
+LOG_URL = unicode( os.environ['ezbCTL__WEBLOG_URL'] )  # url used to web-log various parts of easyBorrow apps
+LOG_KEY = unicode( os.environ['ezbCTL__WEBLOG_KEY'] )
+LOGENTRY_MINIMUM_IMPORTANCE_LEVEL = unicode( os.environ['ezbCTL__WEBLOGENTRY_MINIMUM_IMPORTANCE_LEVEL'] ) # 'debug', etc.
+MAIL_APPARENT_SENDER = unicode( os.environ['ezbCTL__MAIL_APPARENT_SENDER'] )  # this will appear as the sender to the end-user
+MAIL_SENDER = unicode( os.environ['ezbCTL__MAIL_SENDER'] )  # true sender; won't appear to the end-user
+MAIL_SMTP_SERVER = unicode( os.environ['ezbCTL__MAIL_SMTP_SERVER'] )
 
 
 ## inrhode tunneler settings
@@ -25,11 +25,13 @@ MAIL_SMTP_SERVER = os.environ['ezbCTL__MAIL_SMTP_SERVER']
 
 
 ## borrowdirect web-service settings
-BD_API_URL = settings_local.BD_API_URL
-BD_API_AUTHORIZATION_CODE = settings_local.BD_API_AUTHORIZATION_CODE
-BD_API_IDENTITY = settings_local.BD_API_IDENTITY
-BD_UNIVERSITY = settings_local.BD_UNIVERSITY
-OPENURL_PARSER_URL = settings_local.OPENURL_PARSER_URL
+## commented out because most bd-api settings have been replaced by env var settings accessed by classes.tunneler_runners.BD_ApiRunner()
+
+# BD_API_URL = settings_local.BD_API_URL
+# BD_API_AUTHORIZATION_CODE = settings_local.BD_API_AUTHORIZATION_CODE
+# BD_API_IDENTITY = settings_local.BD_API_IDENTITY
+# BD_UNIVERSITY = settings_local.BD_UNIVERSITY
+OPENURL_PARSER_URL = unicode( os.environ['ezbCTL__OPENURL_PARSER_URL'] )
 
 
 ## illiad settings
@@ -43,8 +45,8 @@ ILLIAD_REQUEST_URL = settings_local.ILLIAD_REQUEST_URL  # string
 ILLIAD_REQUEST_AUTHORIZATION_KEY = settings_local.ILLIAD_REQUEST_AUTHORIZATION_KEY  # string
 ILLIAD_NEWUSER_WEBSERVICE_URL = settings_local.ILLIAD_NEWUSER_WEBSERVICE_URL  # string
 #
-ILLIAD_API_URL = os.environ['ezbCTL__ILLIAD_API_URL']
-ILLIAD_API_KEY = os.environ['ezbCTL__ILLIAD_API_KEY']
+ILLIAD_API_URL = unicode( os.environ['ezbCTL__ILLIAD_API_URL'] )
+ILLIAD_API_KEY = unicode( os.environ['ezbCTL__ILLIAD_API_KEY'] )
 
 
 ## tests
