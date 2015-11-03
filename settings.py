@@ -20,27 +20,16 @@ MAIL_SENDER = unicode( os.environ['ezbCTL__MAIL_SENDER'] )  # true sender; won't
 MAIL_SMTP_SERVER = unicode( os.environ['ezbCTL__MAIL_SMTP_SERVER'] )
 
 
-## inrhode tunneler settings
-# INRHODE_TUNNELER_ENCLOSING_DIRECTORY_PATH = settings_local.INRHODE_TUNNELER_ENCLOSING_DIRECTORY_PATH  # no longer needed
-
-
 ## borrowdirect web-service settings
-## commented out because most bd-api settings have been replaced by env var settings accessed by classes.tunneler_runners.BD_ApiRunner()
-
-# BD_API_URL = settings_local.BD_API_URL
-# BD_API_AUTHORIZATION_CODE = settings_local.BD_API_AUTHORIZATION_CODE
-# BD_API_IDENTITY = settings_local.BD_API_IDENTITY
-# BD_UNIVERSITY = settings_local.BD_UNIVERSITY
+## most bd-api settings have been replaced by env var settings accessed by classes.tunneler_runners.BD_ApiRunner() -- TODO, eventually move those here
 OPENURL_PARSER_URL = unicode( os.environ['ezbCTL__OPENURL_PARSER_URL'] )
 
 
 ## illiad settings
-# ILLIAD_HANDLER_SWITCH = settings_local.ILLIAD_HANDLER_SWITCH  # string; to switch between new django-handler and old java-handler
 ILLIAD_HTTP_S_SEGMENT = settings_local.ILLIAD_HTTP_S_SEGMENT  # u-string; u'http' or u'https'
 ILLIAD_TEMP_STORAGE_URL = settings_local.ILLIAD_TEMP_STORAGE_URL  # string; url used only for testing
 ILLIAD_TEMP_STORAGE_AUTHORIZATION_KEY = settings_local.ILLIAD_TEMP_STORAGE_AUTHORIZATION_KEY  # string; key used only for testing
 ILLIAD_REMOTEAUTH_KEY = settings_local.ILLIAD_REMOTEAUTH_KEY  # u-string; key for illiad-remote-authentication
-# ILLIAD_REMOTEAUTH_SWITCH = settings_local.ILLIAD_REMOTEAUTH_SWITCH  # u-string; temporary while new code-flow being implemented; options: u'old_code' or u'new_code'
 ILLIAD_REQUEST_URL = settings_local.ILLIAD_REQUEST_URL  # string
 ILLIAD_REQUEST_AUTHORIZATION_KEY = settings_local.ILLIAD_REQUEST_AUTHORIZATION_KEY  # string
 ILLIAD_NEWUSER_WEBSERVICE_URL = settings_local.ILLIAD_NEWUSER_WEBSERVICE_URL  # string
