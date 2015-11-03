@@ -45,19 +45,6 @@ class UtilityCodeTest(unittest.TestCase):
 
 
 
-  # def testObtainDate(self):
-
-  #   """sending a known time to check formatting"""
-  #   ucInstance = UtilityCode.UtilityCode()
-  #   ucInstance.timeToFormat = (2005, 7, 13, 13, 41, 39, 2, 194, 1) # 'Wed Jul 13 13:41:39 EDT 2005'
-  #   expected = "Wed Jul 13 13:41:39 EDT 2005"
-  #   result = ucInstance.obtainDate()
-  #   self.assertEqual(expected, result, "result is: " + str(result))
-
-
-
-
-
 if __name__ == "__main__":
   ## get the project's enclosing directory for import references
   current_script_name = sys.argv[0] # may or may not include path

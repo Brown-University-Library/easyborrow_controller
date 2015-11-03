@@ -126,7 +126,6 @@ if __name__ == "__main__":
   directory_list = full_directory_path.split('/')
   last_element_string = directory_list[-2] + '/' + directory_list[-1]
   enclosing_directory = full_directory_path.replace( '/' + last_element_string, '' ) # strip off the slash plus the current directory
-  # print u'- enclosing_directory...'; print enclosing_directory
   sys.path.append( enclosing_directory )
   ## ok, rest of imports
   from easyborrow_controller_code import settings, utility_code

@@ -4,8 +4,6 @@
 """
 
 import os, sys, unittest
-# from easyborrow_controller_code import settings
-# from easyborrow_controller_code.classes import Item
 
 
 
@@ -65,24 +63,6 @@ class ItemTest(unittest.TestCase):
     result = item_instance.patronEmail
     self.assertTrue( expected == result, '\nExpected: ->%s<-; \nresult is: ->%s<-' % (expected, result,) )
 
-    #-> commented out because selected id does have a customized email address and does not have a net-id; TO-DO: find another example
-    # no customized email address (default to net_id)
-    # item_instance = Item.Item()
-    # patron_api_data = item_instance.grabPatronApiInfo( settings.TEST_PATRON_02_ID )
-    # converted_patron_api_data = item_instance.grabConvertedPatronApiInfo( patron_api_data )
-    # expected = settings.TEST_PATRON_02_CONVERTED_EMAIL
-    # result = item_instance.patronEmail
-    # self.assertTrue( expected == result, '\nExpected: ->%s<-; \nresult is: ->%s<-' % (expected, result,) )
-
-    #-> commented out because patron's status has been filled in -- at some point set the patron_api_data directly for test-conversion
-    # # check patron status - no info
-    # item_instance = Item.Item()
-    # patron_api_data = item_instance.grabPatronApiInfo( settings.TEST_PATRON_03_ID )
-    # converted_patron_api_data = item_instance.grabConvertedPatronApiInfo( patron_api_data )
-    # expected = 'unknown'
-    # result = item_instance.patron_api_pcode3
-    # self.assertTrue( expected == result, '\nExpected: ->%s<-; \nresult is: ->%s<-' % (expected, result,) )
-
     # end def testGrabConvertedPatronApiInfo()
 
 
@@ -124,27 +104,6 @@ class ItemTest(unittest.TestCase):
       self.assertTrue( expected == result, '\nExpected: ->%s<-; \nresult is: ->%s<-' % (expected, result,) )
 
     # end def testCheckIlliad_forUrl()
-
-
-
-  ## function not used
-  # def testMakeTinyUrl(self):
-  #
-  #   import urllib
-  #
-  #   itemInstance = Item.Item()
-  #   initialUrl = 'http://www.brown.edu'
-  #   newUrl = itemInstance.makeTinyUrl(initialUrl)
-  #
-  #   expected = 7
-  #   result = newUrl.find('tinyurl.com')
-  #   self.assertEqual(expected, result, "result is: " + str(result))
-  #
-  #   resultData = urllib.urlopen(newUrl).read()
-  #   expected = 200
-  #   result = resultData.find('<title>Brown University</title>')
-  #   # print '\n- resultData is: %s' % resultData
-  #   self.assertEqual(expected, result, "result is: " + str(result))
 
 
 
@@ -240,30 +199,6 @@ class ItemTest(unittest.TestCase):
 
 
 
-  # def testDetermineFlow(self):
-  #   ## isbn, quick, no-volumes
-  #   itemInstance = Item.Item()
-  #   itemInstance.timePreference = u'quick'
-  #   itemInstance.itemIsbn = u'1234'
-  #   itemInstance.volumesPreference = u''
-  #   self.assertEqual( [u'bd', u'ir', u'illiad'], itemInstance.determineFlow() )
-  #   ## no-isbn, long, no-volumes
-  #   itemInstance = Item.Item()
-  #   itemInstance.timePreference = u'long'
-  #   self.assertEqual( [u'bd', u'illiad'], itemInstance.determineFlow() )
-  #   ## no-isbn, quick, no-volumes
-  #   itemInstance = Item.Item()
-  #   itemInstance.timePreference = u'quick'
-  #   itemInstance.itemIsbn = u''
-  #   self.assertEqual( [u'bd', u'illiad'], itemInstance.determineFlow() )
-  #   ## isbn, quick, volume-info
-  #   itemInstance = Item.Item()
-  #   itemInstance.timePreference = u'quick'
-  #   itemInstance.itemIsbn = u'1234'
-  #   itemInstance.volumesPreference = u'some text'
-  #   self.assertEqual( [u'illiad'], itemInstance.determineFlow() )
-
-
   def testUpdateHistoryWithStart(self):
 
     from easyborrow_controller_code.classes import UtilityCode
@@ -278,12 +213,9 @@ class ItemTest(unittest.TestCase):
 
     sql = 'TODO - add test env var'
     resultInfo = utCdInstance.connectExecuteSelect(sql) # [ [fieldname01, fieldname02], ( (row01field01_value, row01field02_value), (row02field01_value, row02field02_value) ) ]
-#   print ' -- resultInfo: %s -- ' % (resultInfo,)
 
     fieldNameList = resultInfo[0]
     allRowsTuple = resultInfo[1] # all rows
-#   print ' -- allRowsTuple: %s -- ' % (allRowsTuple,)
-#   print ' -- allRowsTuple[0]: %s -- ' % (allRowsTuple[0],)
 
     rowTuple = allRowsTuple[0] # first row
 
@@ -306,7 +238,6 @@ if __name__ == "__main__":
   directory_list = full_directory_path.split('/')
   last_element_string = directory_list[-2] + '/' + directory_list[-1]
   enclosing_directory = full_directory_path.replace( '/' + last_element_string, '' ) # strip off the slash plus the current directory
-  # print '\n- enclosing_directory is: %s' % enclosing_directory
   sys.path.append( enclosing_directory )
   ## ok, rest of imports
   from easyborrow_controller_code import settings
