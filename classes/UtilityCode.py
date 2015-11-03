@@ -18,10 +18,6 @@ class UtilityCode( object ):
 
     try:
 
-      # print '\n- message is: %s' % message
-      # print '\n- message_importance is: %s' % message_importance
-      # print '\n- identifier is: %s' % identifier
-
       import urllib, urllib2
       import Prefs
 
@@ -36,11 +32,8 @@ class UtilityCode( object ):
       else:
         pass # there definitely are many other conditions that will get us here -- but the whole point is not to log everything.
 
-      # print '\n- update_log_flag is: %s' % update_log_flag
-      # print '\n- url is: %s' % prefsInstance.LOG_URL
       if update_log_flag == 'yes':
         values = { 'message':message, 'identifier':identifier, 'key':prefsInstance.LOG_KEY }
-        # print '\n- values is: %s' % values
         data = urllib.urlencode(values)
         request = urllib2.Request(prefsInstance.LOG_URL, data)
         response = urllib2.urlopen(request)
@@ -52,16 +45,6 @@ class UtilityCode( object ):
 
     # end def updateLog()
 
-
-
-  # def obtainDate(self):
-  #   import time
-  #   if( len(self.timeToFormat) == 0):
-  #     theTime = time.localtime()
-  #   else:
-  #     theTime = self.timeToFormat
-  #   formattedTime = time.strftime("%a %b %d %H:%M:%S %Z %Y", theTime)
-  #   return formattedTime
 
 
 
@@ -88,7 +71,6 @@ class UtilityCode( object ):
         cursorObject.close()
         connectionObject.close()
 
-  #     returnVal = "success"
         returnVal = recordId  # 2012-10-04: this doesn't seem to work, thus always generating a returnVal of 'failure', which doesn't matter since it's not used.
 
       except Exception, e:
@@ -115,7 +97,6 @@ class UtilityCode( object ):
     cursorObject.execute(sql)
 
     dataTuple = cursorObject.fetchall()
-#   print " -- dataTuple: %s -- " % (dataTuple,)
     fields = cursorObject.description
 
     if( dataTuple == () ):
@@ -125,8 +106,6 @@ class UtilityCode( object ):
       fieldList = []
       for elementInfo in fields:
         fieldList.append(elementInfo[0])
-
-#   print '%s' % (fieldList)
 
     resultInfo = [fieldList, dataTuple] # [ [fieldname01, fieldname02], ( (row01field01_value, row01field02_value), (row02field01_value, row02field02_value) ) ]
 
@@ -710,8 +689,6 @@ The easyBorrow automated borrowing encountered a problem requesting via Illiad t
     ## message ##
 
     self.updateLog( message='- in controller.uc.sendEmail(); preparing email; currentlyActiveService is: %s; requestSuccessStatus is: %s' % (itemInstance.currentlyActiveService, itemInstance.requestSuccessStatus), message_importance='low', identifier=eb_request_number )
-    # self.updateLog( message='- currentlyActiveService is: ' + itemInstance.currentlyActiveService, message_importance='low', identifier=eb_request_number )
-    # self.updateLog(  message='- requestSuccessStatus is: ' + itemInstance.requestSuccessStatus, message_importance='low', identifier=eb_request_number )
 
     if ( itemInstance.currentlyActiveService == 'inRhode' ):
       self.updateLog( message="- in controller.uc.sendEmail(); sendMail_if-activeService; in 'inRhode'", message_importance='low', identifier=eb_request_number )
@@ -821,97 +798,6 @@ The easyBorrow automated borrowing encountered a problem requesting via Illiad t
     return returnValue
 
     # end function sendEmail
-
-
-
-#   def sendSecondEmail(self, itemInstance, eb_request_number):
-#
-#     ## setup ##
-#
-#     import smtplib
-#     import time
-#
-#     smtpServer = "mail-relay.brown.edu"
-#     secondMailSession = smtplib.SMTP(smtpServer)
-#
-#     ## header info ##
-#
-#     headerTo = "To: %s" % (itemInstance.patronEmail)
-#     headerFrom = "From: brown_library_easyborrow_system"
-#     headerReplyTo = 'Reply-To: interlibrary_loan@brown.edu'
-#     headerSubject = "Subject: Update on your 'easyBorrow' request"
-#
-#     headerInfo = headerTo + "\n" + headerFrom + "\n" + headerReplyTo + "\n" + headerSubject
-#
-#     ## message ##
-#
-# #   self.updateLog(  message='- currentlyActiveService is: ' + itemInstance.currentlyActiveService )
-# #   self.updateLog(  message='- requestSuccessStatus is: ' + itemInstance.requestSuccessStatus )
-#
-#     message = '''
-# Greetings %s %s,
-#
-# We are in the process of ordering the title '%s' for you from our 'Illiad' borrowing system. You'll be notified when it arrives.
-#
-# Since you did not have a Brown Illiad account, we created one for you. In a day or two, you will receive another about how you can access that account should you ever want to.
-#
-# Some useful information for your records:
-#
-# - Requested title: '%s'
-# - Your 'easyBorrow' reference number: '%s'
-# - Ordered from service: 'Illiad'
-# - Notification of arrival will be sent to email address: '%s'
-#
-# If you have any questions, contact the Library's Interlibrary Loan office at interlibrary_loan@brown.edu or call 863-2169.
-#
-#       ''' % ( itemInstance.firstname, itemInstance.lastname, itemInstance.itemTitle, itemInstance.itemTitle, itemInstance.itemDbId, itemInstance.patronEmail )
-#
-#     self.updateLog("- in illiad new_user if-statement; *patron* message composed")
-# #   self.updateLog(message)
-#
-#     ## complete message ##
-#
-#     fullMessage = headerInfo + "\n" + message
-#
-#     ## non-display info -- NOTE: this really controls who it goes to, not the 'To:' info above. ##
-#
-#     sender = ADMIN_EMAIL
-#     recipientList = [itemInstance.patronEmail]
-#
-#     ## try the send ##
-#
-#     returnValue = "init"
-#     try:
-#       self.updateLog(  message='- email attempt starting' )
-#       smtpResult = secondMailSession.sendmail(sender, recipientList, fullMessage)
-#       self.updateLog('- email sent successfully')
-#     except:
-#       secondMailSession.quit()
-#       self.updateLog(  message='- Attempt to send email failed with errors' )
-#       self.updateLog(  message='- The errors: %s' % (smtpResult,) )
-#       try:
-#         time.sleep(5) # 5 seconds of peace to recharge karma
-#         self.updateLog(  message='- second email attempt starting' )
-#         secondMailSession2 = smtplib.SMTP(smtpServer)
-#         smtpResult2 = secondMailSession2.sendmail(sender, recipientList, fullMessage)
-#         self.updateLog('- second email sent successfully')
-#       except:
-#         secondMailSession2.quit()
-#         self.updateLog(  message='- Attempt to send second email failed with errors' )
-#         self.updateLog(  message='- The errors: first, <<%s>>; and second, <<%s>>.' % (smtpResult, smtpResult2) )
-#         returnValue = 'failure'
-#       else:
-#         secondMailSession2.quit()
-#         returnValue = "success"
-#         self.updateLog('- second mail session quit normally')
-#     else:
-#       secondMailSession.quit()
-#       returnValue = "success"
-#       self.updateLog('- mailsession2 quit normally')
-#
-#     return returnValue
-#
-#     # end function sendSecondEmail
 
 
 
