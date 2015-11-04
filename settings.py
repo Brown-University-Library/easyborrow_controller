@@ -26,13 +26,13 @@ OPENURL_PARSER_URL = unicode( os.environ['ezbCTL__OPENURL_PARSER_URL'] )
 
 
 ## illiad settings
-ILLIAD_HTTP_S_SEGMENT = settings_local.ILLIAD_HTTP_S_SEGMENT  # u-string; u'http' or u'https'
-ILLIAD_TEMP_STORAGE_URL = settings_local.ILLIAD_TEMP_STORAGE_URL  # string; url used only for testing
-ILLIAD_TEMP_STORAGE_AUTHORIZATION_KEY = settings_local.ILLIAD_TEMP_STORAGE_AUTHORIZATION_KEY  # string; key used only for testing
-ILLIAD_REMOTEAUTH_KEY = settings_local.ILLIAD_REMOTEAUTH_KEY  # u-string; key for illiad-remote-authentication
-ILLIAD_REQUEST_URL = settings_local.ILLIAD_REQUEST_URL  # string
-ILLIAD_REQUEST_AUTHORIZATION_KEY = settings_local.ILLIAD_REQUEST_AUTHORIZATION_KEY  # string
-ILLIAD_NEWUSER_WEBSERVICE_URL = settings_local.ILLIAD_NEWUSER_WEBSERVICE_URL  # string
+# ILLIAD_HTTP_S_SEGMENT = settings_local.ILLIAD_HTTP_S_SEGMENT  # u-string; u'http' or u'https'
+# ILLIAD_TEMP_STORAGE_URL = settings_local.ILLIAD_TEMP_STORAGE_URL  # string; url used only for testing
+# ILLIAD_TEMP_STORAGE_AUTHORIZATION_KEY = settings_local.ILLIAD_TEMP_STORAGE_AUTHORIZATION_KEY  # string; key used only for testing
+# ILLIAD_REMOTEAUTH_KEY = settings_local.ILLIAD_REMOTEAUTH_KEY  # u-string; key for illiad-remote-authentication
+# ILLIAD_REQUEST_URL = settings_local.ILLIAD_REQUEST_URL  # string
+# ILLIAD_REQUEST_AUTHORIZATION_KEY = settings_local.ILLIAD_REQUEST_AUTHORIZATION_KEY  # string
+# ILLIAD_NEWUSER_WEBSERVICE_URL = settings_local.ILLIAD_NEWUSER_WEBSERVICE_URL  # string
 #
 ILLIAD_API_URL = unicode( os.environ['ezbCTL__ILLIAD_API_URL'] )
 ILLIAD_API_KEY = unicode( os.environ['ezbCTL__ILLIAD_API_KEY'] )
