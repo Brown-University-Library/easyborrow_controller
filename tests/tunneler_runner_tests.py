@@ -202,7 +202,6 @@ class BDRunnerTest(unittest.TestCase):
 
 
 if __name__ == "__main__":
-  # from easyborrow_project_local_settings.eb_controller_local_settings import settings_local as controller_settings
   from easyborrow_controller_code.classes import UtilityCode
   from easyborrow_controller_code.classes.tunneler_runners import BD_Runner
   unittest.main()

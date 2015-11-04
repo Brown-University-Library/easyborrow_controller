@@ -8,7 +8,6 @@ from __future__ import unicode_literals
 """
 
 import os
-# from easyborrow_project_local_settings.eb_controller_local_settings import settings_local  # TODO: remove this once all settings are loaded from env vars
 
 
 ## general settings
