@@ -4,7 +4,8 @@ import json, os, sys, urllib
 from xml.dom import minidom
 #
 from easyborrow_controller_code import settings
-from easyborrow_controller_code.classes import Prefs, UtilityCode
+# from easyborrow_controller_code.classes import Prefs, UtilityCode
+from easyborrow_controller_code.classes import UtilityCode
 from easyborrow_controller_code.classes.web_logger import WebLogger
 from inrhode_tunneler.inrhode_controller import InRhodeController
 
@@ -104,7 +105,7 @@ class Item( object ):
 
     try:
 
-      prefs_instance = Prefs.Prefs()
+      # prefs_instance = Prefs.Prefs()
 
       dataDict = {}
       dataDict['patron_info'] = '''%s''' % (patronApiInfo,)

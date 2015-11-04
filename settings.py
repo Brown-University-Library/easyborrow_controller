@@ -2,9 +2,8 @@
 
 from __future__ import unicode_literals
 """
-- Settings file for project.
-- Part of python easyBorrow controller code.
-- Note: existing Prefs.py file/class and PrivatePrefs.py file/class will be moved here.
+- Settings file for easyBorrow controller code.
+- Some other code still directly accesses env var settings.
 """
 
 import os
@@ -17,7 +16,6 @@ LOGENTRY_MINIMUM_IMPORTANCE_LEVEL = unicode( os.environ['ezbCTL__WEBLOGENTRY_MIN
 MAIL_APPARENT_SENDER = unicode( os.environ['ezbCTL__MAIL_APPARENT_SENDER'] )  # this will appear as the sender to the end-user
 MAIL_SENDER = unicode( os.environ['ezbCTL__MAIL_SENDER'] )  # true sender; won't appear to the end-user
 MAIL_SMTP_SERVER = unicode( os.environ['ezbCTL__MAIL_SMTP_SERVER'] )
-
 PATRON_API_URL_ROOT = unicode( os.environ['ezbCTL__PATRON_API_URL_ROOT'] )
 
 
