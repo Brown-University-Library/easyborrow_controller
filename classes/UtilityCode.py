@@ -18,8 +18,6 @@ class UtilityCode( object ):
     """ Older web-db logging code. TODO: replace with classes.weblogger.WebLogger() calls. """
     try:
       import urllib, urllib2
-      # import Prefs
-      # prefsInstance = Prefs.Prefs()
       update_log_flag = 'init'
       if message_importance == 'high':
         update_log_flag = 'yes'
@@ -37,40 +35,6 @@ class UtilityCode( object ):
     except Exception, e:
       print '- in UC.updateLog; exception is: %s' % repr(e)
     # end def updateLog()
-
-
-  # def updateLog( self, message, message_importance, identifier='' ):
-
-  #   try:
-
-  #     import urllib, urllib2
-  #     import Prefs
-
-  #     prefsInstance = Prefs.Prefs()
-
-  #     update_log_flag = 'init'
-
-  #     if message_importance == 'high':
-  #       update_log_flag = 'yes'
-  #     elif (message_importance == 'low' and prefsInstance.LOGENTRY_MINIMUM_IMPORTANCE_LEVEL == 'low' ):
-  #       update_log_flag = 'yes'
-  #     else:
-  #       pass # there definitely are many other conditions that will get us here -- but the whole point is not to log everything.
-
-  #     if update_log_flag == 'yes':
-  #       values = { 'message':message, 'identifier':identifier, 'key':prefsInstance.LOG_KEY }
-  #       data = urllib.urlencode(values)
-  #       request = urllib2.Request(prefsInstance.LOG_URL, data)
-  #       response = urllib2.urlopen(request)
-  #       returned_data = response.read()
-  #       return returned_data
-
-  #   except Exception, e:
-  #     print '- in UC.updateLog; exception is: %s' % repr(e)
-
-  #   # end def updateLog()
-
-
 
 
   def connectExecute(self, sql):
