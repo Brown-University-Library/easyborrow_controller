@@ -21,6 +21,13 @@ MAIL_SMTP_SERVER = unicode( os.environ['ezbCTL__MAIL_SMTP_SERVER'] )
 PATRON_API_URL_ROOT = unicode( os.environ['ezbCTL__PATRON_API_URL_ROOT'] )
 
 
+## db
+DB_HOST = unicode( os.environ[u'ezbCTL__DB_HOST'] )
+DB_PORT = int( unicode(os.environ[u'ezbCTL__DB_PORT']) )
+DB_USERNAME = unicode( os.environ[u'ezbCTL__DB_USERNAME'] )
+DB_PASSWORD = unicode( os.environ[u'ezbCTL__DB_PASSWORD'] )
+
+
 ## borrowdirect web-service settings
 ## most bd-api settings have been replaced by env var settings accessed by classes.tunneler_runners.BD_ApiRunner() -- TODO, eventually move those here
 OPENURL_PARSER_URL = unicode( os.environ['ezbCTL__OPENURL_PARSER_URL'] )
