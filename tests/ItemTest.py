@@ -4,6 +4,7 @@
 """
 
 import os, sys, unittest
+from easyborrow_controller_code import settings
 
 
 
@@ -68,16 +69,26 @@ class ItemTest(unittest.TestCase):
 
 
   def testGrabPatronApiInfo(self):
-
-    from easyborrow_controller_code.classes import Prefs
-    prefsInstance = Prefs.Prefs()
     itemInstance = Item.Item()
     needleText = 'TODO - add test env-var'
-    haystackText = itemInstance.grabPatronApiInfo(prefsInstance.patron_id)
-
+    haystackText = itemInstance.grabPatronApiInfo( settings.TEST_PATRON_ID )
     expected = True
     result = haystackText.find(needleText) > -1
     self.assertEqual(expected, result, "result is: " + str(result))
+
+
+
+  # def testGrabPatronApiInfo(self):
+
+  #   from easyborrow_controller_code.classes import Prefs
+  #   prefsInstance = Prefs.Prefs()
+  #   itemInstance = Item.Item()
+  #   needleText = 'TODO - add test env-var'
+  #   haystackText = itemInstance.grabPatronApiInfo(prefsInstance.patron_id)
+
+  #   expected = True
+  #   result = haystackText.find(needleText) > -1
+  #   self.assertEqual(expected, result, "result is: " + str(result))
 
 
 

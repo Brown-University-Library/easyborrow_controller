@@ -38,4 +38,5 @@ ILLIAD_API_URL = unicode( os.environ['ezbCTL__ILLIAD_API_URL'] )
 ILLIAD_API_KEY = unicode( os.environ['ezbCTL__ILLIAD_API_KEY'] )
 
 
-## tests -- TODO
+## tests
+TEST_PATRON_ID = unicode( os.environ['ezbCTL_TEST__PATRON_ID'] )
