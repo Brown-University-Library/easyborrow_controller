@@ -61,71 +61,59 @@ class UtilityCode( object ):
     # end def connectExecute()
 
 
-  # def connectExecute(self, sql):
-
-  #   try:
-
-  #     # I think this environ thing doesn't really work; that I fixed it externally.
-  #     import os
-  #     os.environ["LD_LIBRARY_PATH"] = unicode( os.environ[u'ezbCTL__MYSQL_DIRECTORY_PATH'] )
-
-  #     import MySQLdb
-  #     import Prefs
-  #     prefsInstance = Prefs.Prefs()
-  #     DB_NAME = unicode( os.environ[u'ezbCTL__DB_NAME'] )
-
-  #     try:
-  #       connectionObject = MySQLdb.connect(host=prefsInstance.db_host, port=prefsInstance.db_port, user=prefsInstance.db_username, passwd=prefsInstance.db_password, db=DB_NAME)
-  #       cursorObject = connectionObject.cursor()
-
-  #       cursorObject.execute(sql)
-  #       recordId = int( cursorObject.insert_id() )
-
-  #       cursorObject.close()
-  #       connectionObject.close()
-
-  #       returnVal = recordId  # 2012-10-04: this doesn't seem to work, thus always generating a returnVal of 'failure', which doesn't matter since it's not used.
-
-  #     except Exception, e:
-  #       returnVal = "failure"
-
-  #     return returnVal
-
-  #   except Exception, e:
-  #     self.updateLog( message=u'- in controller.uc.connectExecute(); exception is: %s' % repr(e).decode(u'utf-8', u'replace'), message_importance=u'high', identifier=u'unavailable' )
-
-
-
   def connectExecuteSelect(self, sql):
-
+    """ Older db-access code. TODO: replace with classes.db_handler.Db_Handler() calls. """
     import os
     import MySQLdb
-    import Prefs
-
-    prefsInstance = Prefs.Prefs()
     DB_NAME = unicode( os.environ[u'ezbCTL__DB_NAME'] )
-
-    connectionObject = MySQLdb.connect(host=prefsInstance.db_host, port=prefsInstance.db_port, user=prefsInstance.db_username, passwd=prefsInstance.db_password, db=DB_NAME)
+    connectionObject = MySQLdb.connect(host=settings.DB_HOST, port=settings.DB_PORT, user=settings.DB_USERNAME, passwd=settings.DB_PASSWORD, db=DB_NAME)
     cursorObject = connectionObject.cursor()
     cursorObject.execute(sql)
-
     dataTuple = cursorObject.fetchall()
     fields = cursorObject.description
-
     if( dataTuple == () ):
       return None
-
     else:
       fieldList = []
       for elementInfo in fields:
         fieldList.append(elementInfo[0])
-
     resultInfo = [fieldList, dataTuple] # [ [fieldname01, fieldname02], ( (row01field01_value, row01field02_value), (row02field01_value, row02field02_value) ) ]
-
     cursorObject.close()
     connectionObject.close()
-
     return resultInfo
+    # end def connectExecuteSelect()
+
+
+  # def connectExecuteSelect(self, sql):
+
+  #   import os
+  #   import MySQLdb
+  #   import Prefs
+
+  #   prefsInstance = Prefs.Prefs()
+  #   DB_NAME = unicode( os.environ[u'ezbCTL__DB_NAME'] )
+
+  #   connectionObject = MySQLdb.connect(host=prefsInstance.db_host, port=prefsInstance.db_port, user=prefsInstance.db_username, passwd=prefsInstance.db_password, db=DB_NAME)
+  #   cursorObject = connectionObject.cursor()
+  #   cursorObject.execute(sql)
+
+  #   dataTuple = cursorObject.fetchall()
+  #   fields = cursorObject.description
+
+  #   if( dataTuple == () ):
+  #     return None
+
+  #   else:
+  #     fieldList = []
+  #     for elementInfo in fields:
+  #       fieldList.append(elementInfo[0])
+
+  #   resultInfo = [fieldList, dataTuple] # [ [fieldname01, fieldname02], ( (row01field01_value, row01field02_value), (row02field01_value, row02field02_value) ) ]
+
+  #   cursorObject.close()
+  #   connectionObject.close()
+
+  #   return resultInfo
 
 
 
