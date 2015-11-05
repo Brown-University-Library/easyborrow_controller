@@ -84,39 +84,6 @@ class UtilityCode( object ):
     # end def connectExecuteSelect()
 
 
-  # def connectExecuteSelect(self, sql):
-
-  #   import os
-  #   import MySQLdb
-  #   import Prefs
-
-  #   prefsInstance = Prefs.Prefs()
-  #   DB_NAME = unicode( os.environ[u'ezbCTL__DB_NAME'] )
-
-  #   connectionObject = MySQLdb.connect(host=prefsInstance.db_host, port=prefsInstance.db_port, user=prefsInstance.db_username, passwd=prefsInstance.db_password, db=DB_NAME)
-  #   cursorObject = connectionObject.cursor()
-  #   cursorObject.execute(sql)
-
-  #   dataTuple = cursorObject.fetchall()
-  #   fields = cursorObject.description
-
-  #   if( dataTuple == () ):
-  #     return None
-
-  #   else:
-  #     fieldList = []
-  #     for elementInfo in fields:
-  #       fieldList.append(elementInfo[0])
-
-  #   resultInfo = [fieldList, dataTuple] # [ [fieldname01, fieldname02], ( (row01field01_value, row01field02_value), (row02field01_value, row02field02_value) ) ]
-
-  #   cursorObject.close()
-  #   connectionObject.close()
-
-  #   return resultInfo
-
-
-
   def prepFirstEmailHeader( self, itemInstance ):
     '''
     - Called by: UtilityCode.py->UtilityCode.sendEmail()
