@@ -30,7 +30,7 @@ class UtilityCode( object ):
       if update_log_flag == 'yes':
         values = { 'message':message, 'identifier':identifier, 'key':settings.LOG_KEY }
         data = urllib.urlencode(values)
-        request = urllib2.Request(prefsInstance.LOG_URL, data)
+        request = urllib2.Request(settings.LOG_URL, data)
         response = urllib2.urlopen(request)
         returned_data = response.read()
         return returned_data
