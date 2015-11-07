@@ -20,14 +20,24 @@ from easyborrow_controller_code.classes.web_logger import WebLogger
 
 
 ## set up file logger
-LOG_PATH = unicode( os.environ[u'ezbCTL__LOG_PATH'] )
-LOG_LEVEL = unicode( os.environ[u'ezbCTL__LOG_LEVEL'] )
+LOG_PATH = settings.LOG_PATH
+LOG_LEVEL = settings.LOG_LEVEL
 level_dct = { 'DEBUG': logging.DEBUG, 'INFO': logging.INFO }
 logging.basicConfig(
     filename=LOG_PATH, level=level_dct[LOG_LEVEL],
     format=u'[%(asctime)s] %(levelname)s [%(module)s-%(funcName)s()::%(lineno)d] %(message)s', datefmt=u'%d/%b/%Y %H:%M:%S' )
 logger = logging.getLogger(__name__)
 logger.info( u'controller log started' )
+
+# ## set up file logger
+# LOG_PATH = unicode( os.environ[u'ezbCTL__LOG_PATH'] )
+# LOG_LEVEL = unicode( os.environ[u'ezbCTL__LOG_LEVEL'] )
+# level_dct = { 'DEBUG': logging.DEBUG, 'INFO': logging.INFO }
+# logging.basicConfig(
+#     filename=LOG_PATH, level=level_dct[LOG_LEVEL],
+#     format=u'[%(asctime)s] %(levelname)s [%(module)s-%(funcName)s()::%(lineno)d] %(message)s', datefmt=u'%d/%b/%Y %H:%M:%S' )
+# logger = logging.getLogger(__name__)
+# logger.info( u'controller log started' )
 
 
 class Controller( object ):

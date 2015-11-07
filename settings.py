@@ -9,12 +9,19 @@ from __future__ import unicode_literals
 import os
 
 
-## general settings
+## file-log settings
+LOG_PATH = unicode( os.environ['ezbCTL__LOG_PATH'] )
+LOG_LEVEL = unicode( os.environ['ezbCTL__LOG_LEVEL'] )
+
+
+## web-log settings
 LOG_URL = unicode( os.environ['ezbCTL__WEBLOG_URL'] )  # url used to web-log various parts of easyBorrow apps
 LOG_KEY = unicode( os.environ['ezbCTL__WEBLOG_KEY'] )
 LOGENTRY_MINIMUM_IMPORTANCE_LEVEL = unicode( os.environ['ezbCTL__WEBLOGENTRY_MINIMUM_IMPORTANCE_LEVEL'] ) # 'debug', etc.
 OLD_WEBLOG_LEVEL = unicode( os.environ['ezbCTL__LOGENTRY_MINIMUM_IMPORTANCE_LEVEL'] ) # 'low' or 'high'
 
+
+## general settings
 MAIL_APPARENT_SENDER = unicode( os.environ['ezbCTL__MAIL_APPARENT_SENDER'] )  # this will appear as the sender to the end-user
 MAIL_SENDER = unicode( os.environ['ezbCTL__MAIL_SENDER'] )  # true sender; won't appear to the end-user
 MAIL_SMTP_SERVER = unicode( os.environ['ezbCTL__MAIL_SMTP_SERVER'] )
