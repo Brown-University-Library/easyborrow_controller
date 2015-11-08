@@ -35,6 +35,10 @@ DB_USERNAME = unicode( os.environ[u'ezbCTL__DB_USERNAME'] )
 DB_PASSWORD = unicode( os.environ[u'ezbCTL__DB_PASSWORD'] )
 
 
+## controller sql
+CONTROLLER_SELECT_SQL = unicode( os.environ[u'ezbCTL__SELECT_SQL'] )
+
+
 ## borrowdirect web-service settings
 ## most bd-api settings have been replaced by env var settings accessed by classes.tunneler_runners.BD_ApiRunner() -- TODO, eventually move those here
 OPENURL_PARSER_URL = unicode( os.environ['ezbCTL__OPENURL_PARSER_URL'] )
