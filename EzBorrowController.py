@@ -34,7 +34,6 @@ class Controller( object ):
 
     def __init__( self ):
         """ Grabs settings from environment and sets up logger. """
-        # self.SELECT_SQL = unicode( os.environ[u'ezbCTL__SELECT_SQL'] )
         self.SELECT_SQL = settings.CONTROLLER_SELECT_SQL
         self.log_identifier = u'temp--%s--%s' % ( datetime.datetime.now().strftime('%Y-%m-%d-%H:%M:%S'), random.randint(1000,9999) )    # will be ezb-request-number: helps track which log-entries go with which request
 
