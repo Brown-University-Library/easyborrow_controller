@@ -20,18 +20,6 @@ class Db_Handler(object):
         self.logger = logger
         self.logger.debug( u'DB_Handler instantiated' )
 
-    # def __init__(self, logger ):
-    #     """ Sets up basics. """
-    #     self.DB_HOST = unicode( os.environ[u'ezbCTL__DB_HOST'] )
-    #     self.DB_PORT = int( os.environ[u'ezbCTL__DB_PORT'] )
-    #     self.DB_USERNAME = unicode( os.environ[u'ezbCTL__DB_USERNAME'] )
-    #     self.DB_PASSWORD = unicode( os.environ[u'ezbCTL__DB_PASSWORD'] )
-    #     self.DB_NAME = unicode( os.environ[u'ezbCTL__DB_NAME'] )
-    #     self.connection_object = None  # populated during queries
-    #     self.cursor_object = None  # populated during queries
-    #     self.logger = logger
-    #     self.logger.debug( u'DB_Handler instantiated' )
-
     ## main functions ##
 
     def run_select( self, sql ):

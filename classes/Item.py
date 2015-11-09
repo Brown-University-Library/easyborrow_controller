@@ -14,6 +14,14 @@ class Item( object ):
 
 
   def __init__( self, logger ):
+
+    # from settings
+    self.hist_reference_sql = unicode( os.environ[u'ezbCTL__INSERT_HISTORY_REFERENCENUM_SQL_PATTERN'] )
+    self.hist_action_sql = unicode( os.environ[u'ezbCTL__INSERT_HISTORY_FULLACTION_SQL_PATTERN'] )
+    self.hist_note_sql = unicode( os.environ[u'ezbCTL__INSERT_HISTORY_NOTE_SQL_PATTERN'] )
+    self.request_status_sql = unicode( os.environ[u'ezbCTL__UPDATE_REQUEST_STATUS_SQL_PATTERN'] )
+    self.papi_converter_url = unicode( os.environ[u'ezbCTL__PATRON_API_CONVERTER_URL'] )
+
     # from db
     self.itemDbId = ""
     self.itemTitle = ""
@@ -89,13 +97,21 @@ class Item( object ):
 
 
   def updateHistoryReferenceNumber(self, number):
-
-    SQL_PATTERN = unicode( os.environ[u'ezbCTL__INSERT_HISTORY_REFERENCENUM_SQL_PATTERN'] )
-    sql = SQL_PATTERN % ( self.itemDbId, number )
-
+    """ Updates history table with service's transaction number.
+        Called by: TODO, see if this is still used and delete if not. """
+    sql = self.hist_reference_sql % ( self.itemDbId, number )  # inserts the id & number into the sql-pattern
     utCdInstance = UtilityCode.UtilityCode( self.logger )
     utCdInstance.connectExecute(sql)
+    return
 
+
+  # def updateHistoryReferenceNumber(self, number):
+
+  #   SQL_PATTERN = unicode( os.environ[u'ezbCTL__INSERT_HISTORY_REFERENCENUM_SQL_PATTERN'] )
+  #   sql = SQL_PATTERN % ( self.itemDbId, number )
+
+  #   utCdInstance = UtilityCode.UtilityCode( self.logger )
+  #   utCdInstance.connectExecute(sql)
 
 
   def grabConvertedPatronApiInfo( self, patronApiInfo ):
