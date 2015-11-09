@@ -2,6 +2,7 @@
 
 import os, datetime, pprint
 import MySQLdb
+from easyborrow_controller_code import settings
 
 
 class Db_Handler(object):
@@ -9,15 +10,27 @@ class Db_Handler(object):
 
     def __init__(self, logger ):
         """ Sets up basics. """
-        self.DB_HOST = unicode( os.environ[u'ezbCTL__DB_HOST'] )
-        self.DB_PORT = int( os.environ[u'ezbCTL__DB_PORT'] )
-        self.DB_USERNAME = unicode( os.environ[u'ezbCTL__DB_USERNAME'] )
-        self.DB_PASSWORD = unicode( os.environ[u'ezbCTL__DB_PASSWORD'] )
-        self.DB_NAME = unicode( os.environ[u'ezbCTL__DB_NAME'] )
+        self.DB_HOST = settings.DB_HOST
+        self.DB_PORT = settings.DB_PORT
+        self.DB_USERNAME = settings.DB_USERNAME
+        self.DB_PASSWORD = settings.DB_PASSWORD
+        self.DB_NAME = settings.DB_NAME
         self.connection_object = None  # populated during queries
         self.cursor_object = None  # populated during queries
         self.logger = logger
         self.logger.debug( u'DB_Handler instantiated' )
+
+    # def __init__(self, logger ):
+    #     """ Sets up basics. """
+    #     self.DB_HOST = unicode( os.environ[u'ezbCTL__DB_HOST'] )
+    #     self.DB_PORT = int( os.environ[u'ezbCTL__DB_PORT'] )
+    #     self.DB_USERNAME = unicode( os.environ[u'ezbCTL__DB_USERNAME'] )
+    #     self.DB_PASSWORD = unicode( os.environ[u'ezbCTL__DB_PASSWORD'] )
+    #     self.DB_NAME = unicode( os.environ[u'ezbCTL__DB_NAME'] )
+    #     self.connection_object = None  # populated during queries
+    #     self.cursor_object = None  # populated during queries
+    #     self.logger = logger
+    #     self.logger.debug( u'DB_Handler instantiated' )
 
     ## main functions ##
 

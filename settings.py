@@ -33,6 +33,7 @@ DB_HOST = unicode( os.environ[u'ezbCTL__DB_HOST'] )
 DB_PORT = int( unicode(os.environ[u'ezbCTL__DB_PORT']) )
 DB_USERNAME = unicode( os.environ[u'ezbCTL__DB_USERNAME'] )
 DB_PASSWORD = unicode( os.environ[u'ezbCTL__DB_PASSWORD'] )
+DB_NAME = unicode( os.environ[u'ezbCTL__DB_NAME'] )
 
 
 ## controller sql
