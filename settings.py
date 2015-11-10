@@ -26,6 +26,7 @@ MAIL_APPARENT_SENDER = unicode( os.environ['ezbCTL__MAIL_APPARENT_SENDER'] )  # 
 MAIL_SENDER = unicode( os.environ['ezbCTL__MAIL_SENDER'] )  # true sender; won't appear to the end-user
 MAIL_SMTP_SERVER = unicode( os.environ['ezbCTL__MAIL_SMTP_SERVER'] )
 PATRON_API_URL_ROOT = unicode( os.environ['ezbCTL__PATRON_API_URL_ROOT'] )
+PATRON_API_CONVERTER_URL = unicode( os.environ['ezbCTL__PATRON_API_CONVERTER_URL'] )  # used by classes.Item.Item() -- TODO, see if this url is really active and used
 
 
 ## db
@@ -36,8 +37,12 @@ DB_PASSWORD = unicode( os.environ[u'ezbCTL__DB_PASSWORD'] )
 DB_NAME = unicode( os.environ[u'ezbCTL__DB_NAME'] )
 
 
-## controller sql
-CONTROLLER_SELECT_SQL = unicode( os.environ[u'ezbCTL__SELECT_SQL'] )
+## sql patterns (IDs inserted for full queries)
+CONTROLLER_SELECT_SQL = unicode( os.environ[u'ezbCTL__SELECT_SQL'] )  # used by controller
+HISTORY_REFERENCENUMBER_SQL = unicode( os.environ[u'ezbCTL__INSERT_HISTORY_REFERENCENUM_SQL_PATTERN'] )  # used by classes.Item.Item()
+HISTORY_ACTION_SQL = unicode( os.environ[u'ezbCTL__INSERT_HISTORY_FULLACTION_SQL_PATTERN'] )  # used by classes.Item.Item()
+HISTORY_NOTE_SQL = unicode( os.environ[u'ezbCTL__INSERT_HISTORY_NOTE_SQL_PATTERN'] )  # used by classes.Item.Item()
+REQUEST_UPDATE_SQL = unicode( os.environ[u'ezbCTL__UPDATE_REQUEST_STATUS_SQL_PATTERN'] )  # used by classes.Item.Item()
 
 
 ## borrowdirect web-service settings
