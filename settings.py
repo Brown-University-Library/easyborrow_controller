@@ -40,13 +40,16 @@ DB_NAME = unicode( os.environ[u'ezbCTL__DB_NAME'] )
 ## sql patterns (IDs inserted for full queries)
 CONTROLLER_SELECT_SQL = unicode( os.environ[u'ezbCTL__SELECT_SQL'] )  # used by controller
 HISTORY_REFERENCENUMBER_SQL = unicode( os.environ[u'ezbCTL__INSERT_HISTORY_REFERENCENUM_SQL_PATTERN'] )  # used by classes.Item.Item()
-HISTORY_ACTION_SQL = unicode( os.environ[u'ezbCTL__INSERT_HISTORY_FULLACTION_SQL_PATTERN'] )  # used by classes.Item.Item()
+HISTORY_ACTION_SQL = unicode( os.environ[u'ezbCTL__INSERT_HISTORY_FULLACTION_SQL_PATTERN'] )  # used by classes.Item.Item(), classes.tunneler_runners.BD_ApiRunner()
 HISTORY_NOTE_SQL = unicode( os.environ[u'ezbCTL__INSERT_HISTORY_NOTE_SQL_PATTERN'] )  # used by classes.Item.Item()
 REQUEST_UPDATE_SQL = unicode( os.environ[u'ezbCTL__UPDATE_REQUEST_STATUS_SQL_PATTERN'] )  # used by classes.Item.Item()
 
 
 ## borrowdirect web-service settings
 ## most bd-api settings have been replaced by env var settings accessed by classes.tunneler_runners.BD_ApiRunner() -- TODO, eventually move those here
+BDPYWEB_URL = unicode( os.environ['ezbCTL__BDPYWEB_URL'] )
+BDPYWEB_AUTHORIZATION_CODE = unicode( os.environ['ezbCTL__BDPYWEB_AUTHORIZATION_CODE'] )
+BDPYWEB_IDENTITY = unicode( os.environ['ezbCTL__BDPYWEB_IDENTITY'] )
 OPENURL_PARSER_URL = unicode( os.environ['ezbCTL__OPENURL_PARSER_URL'] )
 
 

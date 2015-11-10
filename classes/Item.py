@@ -16,11 +16,6 @@ class Item( object ):
   def __init__( self, logger ):
 
     # from settings
-    # self.hist_reference_sql = unicode( os.environ[u'ezbCTL__INSERT_HISTORY_REFERENCENUM_SQL_PATTERN'] )
-    # self.hist_action_sql = unicode( os.environ[u'ezbCTL__INSERT_HISTORY_FULLACTION_SQL_PATTERN'] )
-    # self.hist_note_sql = unicode( os.environ[u'ezbCTL__INSERT_HISTORY_NOTE_SQL_PATTERN'] )
-    # self.request_status_sql = unicode( os.environ[u'ezbCTL__UPDATE_REQUEST_STATUS_SQL_PATTERN'] )
-    # self.papi_converter_url = unicode( os.environ[u'ezbCTL__PATRON_API_CONVERTER_URL'] )
     self.hist_reference_sql = settings.HISTORY_REFERENCENUMBER_SQL
     self.hist_action_sql = settings.HISTORY_ACTION_SQL
     self.hist_note_sql = settings.HISTORY_NOTE_SQL
@@ -110,15 +105,6 @@ class Item( object ):
     return
 
 
-  # def updateHistoryReferenceNumber(self, number):
-
-  #   SQL_PATTERN = unicode( os.environ[u'ezbCTL__INSERT_HISTORY_REFERENCENUM_SQL_PATTERN'] )
-  #   sql = SQL_PATTERN % ( self.itemDbId, number )
-
-  #   utCdInstance = UtilityCode.UtilityCode( self.logger )
-  #   utCdInstance.connectExecute(sql)
-
-
   def grabConvertedPatronApiInfo( self, patronApiInfo ):
 
     utCdInstance = UtilityCode.UtilityCode( self.logger )
@@ -129,8 +115,6 @@ class Item( object ):
       dataDict['patron_info'] = '''%s''' % (patronApiInfo,)
       encodedString = urllib.urlencode(dataDict)
 
-      # url_root = unicode( os.environ[u'ezbCTL__PATRON_API_CONVERTER_URL'] )
-      # url = u'%s?%s' % ( url_root, encodedString )
       url = u'%s?%s' % ( self.papi_converter_url, encodedString )
 
       data = json.load( urllib.urlopen(url) )
@@ -278,8 +262,6 @@ class Item( object ):
 
   def updateHistoryAction(self, serviceName, action, result, number):
 
-    # SQL_PATTERN = unicode( os.environ[u'ezbCTL__INSERT_HISTORY_FULLACTION_SQL_PATTERN'] )
-    # sql = SQL_PATTERN % ( self.itemDbId, serviceName, action, result, number )
     sql = self.hist_action_sql % ( self.itemDbId, serviceName, action, result, number )
 
     utCdInstance = UtilityCode.UtilityCode( self.logger )
@@ -307,8 +289,6 @@ class Item( object ):
 
   def updateRequestStatus(self, newStatus):
 
-    # SQL_PATTERN = unicode( os.environ[u'self.request_status_sql'] )
-    # sql = SQL_PATTERN % ( newStatus, self.itemDbId )
     sql = self.request_status_sql % ( newStatus, self.itemDbId )
 
     utCdInstance = UtilityCode.UtilityCode( self.logger )
@@ -371,8 +351,6 @@ class Item( object ):
 
   def updateHistoryNote(self, note):
 
-    # SQL_PATTERN = unicode( os.environ[u'ezbCTL__INSERT_HISTORY_NOTE_SQL_PATTERN'] )
-    # sql = SQL_PATTERN % ( self.itemDbId, note )
     sql = self.hist_note_sql % ( self.itemDbId, note )
 
     utCdInstance = UtilityCode.UtilityCode( self.logger )
