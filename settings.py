@@ -21,10 +21,15 @@ LOGENTRY_MINIMUM_IMPORTANCE_LEVEL = unicode( os.environ['ezbCTL__WEBLOGENTRY_MIN
 OLD_WEBLOG_LEVEL = unicode( os.environ['ezbCTL__LOGENTRY_MINIMUM_IMPORTANCE_LEVEL'] ) # 'low' or 'high'
 
 
-## general settings
+## email
 MAIL_APPARENT_SENDER = unicode( os.environ['ezbCTL__MAIL_APPARENT_SENDER'] )  # this will appear as the sender to the end-user
 MAIL_SENDER = unicode( os.environ['ezbCTL__MAIL_SENDER'] )  # true sender; won't appear to the end-user
 MAIL_SMTP_SERVER = unicode( os.environ['ezbCTL__MAIL_SMTP_SERVER'] )
+ADMIN_EMAIL = unicode( os.environ[u'ezbCTL__ADMIN_EMAIL'] )  # listed in classes.UtilityCode.UtilitCode() -- TODO, see if it's really being used
+CIRC_ADMIN_EMAIL = unicode( os.environ[u'ezbCTL__CIRC_ADMIN_EMAIL'] )  # listed in classes.UtilityCode.UtilitCode() -- TODO, see if it's really being used
+
+
+## general settings
 PATRON_API_URL_ROOT = unicode( os.environ['ezbCTL__PATRON_API_URL_ROOT'] )
 PATRON_API_CONVERTER_URL = unicode( os.environ['ezbCTL__PATRON_API_CONVERTER_URL'] )  # used by classes.Item.Item() -- TODO, see if this url is really active and used
 

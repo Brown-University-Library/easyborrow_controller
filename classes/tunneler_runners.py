@@ -14,11 +14,6 @@ class BD_ApiRunner( object ):
             Called by EzBorrowController.py """
         self.logger = logger
         self.log_identifier = log_identifier
-        # self.bdpyweb_defaults = {
-        #     u'url': unicode( os.environ[u'ezbCTL__BDPYWEB_URL'] ),
-        #     u'api_authorization_code': unicode( os.environ[u'ezbCTL__BDPYWEB_AUTHORIZATION_CODE'] ),
-        #     u'api_identity': unicode( os.environ[u'ezbCTL__BDPYWEB_IDENTITY'] )
-        #     }
         self.bdpyweb_defaults = {
             u'url': settings.BDPYWEB_URL,
             u'api_authorization_code': settings.BDPYWEB_AUTHORIZATION_CODE,
@@ -303,17 +298,6 @@ class BD_Runner(object):
             self.history_table_message = u'not_found'
       self.UC_INSTANCE.updateLog( message=u'- in controller.BD_Runner.updateHistoryTable(); history_table_message: %s' % self.history_table_message, message_importance=u'low', identifier=self.EB_REQUEST_NUM )
 
-      ## execute sql
-      # SQL_PATTERN = unicode( os.environ[u'ezbCTL__INSERT_HISTORY_FULLACTION_SQL_PATTERN'] )
-      # sql = SQL_PATTERN % (
-      #   self.EB_REQUEST_NUM.encode('utf-8', 'replace'),
-      #   'borrowdirect',
-      #   'attempt',
-      #   self.history_table_message.encode(u'utf-8', u'replace'),
-      #   self.api_confirmation_code.encode(u'utf-8', u'replace')
-      #   )  # old code was expecting non-unicode string, so I'll give it.
-
-      # SQL_PATTERN = unicode( os.environ[u'ezbCTL__INSERT_HISTORY_FULLACTION_SQL_PATTERN'] )
       sql = self.HISTORY_SQL_PATTERN % (
         self.EB_REQUEST_NUM.encode('utf-8', 'replace'),
         'borrowdirect',

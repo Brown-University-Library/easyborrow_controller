@@ -42,11 +42,12 @@ class UtilityCode( object ):
     try:
       # I think this environ thing doesn't really work; that I fixed it externally.
       import os
-      os.environ["LD_LIBRARY_PATH"] = unicode( os.environ[u'ezbCTL__MYSQL_DIRECTORY_PATH'] )
+      # os.environ["LD_LIBRARY_PATH"] = unicode( os.environ[u'ezbCTL__MYSQL_DIRECTORY_PATH'] )
       import MySQLdb
-      DB_NAME = unicode( os.environ[u'ezbCTL__DB_NAME'] )
+      # DB_NAME = unicode( os.environ[u'ezbCTL__DB_NAME'] )
       try:
-        connectionObject = MySQLdb.connect(host=settings.DB_HOST, port=settings.DB_PORT, user=settings.DB_USERNAME, passwd=settings.DB_PASSWORD, db=DB_NAME)
+        # connectionObject = MySQLdb.connect(host=settings.DB_HOST, port=settings.DB_PORT, user=settings.DB_USERNAME, passwd=settings.DB_PASSWORD, db=DB_NAME)
+        connectionObject = MySQLdb.connect(host=settings.DB_HOST, port=settings.DB_PORT, user=settings.DB_USERNAME, passwd=settings.DB_PASSWORD, db=settings.DB_NAME)
         cursorObject = connectionObject.cursor()
         cursorObject.execute(sql)
         recordId = int( cursorObject.insert_id() )
@@ -65,8 +66,9 @@ class UtilityCode( object ):
     """ Older db-access code. TODO: replace with classes.db_handler.Db_Handler() calls. """
     import os
     import MySQLdb
-    DB_NAME = unicode( os.environ[u'ezbCTL__DB_NAME'] )
-    connectionObject = MySQLdb.connect(host=settings.DB_HOST, port=settings.DB_PORT, user=settings.DB_USERNAME, passwd=settings.DB_PASSWORD, db=DB_NAME)
+    # DB_NAME = unicode( os.environ[u'ezbCTL__DB_NAME'] )
+    # connectionObject = MySQLdb.connect(host=settings.DB_HOST, port=settings.DB_PORT, user=settings.DB_USERNAME, passwd=settings.DB_PASSWORD, db=DB_NAME)
+    connectionObject = MySQLdb.connect(host=settings.DB_HOST, port=settings.DB_PORT, user=settings.DB_USERNAME, passwd=settings.DB_PASSWORD, db=settings.DB_NAME)
     cursorObject = connectionObject.cursor()
     cursorObject.execute(sql)
     dataTuple = cursorObject.fetchall()
@@ -89,8 +91,10 @@ class UtilityCode( object ):
     - Called by: UtilityCode.py->UtilityCode.sendEmail()
     - Purpose: Prepare header info for main email.
     '''
-    ADMIN_EMAIL = unicode( os.environ[u'ezbCTL__ADMIN_EMAIL'] )
-    CIRC_ADMIN_EMAIL = unicode( os.environ[u'ezbCTL__CIRC_ADMIN_EMAIL'] )
+    # ADMIN_EMAIL = unicode( os.environ[u'ezbCTL__ADMIN_EMAIL'] )
+    # CIRC_ADMIN_EMAIL = unicode( os.environ[u'ezbCTL__CIRC_ADMIN_EMAIL'] )
+    ADMIN_EMAIL = settings.ADMIN_EMAIL
+    CIRC_ADMIN_EMAIL = settings.CIRC_ADMIN_EMAIL
 
     if ( itemInstance.currentlyActiveService == 'inRhode' and itemInstance.requestSuccessStatus == 'success' ):
       headerTo = "To: %s" % (itemInstance.patronEmail)
@@ -584,8 +588,10 @@ The easyBorrow automated borrowing encountered a problem requesting via Illiad t
     '''
 
     try:
-      ADMIN_EMAIL = unicode( os.environ[u'ezbCTL__ADMIN_EMAIL'] )
-      CIRC_ADMIN_EMAIL = unicode( os.environ[u'ezbCTL__CIRC_ADMIN_EMAIL'] )
+      # ADMIN_EMAIL = unicode( os.environ[u'ezbCTL__ADMIN_EMAIL'] )
+      # CIRC_ADMIN_EMAIL = unicode( os.environ[u'ezbCTL__CIRC_ADMIN_EMAIL'] )
+      ADMIN_EMAIL = settings.ADMIN_EMAIL
+      CIRC_ADMIN_EMAIL = settings.CIRC_ADMIN_EMAIL
       if( itemInstance.currentlyActiveService == 'inRhode' and itemInstance.requestSuccessStatus == 'success' ):
         recipientList = [itemInstance.patronEmail]
       elif( itemInstance.currentlyActiveService == 'borrowDirect' and itemInstance.requestSuccessStatus == 'success' ):
@@ -643,7 +649,8 @@ The easyBorrow automated borrowing encountered a problem requesting via Illiad t
     import sys
     import time
 
-    ADMIN_EMAIL = unicode( os.environ[u'ezbCTL__ADMIN_EMAIL'] )
+    # ADMIN_EMAIL = unicode( os.environ[u'ezbCTL__ADMIN_EMAIL'] )
+    ADMIN_EMAIL = settings.ADMIN_EMAIL
     smtpServer = "mail-relay.brown.edu"
     mailSession = smtplib.SMTP(smtpServer)
 
