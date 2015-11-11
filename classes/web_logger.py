@@ -2,6 +2,7 @@
 
 import os
 import requests
+from easyborrow_controller_code import settings
 
 
 class WebLogger( object ):
@@ -10,9 +11,12 @@ class WebLogger( object ):
         This enables a request to be easily tracked through a web-admin interface. """
 
     def __init__( self, logger ):
-        self.WEBLOG_URL = unicode( os.environ['ezbCTL__WEBLOG_URL'] )
-        self.WEBLOG_KEY = unicode( os.environ['ezbCTL__WEBLOG_KEY'] )
-        self.WEBLOGENTRY_MINIMUM_IMPORTANCE_LEVEL = unicode( os.environ['ezbCTL__WEBLOGENTRY_MINIMUM_IMPORTANCE_LEVEL'] )
+        # self.WEBLOG_URL = unicode( os.environ['ezbCTL__WEBLOG_URL'] )
+        # self.WEBLOG_KEY = unicode( os.environ['ezbCTL__WEBLOG_KEY'] )
+        # self.WEBLOGENTRY_MINIMUM_IMPORTANCE_LEVEL = unicode( os.environ['ezbCTL__WEBLOGENTRY_MINIMUM_IMPORTANCE_LEVEL'] )
+        self.WEBLOG_URL = settings.WEBLOG_URL
+        self.WEBLOG_KEY = settings.WEBLOG_KEY
+        self.WEBLOG_LEVEL = settings.WEBLOG_LEVEL
         self.logger = logger
 
     def post_message( self, message, identifier, importance ):
@@ -29,7 +33,7 @@ class WebLogger( object ):
             Returns boolean.
             Called by post_message() """
         assessed_importance = False
-        if stated_importance == u'debug' and self.WEBLOGENTRY_MINIMUM_IMPORTANCE_LEVEL == u'debug':
+        if stated_importance == u'debug' and self.WEBLOG_LEVEL == u'debug':
             assessed_importance = True
         elif stated_importance == u'info' or stated_importance == u'error':
             assessed_importance = True
