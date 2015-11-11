@@ -11,9 +11,6 @@ class WebLogger( object ):
         This enables a request to be easily tracked through a web-admin interface. """
 
     def __init__( self, logger ):
-        # self.WEBLOG_URL = unicode( os.environ['ezbCTL__WEBLOG_URL'] )
-        # self.WEBLOG_KEY = unicode( os.environ['ezbCTL__WEBLOG_KEY'] )
-        # self.WEBLOGENTRY_MINIMUM_IMPORTANCE_LEVEL = unicode( os.environ['ezbCTL__WEBLOGENTRY_MINIMUM_IMPORTANCE_LEVEL'] )
         self.WEBLOG_URL = settings.WEBLOG_URL
         self.WEBLOG_KEY = settings.WEBLOG_KEY
         self.WEBLOG_LEVEL = settings.WEBLOG_LEVEL
