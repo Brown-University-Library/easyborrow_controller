@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import unicode_literals
+
 import datetime, json, os, pprint, sys
 import requests
 from easyborrow_controller_code import settings
@@ -65,14 +67,14 @@ def createIlliadUser( eb_request, log_identifier ):
     # analyze result
     json_dict = json.loads( json_string )
     if json_dict['status'] == 'success':
-      return { u'status': u'success' }
+      return { 'status': 'success' }
     else:
-      return { u'status': u'failure', u'message': json_string }
+      return { 'status': 'failure', 'message': json_string }
 
   except:  # reasonable on a 403/Forbidden
-    message = u'- in controller.uc.createIlliadUser(); error detail: %s' % makeErrorString()
+    message = '- in controller.uc.createIlliadUser(); error detail: %s' % makeErrorString()
     updateLog( message, log_identifier, message_importance='high' )
-    return { u'status': u'failure', u'message': message }
+    return { 'status': 'failure', 'message': message }
 
   # end def createIlliadUser()
 
@@ -80,37 +82,37 @@ def createIlliadUser( eb_request, log_identifier ):
 
 def evaluateIlliadSubmissionV2( itemInstance, send_result_dict, log_identifier ):
   try:
-    return_dict = { u'status': u'init' }
+    return_dict = { 'status': 'init' }
     ## new-user check
-    if u'new_user' in send_result_dict:
-      if send_result_dict[u'new_user'] == True:
-        updateLog( u'- in controller.uc.evaluateIlliadSubmissionV2(); Illiad user created...', log_identifier, message_importance='high' )
-        parameterDict = { u'serviceName': u'illiad', u'action': u'create_illiad_user_attempt', u'result': u'success', u'number': u'' }
-        itemInstance.updateHistoryAction( parameterDict[u'serviceName'], parameterDict[u'action'], parameterDict[u'result'], parameterDict[u'number'] )
+    if 'new_user' in send_result_dict:
+      if send_result_dict['new_user'] == True:
+        updateLog( '- in controller.uc.evaluateIlliadSubmissionV2(); Illiad user created...', log_identifier, message_importance='high' )
+        parameterDict = { 'serviceName': 'illiad', 'action': 'create_illiad_user_attempt', 'result': 'success', 'number': '' }
+        itemInstance.updateHistoryAction( parameterDict['serviceName'], parameterDict['action'], parameterDict['result'], parameterDict['number'] )
     ## illiad status check
-    if u'status' in send_result_dict:
+    if 'status' in send_result_dict:
       parameterDict = None  # for history update
-      if send_result_dict[u'status'] == u'submission_successful':
-        itemInstance.illiadAssignedReferenceNumber = send_result_dict[u'transaction_number']  # it should be there
-        parameterDict = { u'serviceName': u'illiad', u'action': u'attempt', u'result': u'Request_Successful', u'number': itemInstance.illiadAssignedReferenceNumber }
-        itemInstance.requestSuccessStatus = u'success'
+      if send_result_dict['status'] == 'submission_successful':
+        itemInstance.illiadAssignedReferenceNumber = send_result_dict['transaction_number']  # it should be there
+        parameterDict = { 'serviceName': 'illiad', 'action': 'attempt', 'result': 'Request_Successful', 'number': itemInstance.illiadAssignedReferenceNumber }
+        itemInstance.requestSuccessStatus = 'success'
         itemInstance.genericAssignedUserEmail = itemInstance.patronEmail
         itemInstance.genericAssignedReferenceNumber = itemInstance.illiadAssignedReferenceNumber
-      elif send_result_dict[u'status'] == u'login_failed_possibly_blocked':
-        itemInstance.requestSuccessStatus = u'login_failed_possibly_blocked'
+      elif send_result_dict['status'] == 'login_failed_possibly_blocked':
+        itemInstance.requestSuccessStatus = 'login_failed_possibly_blocked'
         itemInstance.genericAssignedUserEmail = itemInstance.patronEmail
         patronInfo = itemInstance.grabPatronApiInfo(itemInstance.patronId)
         itemInstance.grabConvertedPatronApiInfo(patronInfo) # grabs converted info and stores it to attributes
       if parameterDict == None:
-        parameterDict = { u'serviceName': u'illiad', u'action': u'attempt', u'result': send_result_dict[u'status'], u'number': u'' }
-      itemInstance.updateHistoryAction( parameterDict[u'serviceName'], parameterDict[u'action'], parameterDict[u'result'], parameterDict[u'number'] )
-      return_dict[u'status'] = u'evaluation_successful'
-    updateLog( u'- in controller.uc.evaluateIlliadSubmissionV2(); return_dict: %s' % return_dict, log_identifier, message_importance='high' )
+        parameterDict = { 'serviceName': 'illiad', 'action': 'attempt', 'result': send_result_dict['status'], 'number': '' }
+      itemInstance.updateHistoryAction( parameterDict['serviceName'], parameterDict['action'], parameterDict['result'], parameterDict['number'] )
+      return_dict['status'] = 'evaluation_successful'
+    updateLog( '- in controller.uc.evaluateIlliadSubmissionV2(); return_dict: %s' % return_dict, log_identifier, message_importance='high' )
     return return_dict
   except:
-    message = u'- in controller.uc.evaluateIlliadSubmissionV2(); error detail: %s' % makeErrorString()
+    message = '- in controller.uc.evaluateIlliadSubmissionV2(); error detail: %s' % makeErrorString()
     updateLog( message, log_identifier, message_importance='high' )
-    return { u'error_message': message }
+    return { 'error_message': message }
 
 
 
@@ -131,16 +133,16 @@ def makeOpenUrlSegment( initial_url, log_identifier ):
       initial_url = unicode( initial_url )
     if not type( log_identifier ) == unicode:
       log_identifier = unicode( log_identifier )
-    updateLog( u'- in controller.uc.makeOpenUrlSegment(); initial_url is: %s' % initial_url, log_identifier )
-    parsed_url = initial_url[ initial_url.find( u'serialssolutions.com/?' ) + 22 : ]  # TODO: change this to use the urlparse library
+    updateLog( '- in controller.uc.makeOpenUrlSegment(); initial_url is: %s' % initial_url, log_identifier )
+    parsed_url = initial_url[ initial_url.find( 'serialssolutions.com/?' ) + 22 : ]  # TODO: change this to use the urlparse library
     # parsed_url = initial_url[ initial_url.find( 'sid' ) : ]
-    parsed_url = parsed_url.replace( u'genre=unknown', u'genre=book' )
-    updateLog( u'- in controller.uc.makeOpenUrlSegment(); parsed_url is: %s' % parsed_url, log_identifier )
-    return { u'openurl_segment': parsed_url }
+    parsed_url = parsed_url.replace( 'genre=unknown', 'genre=book' )
+    updateLog( '- in controller.uc.makeOpenUrlSegment(); parsed_url is: %s' % parsed_url, log_identifier )
+    return { 'openurl_segment': parsed_url }
   except:
-    message = u'- in controller.uc.updateLog(); error detail: %s' % makeErrorString()
-    updateLog( message, log_identifier, message_importance=u'high' )
-    return { u'status': u'failure', u'message': message }
+    message = '- in controller.uc.updateLog(); error detail: %s' % makeErrorString()
+    updateLog( message, log_identifier, message_importance='high' )
+    return { 'status': 'failure', 'message': message }
 
 
 
@@ -166,14 +168,14 @@ def makeEbRequest( itemInstance, log_identifier ):
     eb_request.request_current_tunneler_service = itemInstance.currentlyActiveService
     eb_request.request_current_tunneler_status = itemInstance.requestSuccessStatus
     #
-    updateLog( u'- in controller.uc.makeEbRequest(); eb_request.__dict__ is: %s' % eb_request.__dict__, log_identifier )
-    return_dict = { u'status': u'success', u'eb_request': eb_request }
-    updateLog( u'- in controller.uc.makeEbRequest(); return_dict is: %s' % return_dict, log_identifier )
+    updateLog( '- in controller.uc.makeEbRequest(); eb_request.__dict__ is: %s' % eb_request.__dict__, log_identifier )
+    return_dict = { 'status': 'success', 'eb_request': eb_request }
+    updateLog( '- in controller.uc.makeEbRequest(); return_dict is: %s' % return_dict, log_identifier )
     return return_dict
   except:
-    message = u'- in controller.uc.updateLog(); error detail: %s' % makeErrorString()
+    message = '- in controller.uc.updateLog(); error detail: %s' % makeErrorString()
     updateLog( message, log_identifier, message_importance='high' )
-    return { u'status': u'failure', u'message': message }
+    return { 'status': 'failure', 'message': message }
   # end def makeEbRequest()
 
 
@@ -185,7 +187,7 @@ def makeErrorString():
   '''
 
   import sys
-  return u'error-type - %s; error-message - %s; line-number - %s' % ( sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2].tb_lineno, )
+  return 'error-type - %s; error-message - %s; line-number - %s' % ( sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2].tb_lineno, )
 
   # end def makeErrorString()
 
@@ -195,42 +197,42 @@ def make_datetime_string():
   """ Returns time-string like 'Wed Oct 23 14:49:38 EDT 2013'. """
   import time
   time_object = time.localtime(); assert type(time_object) == time.struct_time
-  time_string = time.strftime( u'%a %b %d %H:%M:%S %Z %Y', time_object )
+  time_string = time.strftime( '%a %b %d %H:%M:%S %Z %Y', time_object )
   return time_string
 
 
 
 def makeIlliadParametersV2( itemInstance, settings, log_identifier ):
   try:
-    updateLog( u'- in controller.uc.makeIlliadParametersV2(); starting...', log_identifier, message_importance='high' )  # TODO: lower hardcoded message_importance
+    updateLog( '- in controller.uc.makeIlliadParametersV2(); starting...', log_identifier, message_importance='high' )  # TODO: lower hardcoded message_importance
     try:
       patron_info = itemInstance.grabPatronApiInfo( itemInstance.patronId )
       itemInstance.grabConvertedPatronApiInfo( patron_info) # grabs converted info and stores it to attributes
-      updateLog( u'- in controller.uc.makeIlliadParametersV2(); patron-api work done; ii.patronId is: %s; ii.patronEmail is: %s' % (itemInstance.patronId, itemInstance.patronEmail), log_identifier, message_importance='low' )
+      updateLog( '- in controller.uc.makeIlliadParametersV2(); patron-api work done; ii.patronId is: %s; ii.patronEmail is: %s' % (itemInstance.patronId, itemInstance.patronEmail), log_identifier, message_importance='low' )
     except Exception, e:
-      updateLog( u'- in controller.uc.makeIlliadParametersV2(); patron-api work failed; exception is: %s' % e, log_identifier, message_importance='high' )
+      updateLog( '- in controller.uc.makeIlliadParametersV2(); patron-api work failed; exception is: %s' % e, log_identifier, message_importance='high' )
     parameter_dict = {
-      u'auth_key': settings.ILLIAD_API_KEY,
-      u'request_id': log_identifier,
-      u'first_name': itemInstance.firstname,  # used for new_user registration
-      u'last_name': itemInstance.lastname,  # used for new_user registration
-      u'username': itemInstance.eppn,  # for login _and_ new_user registration
-      u'address': '',  # used for new_user registration
-      u'email': itemInstance.patronEmail,  # used for new_user registration
-      u'oclc_number': itemInstance.oclcNumber,
-      u'openurl': makeOpenUrlSegment( itemInstance.sfxurl, log_identifier )['openurl_segment'],
-      u'patron_barcode': itemInstance.patronBarcode,
-      u'patron_department': itemInstance.patron_api_dept,  # used for new_user registration
-      u'patron_status': itemInstance.patronStatus,  # used for new_user registration
-      u'phone': '',  # used for new_user registration
-      u'volumes': '',  # perceived but not handled by dj_ill_submission
+      'auth_key': settings.ILLIAD_API_KEY,
+      'request_id': log_identifier,
+      'first_name': itemInstance.firstname,  # used for new_user registration
+      'last_name': itemInstance.lastname,  # used for new_user registration
+      'username': itemInstance.eppn,  # for login _and_ new_user registration
+      'address': '',  # used for new_user registration
+      'email': itemInstance.patronEmail,  # used for new_user registration
+      'oclc_number': itemInstance.oclcNumber,
+      'openurl': makeOpenUrlSegment( itemInstance.sfxurl, log_identifier )['openurl_segment'],
+      'patron_barcode': itemInstance.patronBarcode,
+      'patron_department': itemInstance.patron_api_dept,  # used for new_user registration
+      'patron_status': itemInstance.patronStatus,  # used for new_user registration
+      'phone': '',  # used for new_user registration
+      'volumes': '',  # perceived but not handled by dj_ill_submission
       }
-    updateLog( u'- in controller.uc.makeIlliadParametersV2(); parameter_dict: %s' % parameter_dict, log_identifier, message_importance='high' )  # TODO: lower hardcoded message_importance
-    return { u'parameter_dict': parameter_dict }
+    updateLog( '- in controller.uc.makeIlliadParametersV2(); parameter_dict: %s' % parameter_dict, log_identifier, message_importance='high' )  # TODO: lower hardcoded message_importance
+    return { 'parameter_dict': parameter_dict }
   except:
-    message = u'- in controller.uc.makeIlliadParametersV2(); error detail: %s' % makeErrorString()
+    message = '- in controller.uc.makeIlliadParametersV2(); error detail: %s' % makeErrorString()
     updateLog( message, log_identifier, message_importance='high' )
-    return { u'error_message': message }
+    return { 'error_message': message }
 
 
 
@@ -248,9 +250,9 @@ def sendEmail( eb_request, log_identifier ):
     updateLog( '- in controller.uc.sendEmail(); result_dict is: %s' % result_dict, log_identifier )
     return result_dict
   except:
-    message = u'- in controller.uc.sendEmail(); error detail: %s' % makeErrorString()
+    message = '- in controller.uc.sendEmail(); error detail: %s' % makeErrorString()
     updateLog( message, log_identifier, message_importance='high' )
-    return { u'status': u'failure', u'message': message }
+    return { 'status': 'failure', 'message': message }
   # end def sendEmail()
 
 
@@ -340,9 +342,9 @@ Once your account issue is cleared up, click on this link to re-request the item
     updateLog( '- in controller.uc.sendEmailIlliadBlocked(); return_dict: %s' % return_dict, log_identifier )
     return return_dict
   except:
-    message = u'- in controller.uc.sendEmailIlliadBlocked(); error detail: %s' % makeErrorString()
+    message = '- in controller.uc.sendEmailIlliadBlocked(); error detail: %s' % makeErrorString()
     updateLog( message, log_identifier, message_importance='high' )
-    return { u'status': u'failure', u'message': message }
+    return { 'status': 'failure', 'message': message }
   # end def sendEmailIlliadBlocked()
 
 
@@ -359,21 +361,21 @@ def submitIlliadRequest( parameter_dict, log_identifier ):
     from easyborrow_controller_code import settings
     import json, urllib, urllib2
 
-    updateLog( u'- in controller.uc.submitIlliadRequest(); parameter_dict is: %s' % parameter_dict, log_identifier, message_importance='high' )
+    updateLog( '- in controller.uc.submitIlliadRequest(); parameter_dict is: %s' % parameter_dict, log_identifier, message_importance='high' )
 
     data = urllib.urlencode( parameter_dict )
     request = urllib2.Request( settings.ILLIAD_REQUEST_URL, data )
     response = urllib2.urlopen( request )
     json_string = response.read()
     json_dict = json.loads( json_string )
-    updateLog( u'- in controller.uc.submitIlliadRequest(); submission result is: %s' % json_dict, log_identifier, message_importance='high' )
+    updateLog( '- in controller.uc.submitIlliadRequest(); submission result is: %s' % json_dict, log_identifier, message_importance='high' )
 
     return json_dict
 
   except:
-    message = u'- in controller.uc.submitIlliadRequest(); error detail: %s' % makeErrorString()
+    message = '- in controller.uc.submitIlliadRequest(); error detail: %s' % makeErrorString()
     # updateLog( message, log_identifier, message_importance='high' )
-    return { u'status': u'failure', u'message': message }
+    return { 'status': 'failure', 'message': message }
 
   # end def submitIlliadRequest()
 
@@ -384,16 +386,16 @@ def submitIlliadRemoteAuthRequestV2( parameter_dict, log_identifier ):
     import json, pprint
     import requests
     url = settings.ILLIAD_API_URL
-    headers = { u'Content-Type': u'application/x-www-form-urlencoded; charset=utf-8' }
+    headers = { 'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8' }
     r = requests.post( url, data=parameter_dict, headers=headers, timeout=60, verify=False )
-    updateLog( u'- in controller.uc.submitIlliadRequestV2(); ws response text: %s' % r.text, log_identifier )
+    updateLog( '- in controller.uc.submitIlliadRequestV2(); ws response text: %s' % r.text, log_identifier )
     return_dict = json.loads( r.text )
-    updateLog( u'- in controller.uc.submitIlliadRequestV2(); return_dict: %s' % return_dict, log_identifier, message_importance=u'high' )  # TODO: remove hardcoded importance
+    updateLog( '- in controller.uc.submitIlliadRequestV2(); return_dict: %s' % return_dict, log_identifier, message_importance='high' )  # TODO: remove hardcoded importance
     return return_dict
   except:
-    message = u'- in controller.uc.submitIlliadRequestV2(); error detail: %s' % makeErrorString()
-    updateLog( message, log_identifier, message_importance=u'high' )
-    return { u'error_message': message }
+    message = '- in controller.uc.submitIlliadRequestV2(); error detail: %s' % makeErrorString()
+    updateLog( message, log_identifier, message_importance='high' )
+    return { 'error_message': message }
   # end def submitIlliadRemoteAuthRequestV2()
 
 
@@ -423,7 +425,7 @@ def updateLog( message, log_identifier, message_importance='low' ):
       return returned_data
 
   except:
-    print u'- in controller.uc.updateLog(); error detail: %s' % makeErrorString()
+    print '- in controller.uc.updateLog(); error detail: %s' % makeErrorString()
 
   # end def updateLog()
 
@@ -433,6 +435,6 @@ def jsonify_db_data( data_dict ):
   """ Returns json string for given tuple of row-dict entries.
       Allows result to be logged easily.
       Called by ezb_controller.py """
-  data_dict[u'created'] = unicode( data_dict[u'created'] )
+  data_dict['created'] = unicode( data_dict['created'] )
   jstring = json.dumps( data_dict, sort_keys=True, indent=2 )
   return jstring

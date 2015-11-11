@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import unicode_literals
-"""
-- Settings file for easyBorrow controller code.
-- Some other code still directly accesses env var settings.
-"""
+
+""" Settings file for easyBorrow controller code. """
 
 import os
 
