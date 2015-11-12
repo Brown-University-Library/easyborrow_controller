@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import unicode_literals
+
 import os, datetime, pprint
 import MySQLdb
 from easyborrow_controller_code import settings
@@ -18,7 +20,7 @@ class Db_Handler(object):
         self.connection_object = None  # populated during queries
         self.cursor_object = None  # populated during queries
         self.logger = logger
-        self.logger.debug( u'DB_Handler instantiated' )
+        self.logger.debug( 'DB_Handler instantiated' )
 
     ## main functions ##
 
@@ -33,7 +35,7 @@ class Db_Handler(object):
                 dict_list = self._unicodify_resultset( dict_list )
             return dict_list
         except Exception as e:
-            self.logger.error( u'error: %s' % unicode(repr(e).decode(u'utf8', u'replace')) )
+            self.logger.error( 'error: %s' % unicode(repr(e).decode('utf8', 'replace')) )
             raise Exception( unicode(repr(e)) )
         finally:
             self._close_db_connection()
@@ -49,7 +51,7 @@ class Db_Handler(object):
             self.cursor_object = self.connection_object.cursor( MySQLdb.cursors.DictCursor )
             return
         except Exception as e:
-            self.logger.error( u'error: %s' % unicode(repr(e).decode(u'utf8', u'replace')) )
+            self.logger.error( 'error: %s' % unicode(repr(e).decode('utf8', 'replace')) )
             raise Exception( unicode(repr(e)) )
 
     def _run_execute( self, sql ):
@@ -58,7 +60,7 @@ class Db_Handler(object):
             Called by run_select() """
         self.cursor_object.execute( sql )
         dict_list = self.cursor_object.fetchall()  # really a tuple of row-dicts
-        self.logger.debug( u'dict_list, ```%s```' % pprint.pformat(dict_list) )
+        self.logger.debug( 'dict_list, ```%s```' % pprint.pformat(dict_list) )
         return dict_list
 
     def _unicodify_resultset( self, dict_list ):
@@ -73,7 +75,7 @@ class Db_Handler(object):
                 result_list.append( new_row_dict )
             return result_list
         except Exception as e:
-            self.logger.error( u'error: %s' % unicode(repr(e).decode(u'utf8', u'replace')) )
+            self.logger.error( 'error: %s' % unicode(repr(e).decode('utf8', 'replace')) )
             raise Exception( unicode(repr(e)) )
 
     def _unicodify_value( self, value ):
@@ -91,9 +93,9 @@ class Db_Handler(object):
         try:
             self.cursor_object.close()
             self.connection_object.close()
-            self.logger.debug( u'db connection closed' )
+            self.logger.debug( 'db connection closed' )
             return
         except Exception as e:
-            self.logger.error( u'error: %s' % unicode(repr(e).decode(u'utf8', u'replace')) )
+            self.logger.error( 'error: %s' % unicode(repr(e).decode('utf8', 'replace')) )
 
   # end class DB_Handler()
