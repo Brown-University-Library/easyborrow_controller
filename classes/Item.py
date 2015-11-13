@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import unicode_literals
+
 import json, os, sys, urllib
 from xml.dom import minidom
 #
@@ -69,8 +71,8 @@ class Item( object ):
 
     # from controller.run_code()
     self.logger = logger
-    self.log_identifier = u''
-    self.logger.debug( u'item-instance instantiated' )
+    self.log_identifier = ''
+    self.logger.debug( 'item-instance instantiated' )
 
 
   def constructPasswordHolderUrl( self ):
@@ -115,7 +117,7 @@ class Item( object ):
       dataDict['patron_info'] = '''%s''' % (patronApiInfo,)
       encodedString = urllib.urlencode(dataDict)
 
-      url = u'%s?%s' % ( self.papi_converter_url, encodedString )
+      url = '%s?%s' % ( self.papi_converter_url, encodedString )
 
       data = json.load( urllib.urlopen(url) )
       utCdInstance.updateLog( message="- in controller.Item.grabConvertedPatronApiInfo(); data is: %s" % data, message_importance='high', identifier='NA' )
@@ -139,7 +141,7 @@ class Item( object ):
           self.patronEmail = 'unknown_email'                                    # otherwise hardcode the unknown status
 
       if( self.patron_api_pcode3 == None ):
-        self.patron_api_pcode3 = u'unknown'
+        self.patron_api_pcode3 = 'unknown'
 
       return data
 
