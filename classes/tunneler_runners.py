@@ -251,7 +251,7 @@ class BD_Runner(object):
     Prepares search string from worldcat url.
     Called by self.prepRequestData()
     '''
-    import requests
+    # import requests
     self.UC_INSTANCE.updateLog( message='- in controller.BD_Runner.makeSearchString(); wc-url to parse: %s' % self.WC_URL, message_importance='low', identifier=self.EB_REQUEST_NUM )
     url = self.OPENURL_PARSER_URL
     payload = { 'db_wc_url': self.WC_URL }

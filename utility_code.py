@@ -43,7 +43,6 @@ def createIlliadUser( eb_request, log_identifier ):
   '''
 
   try:
-    # import urllib, urllib2
 
     # prepare parameters
     parameter_dict = {
@@ -186,7 +185,6 @@ def makeErrorString():
   - Called by: could be any exception block.
   '''
 
-  # import sys
   return 'error-type - %s; error-message - %s; line-number - %s' % ( sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2].tb_lineno, )
 
   # end def makeErrorString()
@@ -195,7 +193,6 @@ def makeErrorString():
 
 def make_datetime_string():
   """ Returns time-string like 'Wed Oct 23 14:49:38 EDT 2013'. """
-  # import time
   time_object = time.localtime(); assert type(time_object) == time.struct_time
   time_string = time.strftime( '%a %b %d %H:%M:%S %Z %Y', time_object )
   return time_string
@@ -262,7 +259,6 @@ def sendEmailActualSend( sender, recipient_list, full_message, log_identifier ):
   - Purpose: actually sends the email.
   - Called by: sendEmail() functions
   '''
-  # import smtplib
   smtp_server = settings.MAIL_SMTP_SERVER
   smtp_result = 'init'
   updateLog( '- in uc.sendEmailActualSend(); starting send', log_identifier )
@@ -358,9 +354,6 @@ def submitIlliadRequest( parameter_dict, log_identifier ):
 
   try:
 
-    # from easyborrow_controller_code import settings
-    # import json, urllib, urllib2
-
     updateLog( '- in controller.uc.submitIlliadRequest(); parameter_dict is: %s' % parameter_dict, log_identifier, message_importance='high' )
 
     data = urllib.urlencode( parameter_dict )
@@ -383,8 +376,6 @@ def submitIlliadRequest( parameter_dict, log_identifier ):
 
 def submitIlliadRemoteAuthRequestV2( parameter_dict, log_identifier ):
   try:
-    # import json, pprint
-    # import requests
     url = settings.ILLIAD_API_URL
     headers = { 'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8' }
     r = requests.post( url, data=parameter_dict, headers=headers, timeout=60, verify=False )
@@ -403,9 +394,6 @@ def submitIlliadRemoteAuthRequestV2( parameter_dict, log_identifier ):
 def updateLog( message, log_identifier, message_importance='low' ):
 
   try:
-
-    # from easyborrow_controller_code import settings
-    # import urllib, urllib2
 
     update_log_flag = 'init'
 
