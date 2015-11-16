@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+
+from __future__ import unicode_literals
+
 """
 - Test class for class Item.
 - Part of easyBorrow python code.

@@ -1,8 +1,11 @@
+# -*- coding: utf-8 -*-
+
+from __future__ import unicode_literals
+
 """
 - Test class for class UtilityCode.
 - Part of easyBorrow python code.
 """
-
 
 import os, sys, unittest
 from easyborrow_controller_code.classes import UtilityCode

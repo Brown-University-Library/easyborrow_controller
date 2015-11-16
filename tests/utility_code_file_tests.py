@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import unicode_literals
+
 import random, unittest
 
 
@@ -32,27 +34,27 @@ class UtilityCodeFileTests(unittest.TestCase):
   # def test_submitIlliadRemoteAuthRequest_blocked( self):
   #   import json, pprint
   #   import requests
-  #   url = u'%s://127.0.0.1/easyborrow/ill/v2/make_request/' % settings.ILLIAD_HTTP_S_SEGMENT
+  #   url = '%s://127.0.0.1/easyborrow/ill/v2/make_request/' % settings.ILLIAD_HTTP_S_SEGMENT
   #   parameters = {
-  #     u'auth_key': settings.ILLIAD_REMOTEAUTH_KEY,
-  #     u'username': settings.TEST_ILLIAD_REMOTEAUTH_BLOCKED_USERNAME,
-  #     u'first_name': u'test_firstname',
-  #     u'last_name': u'test_lastname',
-  #     u'phone': u'test_phone',
-  #     u'address': u'test_address',
-  #     u'email': u'',
-  #     u'patron_status': u'test_patron_status',
-  #     u'oclc_number': u'226308091',  # czech zen book, http://www.worldcat.org/oclc/25990799
-  #     u'openurl': settings.TEST_ILLIAD_REMOTEAUTH_RAW_WORLDCAT_OPENURL,  # unicode from utf-8 string like: 'sid=...'.decode(u'utf-8')
-  #     u'volumes': u'abc',
-  #     u'request_id': u'TEST_%s' % random.randint(100,999)  # the easyborrow request #
+  #     'auth_key': settings.ILLIAD_REMOTEAUTH_KEY,
+  #     'username': settings.TEST_ILLIAD_REMOTEAUTH_BLOCKED_USERNAME,
+  #     'first_name': 'test_firstname',
+  #     'last_name': 'test_lastname',
+  #     'phone': 'test_phone',
+  #     'address': 'test_address',
+  #     'email': '',
+  #     'patron_status': 'test_patron_status',
+  #     'oclc_number': '226308091',  # czech zen book, http://www.worldcat.org/oclc/25990799
+  #     'openurl': settings.TEST_ILLIAD_REMOTEAUTH_RAW_WORLDCAT_OPENURL,  # unicode from utf-8 string like: 'sid=...'.decode('utf-8')
+  #     'volumes': 'abc',
+  #     'request_id': 'TEST_%s' % random.randint(100,999)  # the easyborrow request #
   #     }
-  #   headers = { u'Content-Type': u'application/x-www-form-urlencoded; charset=utf-8' }
+  #   headers = { 'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8' }
   #   r = requests.post( url, data=parameters, headers=headers, timeout=10, verify=False )
-  #   # print u'-r.text...'; pprint.pprint( r.text )
+  #   # print '-r.text...'; pprint.pprint( r.text )
   #   jdict = json.loads( r.text )
-  #   assert sorted( jdict.keys() ) == [u'status'], sorted( jdict.keys() )
-  #   assert jdict[u'status'] == u'login_failed_possibly_blocked', jdict[u'status']
+  #   assert sorted( jdict.keys() ) == ['status'], sorted( jdict.keys() )
+  #   assert jdict['status'] == 'login_failed_possibly_blocked', jdict['status']
   #   # end def test_submitIlliadRemoteAuthRequest_blocked()
 
 
@@ -60,27 +62,27 @@ class UtilityCodeFileTests(unittest.TestCase):
   # def test_submitIlliadRemoteAuthRequest_good( self):
   #   import json, pprint
   #   import requests
-  #   url = u'%s://127.0.0.1/easyborrow/ill/v2/make_request/' % settings.ILLIAD_HTTP_S_SEGMENT
+  #   url = '%s://127.0.0.1/easyborrow/ill/v2/make_request/' % settings.ILLIAD_HTTP_S_SEGMENT
   #   parameters = {
-  #     u'auth_key': settings.ILLIAD_REMOTEAUTH_KEY,
-  #     u'username': settings.TEST_ILLIAD_REMOTEAUTH_LOGIN_USERNAME,
-  #     u'first_name': u'test_firstname',
-  #     u'last_name': u'test_lastname',
-  #     u'phone': u'test_phone',
-  #     u'address': u'test_address',
-  #     u'email': u'',
-  #     u'patron_status': u'test_patron_status',
-  #     u'oclc_number': u'226308091',  # czech zen book, http://www.worldcat.org/oclc/25990799
-  #     u'openurl': settings.TEST_ILLIAD_REMOTEAUTH_RAW_WORLDCAT_OPENURL,  # unicode from utf-8 string like: 'sid=...'.decode(u'utf-8')
-  #     u'volumes': u'abc',
-  #     u'request_id': u'TEST_%s' % random.randint(100,999)  # the easyborrow request #
+  #     'auth_key': settings.ILLIAD_REMOTEAUTH_KEY,
+  #     'username': settings.TEST_ILLIAD_REMOTEAUTH_LOGIN_USERNAME,
+  #     'first_name': 'test_firstname',
+  #     'last_name': 'test_lastname',
+  #     'phone': 'test_phone',
+  #     'address': 'test_address',
+  #     'email': '',
+  #     'patron_status': 'test_patron_status',
+  #     'oclc_number': '226308091',  # czech zen book, http://www.worldcat.org/oclc/25990799
+  #     'openurl': settings.TEST_ILLIAD_REMOTEAUTH_RAW_WORLDCAT_OPENURL,  # unicode from utf-8 string like: 'sid=...'.decode('utf-8')
+  #     'volumes': 'abc',
+  #     'request_id': 'TEST_%s' % random.randint(100,999)  # the easyborrow request #
   #     }
-  #   headers = { u'Content-Type': u'application/x-www-form-urlencoded; charset=utf-8' }
+  #   headers = { 'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8' }
   #   r = requests.post( url, data=parameters, headers=headers, timeout=10, verify=False )
-  #   # print u'-r.text...'; pprint.pprint( r.text )
+  #   # print '-r.text...'; pprint.pprint( r.text )
   #   jdict = json.loads( r.text )
-  #   assert sorted( jdict.keys() ) == [u'status', u'transaction_number'], sorted( jdict.keys() )
-  #   assert jdict[u'status'] == u'submission_successful', jdict[u'status']
+  #   assert sorted( jdict.keys() ) == ['status', 'transaction_number'], sorted( jdict.keys() )
+  #   assert jdict['status'] == 'submission_successful', jdict['status']
   #   # end def test_submitIlliadRemoteAuthRequest_good()
 
 
@@ -88,28 +90,28 @@ class UtilityCodeFileTests(unittest.TestCase):
   # def test_submitIlliadRemoteAuthRequest_goodNewUser( self):
   #   import json, pprint
   #   import requests
-  #   url = u'%s://127.0.0.1/easyborrow/ill/v2/make_request/' % settings.ILLIAD_HTTP_S_SEGMENT
-  #   KNOWN_NEW_USERNAME = u'btst0001'
+  #   url = '%s://127.0.0.1/easyborrow/ill/v2/make_request/' % settings.ILLIAD_HTTP_S_SEGMENT
+  #   KNOWN_NEW_USERNAME = 'btst0001'
   #   parameters = {
-  #     u'auth_key': settings.ILLIAD_REMOTEAUTH_KEY,
-  #     u'username': KNOWN_NEW_USERNAME,
-  #     u'first_name': u'test_firstname',
-  #     u'last_name': u'test_lastname',
-  #     u'phone': u'test_phone',
-  #     u'address': u'test_address',
-  #     u'email': u'TODO: add test env-var',
-  #     u'patron_status': u'test_patron_status',
-  #     u'oclc_number': u'226308091',  # czech zen book, http://www.worldcat.org/oclc/25990799
-  #     u'openurl': settings.TEST_ILLIAD_REMOTEAUTH_RAW_WORLDCAT_OPENURL,  # unicode from utf-8 string like: 'sid=...'.decode(u'utf-8')
-  #     u'volumes': u'abc',
-  #     u'request_id': u'TEST_%s' % random.randint(100,999)  # the easyborrow request #
+  #     'auth_key': settings.ILLIAD_REMOTEAUTH_KEY,
+  #     'username': KNOWN_NEW_USERNAME,
+  #     'first_name': 'test_firstname',
+  #     'last_name': 'test_lastname',
+  #     'phone': 'test_phone',
+  #     'address': 'test_address',
+  #     'email': 'TODO: add test env-var',
+  #     'patron_status': 'test_patron_status',
+  #     'oclc_number': '226308091',  # czech zen book, http://www.worldcat.org/oclc/25990799
+  #     'openurl': settings.TEST_ILLIAD_REMOTEAUTH_RAW_WORLDCAT_OPENURL,  # unicode from utf-8 string like: 'sid=...'.decode('utf-8')
+  #     'volumes': 'abc',
+  #     'request_id': 'TEST_%s' % random.randint(100,999)  # the easyborrow request #
   #     }
-  #   headers = { u'Content-Type': u'application/x-www-form-urlencoded; charset=utf-8' }
+  #   headers = { 'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8' }
   #   r = requests.post( url, data=parameters, headers=headers, timeout=10, verify=False )
-  #   # print u'-r.text...'; pprint.pprint( r.text )
+  #   # print '-r.text...'; pprint.pprint( r.text )
   #   jdict = json.loads( r.text )
-  #   assert sorted( jdict.keys() ) == [u'status', u'transaction_number'], sorted( jdict.keys() )
-  #   assert jdict[u'status'] == u'submission_successful', jdict[u'status']
+  #   assert sorted( jdict.keys() ) == ['status', 'transaction_number'], sorted( jdict.keys() )
+  #   assert jdict['status'] == 'submission_successful', jdict['status']
   #   # end def test_submitIlliadRemoteAuthRequest_goodNewUser()
 
 

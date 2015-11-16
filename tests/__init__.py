@@ -1,4 +1,6 @@
+# -*- coding: utf-8 -*-
 
+from __future__ import unicode_literals
 
 
 if __name__ == "__main__":
@@ -8,7 +10,7 @@ if __name__ == "__main__":
   directory_path = os.path.dirname( current_script_name )
   full_directory_path = os.path.abspath( directory_path )
   directory_list = full_directory_path.split('/')
-  path = u'/'.join( directory_list[0:-2] )
+  path = '/'.join( directory_list[0:-2] )
   sys.path.append( path )
 
   ## module imports
