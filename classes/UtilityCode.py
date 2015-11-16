@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import unicode_literals
+
 import os, sys
 from easyborrow_controller_code import settings
 
@@ -10,7 +12,7 @@ class UtilityCode( object ):
   def __init__( self, logger ):
     self.timeToFormat = ""
     self.log = ""
-    self.log_identifier = u''  # set by controller.run_code()
+    self.log_identifier = ''  # set by controller.run_code()
     self.logger = logger  # set by Controller() or Item()
 
 
@@ -54,7 +56,7 @@ class UtilityCode( object ):
         returnVal = "failure"
       return returnVal
     except Exception, e:
-      self.updateLog( message=u'- in controller.uc.connectExecute(); exception is: %s' % repr(e).decode(u'utf-8', u'replace'), message_importance=u'high', identifier=u'unavailable' )
+      self.updateLog( message='- in controller.uc.connectExecute(); exception is: %s' % repr(e).decode('utf-8', 'replace'), message_importance='high', identifier='unavailable' )
     # end def connectExecute()
 
 
@@ -711,8 +713,8 @@ The easyBorrow automated borrowing encountered a problem requesting via Illiad t
     fullMessage = headerInfo + "\n" + message
     self.updateLog( message="- in controller.uc.sendEmail(); fullMessage prepared", message_importance='low', identifier=eb_request_number)
 
-    self.logger.debug( u'%s -- type(message), `%s`' % (itemInstance.log_identifier, type(message)) )  # unicode -- TODO, remove these log-entries 2015-June-30 if problem solved
-    self.logger.debug( u'%s -- type(fullMessage), `%s`' % (itemInstance.log_identifier, type(fullMessage)) )  # unicode
+    self.logger.debug( '%s -- type(message), `%s`' % (itemInstance.log_identifier, type(message)) )  # unicode -- TODO, remove these log-entries 2015-June-30 if problem solved
+    self.logger.debug( '%s -- type(fullMessage), `%s`' % (itemInstance.log_identifier, type(fullMessage)) )  # unicode
     fullMessage = fullMessage.encode( 'utf-8', 'ignore' )
 
     ## non-display info -- NOTE: this really controls who it goes to, not the 'To:' info above. ##
