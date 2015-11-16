@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import unicode_literals
+
 import os
 import requests
 from easyborrow_controller_code import settings
@@ -18,7 +20,7 @@ class WebLogger( object ):
 
     def post_message( self, message, identifier, importance ):
         """ Sends weblog message based on importance. """
-        self.logger.debug( u'identifier, `%s`; message, `%s`; importance, `%s`' % (identifier, message, importance) )
+        self.logger.debug( 'identifier, `%s`; message, `%s`; importance, `%s`' % (identifier, message, importance) )
         status_code = None
         important_enough = self.evaluate_importance( importance )
         if important_enough:
@@ -30,9 +32,9 @@ class WebLogger( object ):
             Returns boolean.
             Called by post_message() """
         assessed_importance = False
-        if stated_importance == u'debug' and self.WEBLOG_LEVEL == u'debug':
+        if stated_importance == 'debug' and self.WEBLOG_LEVEL == 'debug':
             assessed_importance = True
-        elif stated_importance == u'info' or stated_importance == u'error':
+        elif stated_importance == 'info' or stated_importance == 'error':
             assessed_importance = True
         return assessed_importance
 
