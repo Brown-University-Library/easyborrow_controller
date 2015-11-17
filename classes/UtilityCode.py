@@ -20,7 +20,6 @@ class UtilityCode( object ):
   def updateLog( self, message, message_importance, identifier='' ):
     """ Older web-db logging code. TODO: replace with classes.weblogger.WebLogger() calls. """
     try:
-      # import urllib, urllib2
       update_log_flag = 'init'
       if message_importance == 'high':
         update_log_flag = 'yes'
@@ -43,8 +42,6 @@ class UtilityCode( object ):
   def connectExecute(self, sql):
     """ Older db-access code. TODO: replace with classes.db_handler.Db_Handler() calls. """
     try:
-      # import os
-      # import MySQLdb
       try:
         connectionObject = MySQLdb.connect(host=settings.DB_HOST, port=settings.DB_PORT, user=settings.DB_USERNAME, passwd=settings.DB_PASSWORD, db=settings.DB_NAME)
         cursorObject = connectionObject.cursor()
@@ -63,8 +60,6 @@ class UtilityCode( object ):
 
   def connectExecuteSelect(self, sql):
     """ Older db-access code. TODO: replace with classes.db_handler.Db_Handler() calls. """
-    # import os
-    # import MySQLdb
     connectionObject = MySQLdb.connect(host=settings.DB_HOST, port=settings.DB_PORT, user=settings.DB_USERNAME, passwd=settings.DB_PASSWORD, db=settings.DB_NAME)
     cursorObject = connectionObject.cursor()
     cursorObject.execute(sql)
@@ -623,7 +618,6 @@ The easyBorrow automated borrowing encountered a problem requesting via Illiad t
     - Purpose: to check syntax for exceptions for error-logging.
     '''
 
-    # import sys
     try:
       1/0
     except Exception, e:
@@ -636,11 +630,6 @@ The easyBorrow automated borrowing encountered a problem requesting via Illiad t
   def sendEmail( self, itemInstance, eb_request_number ):
 
     ## setup ##
-
-    # import os
-    # import smtplib
-    # import sys
-    # import time
 
     ADMIN_EMAIL = settings.ADMIN_EMAIL
     smtpServer = "mail-relay.brown.edu"

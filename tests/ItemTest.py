@@ -9,6 +9,7 @@ from __future__ import unicode_literals
 
 import os, sys, unittest
 from easyborrow_controller_code import settings
+from easyborrow_controller_code.classes import UtilityCode
 
 
 
@@ -17,8 +18,6 @@ class ItemTest(unittest.TestCase):
 
 
   def testGrabConvertedPatronApiInfo(self):
-
-    # import settings
 
     # check name directly from data
     item_instance = Item.Item()
@@ -202,7 +201,7 @@ class ItemTest(unittest.TestCase):
 
   def testUpdateHistoryWithStart(self):
 
-    from easyborrow_controller_code.classes import UtilityCode
+    # from easyborrow_controller_code.classes import UtilityCode
 
     itemInstance = Item.Item()
     utCdInstance = UtilityCode.UtilityCode()
