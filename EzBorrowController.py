@@ -32,6 +32,12 @@ logger = logging.getLogger(__name__)
 logger.info( 'controller log started' )
 
 
+## prevent modules from unnecessary logging
+logging.getLogger("requests").setLevel(logging.WARNING)
+logging.getLogger("urllib3").setLevel(logging.WARNING)
+
+
+## get to work
 class Controller( object ):
 
     def __init__( self ):
