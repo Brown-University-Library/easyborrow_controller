@@ -36,46 +36,46 @@ class EB_Request:
 
 
 
-def createIlliadUser( eb_request, log_identifier ):
-  '''
-  - Purpose: prepare request, submit it, and return result to controller.
-  - Called by: controller().
-  '''
+# def createIlliadUser( eb_request, log_identifier ):
+#   '''
+#   - Purpose: prepare request, submit it, and return result to controller.
+#   - Called by: controller().
+#   '''
 
-  try:
+#   try:
 
-    # prepare parameters
-    parameter_dict = {
-      'easyborrow_key': log_identifier,
-      'firstname': eb_request.patron_firstname,
-      'lastname': eb_request.patron_lastname,
-      'email': eb_request.patron_email,
-      'phone': eb_request.patron_phone,
-      'address': eb_request.patron_address,
-      'patron_status': eb_request.patron_status,
-      'department': eb_request.patron_department }
-    updateLog( '- in controller.uc.createIlliadUser(); parameter_dict is: %s' % parameter_dict, log_identifier )
+#     # prepare parameters
+#     parameter_dict = {
+#       'easyborrow_key': log_identifier,
+#       'firstname': eb_request.patron_firstname,
+#       'lastname': eb_request.patron_lastname,
+#       'email': eb_request.patron_email,
+#       'phone': eb_request.patron_phone,
+#       'address': eb_request.patron_address,
+#       'patron_status': eb_request.patron_status,
+#       'department': eb_request.patron_department }
+#     updateLog( '- in controller.uc.createIlliadUser(); parameter_dict is: %s' % parameter_dict, log_identifier )
 
-    # submit post
-    post_data = urllib.urlencode( parameter_dict )
-    request = urllib2.Request( settings.ILLIAD_NEWUSER_WEBSERVICE_URL, post_data )
-    response = urllib2.urlopen( request )
-    json_string = response.read()
-    updateLog( '- in controller.uc.createIlliadUser(); json_string is: %s' % json_string, log_identifier )
+#     # submit post
+#     post_data = urllib.urlencode( parameter_dict )
+#     request = urllib2.Request( settings.ILLIAD_NEWUSER_WEBSERVICE_URL, post_data )
+#     response = urllib2.urlopen( request )
+#     json_string = response.read()
+#     updateLog( '- in controller.uc.createIlliadUser(); json_string is: %s' % json_string, log_identifier )
 
-    # analyze result
-    json_dict = json.loads( json_string )
-    if json_dict['status'] == 'success':
-      return { 'status': 'success' }
-    else:
-      return { 'status': 'failure', 'message': json_string }
+#     # analyze result
+#     json_dict = json.loads( json_string )
+#     if json_dict['status'] == 'success':
+#       return { 'status': 'success' }
+#     else:
+#       return { 'status': 'failure', 'message': json_string }
 
-  except:  # reasonable on a 403/Forbidden
-    message = '- in controller.uc.createIlliadUser(); error detail: %s' % makeErrorString()
-    updateLog( message, log_identifier, message_importance='high' )
-    return { 'status': 'failure', 'message': message }
+#   except:  # reasonable on a 403/Forbidden
+#     message = '- in controller.uc.createIlliadUser(); error detail: %s' % makeErrorString()
+#     updateLog( message, log_identifier, message_importance='high' )
+#     return { 'status': 'failure', 'message': message }
 
-  # end def createIlliadUser()
+#   # end def createIlliadUser()
 
 
 
