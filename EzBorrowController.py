@@ -17,7 +17,8 @@ from __future__ import unicode_literals
 import datetime, json, logging, os, pprint, random, string, sys, time
 from easyborrow_controller_code import settings, utility_code
 from easyborrow_controller_code.classes import db_handler, Item, UtilityCode
-from easyborrow_controller_code.classes.tunneler_runners import BD_Runner, BD_ApiRunner
+# from easyborrow_controller_code.classes.tunneler_runners import BD_Runner, BD_ApiRunner
+from easyborrow_controller_code.classes.tunneler_runners import BD_ApiRunner
 from easyborrow_controller_code.classes.web_logger import WebLogger
 
 
