@@ -2,14 +2,21 @@
 
 from __future__ import unicode_literals
 
-import datetime, json, os, pprint, smtplib, sys, time, urllib, urllib2
+import datetime, json, logging, os, pprint, smtplib, sys, time, urllib, urllib2
 import requests
 from easyborrow_controller_code import settings
 from easyborrow_controller_code.classes.web_logger import WebLogger
 
 
+## file and web-loggers
+LOG_PATH = settings.LOG_PATH
+LOG_LEVEL = settings.LOG_LEVEL
+level_dct = { 'DEBUG': logging.DEBUG, 'INFO': logging.INFO }
+logging.basicConfig(
+    filename=LOG_PATH, level=level_dct[LOG_LEVEL],
+    format='[%(asctime)s] %(levelname)s [%(module)s-%(funcName)s()::%(lineno)d] %(message)s', datefmt='%d/%b/%Y %H:%M:%S' )
+logger = logging.getLogger(__name__)
 web_logger = WebLogger( logger )
-# web_logger.post_message( message='the message', identifier=self.log_identifier, importance='info' )
 
 
 class EB_Request:
