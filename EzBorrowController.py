@@ -114,7 +114,7 @@ class Controller( object ):
                     try:
                       web_logger.post_message( message='- in controller; InRhode resultData: %s' % inRhodeResultData, identifier=self.log_identifier, importance='info' )
                     except Exception, e:
-                      print 'updateLog() showing inrhode resultData failed, exception is: %s' % e
+                      print 'web_logger-post showing inrhode resultData failed, exception is: %s' % e
                     inRhodeStatus = inRhodeResultData # simple string
                     web_logger.post_message( message='- in controller; InRhode status: %s' % inRhodeStatus, identifier=self.log_identifier, importance='info' )
                     # update history table
