@@ -54,7 +54,8 @@ def evaluateIlliadSubmissionV2( itemInstance, send_result_dict, log_identifier )
     ## new-user check
     if 'new_user' in send_result_dict:
       if send_result_dict['new_user'] == True:
-        updateLog( '- in utility_code.evaluateIlliadSubmissionV2(); Illiad user created...', log_identifier, message_importance='high' )
+        # updateLog( '- in utility_code.evaluateIlliadSubmissionV2(); Illiad user created...', log_identifier, message_importance='high' )
+        web_logger.post_message( message='- in utility_code.evaluateIlliadSubmissionV2(); Illiad user created...', identifier=log_identifier, importance='info' )
         parameterDict = { 'serviceName': 'illiad', 'action': 'create_illiad_user_attempt', 'result': 'success', 'number': '' }
         itemInstance.updateHistoryAction( parameterDict['serviceName'], parameterDict['action'], parameterDict['result'], parameterDict['number'] )
     ## illiad status check
@@ -75,11 +76,13 @@ def evaluateIlliadSubmissionV2( itemInstance, send_result_dict, log_identifier )
         parameterDict = { 'serviceName': 'illiad', 'action': 'attempt', 'result': send_result_dict['status'], 'number': '' }
       itemInstance.updateHistoryAction( parameterDict['serviceName'], parameterDict['action'], parameterDict['result'], parameterDict['number'] )
       return_dict['status'] = 'evaluation_successful'
-    updateLog( '- in utility_code.evaluateIlliadSubmissionV2(); return_dict: %s' % return_dict, log_identifier, message_importance='high' )
+    # updateLog( '- in utility_code.evaluateIlliadSubmissionV2(); return_dict: %s' % return_dict, log_identifier, message_importance='high' )
+    web_logger.post_message( message='- in utility_code.evaluateIlliadSubmissionV2(); return_dict: %s' % unicode(repr(return_dict)), identifier=log_identifier, importance='info' )
     return return_dict
   except:
     message = '- in utility_code.evaluateIlliadSubmissionV2(); error detail: %s' % makeErrorString()
-    updateLog( message, log_identifier, message_importance='high' )
+    # updateLog( message, log_identifier, message_importance='high' )
+    web_logger.post_message( message=message, identifier=log_identifier, importance='info' )
     return { 'error_message': message }
 
 
@@ -101,15 +104,18 @@ def makeOpenUrlSegment( initial_url, log_identifier ):
       initial_url = unicode( initial_url )
     if not type( log_identifier ) == unicode:
       log_identifier = unicode( log_identifier )
-    updateLog( '- in utility_code.makeOpenUrlSegment(); initial_url is: %s' % initial_url, log_identifier )
+    # updateLog( '- in utility_code.makeOpenUrlSegment(); initial_url is: %s' % initial_url, log_identifier )
+    logger.debug( 'id, `%s`; initial_url is: %s' % (log_identifier, initial_url) )
     parsed_url = initial_url[ initial_url.find( 'serialssolutions.com/?' ) + 22 : ]  # TODO: change this to use the urlparse library
     # parsed_url = initial_url[ initial_url.find( 'sid' ) : ]
     parsed_url = parsed_url.replace( 'genre=unknown', 'genre=book' )
-    updateLog( '- in utility_code.makeOpenUrlSegment(); parsed_url is: %s' % parsed_url, log_identifier )
+    # updateLog( '- in utility_code.makeOpenUrlSegment(); parsed_url is: %s' % parsed_url, log_identifier )
+    logger.debug( 'id, `%s`; parsed_url is: %s' % (log_identifier, parsed_url) )
     return { 'openurl_segment': parsed_url }
   except:
     message = '- in utility_code.updateLog(); error detail: %s' % makeErrorString()
-    updateLog( message, log_identifier, message_importance='high' )
+    # updateLog( message, log_identifier, message_importance='high' )
+    web_logger.post_message( message='- in utility_code.makeOpenUrlSegment(); exception, `%s`' % message, identifier=log_identifier, importance='error' )
     return { 'status': 'failure', 'message': message }
 
 
@@ -136,13 +142,15 @@ def makeEbRequest( itemInstance, log_identifier ):
     eb_request.request_current_tunneler_service = itemInstance.currentlyActiveService
     eb_request.request_current_tunneler_status = itemInstance.requestSuccessStatus
     #
-    updateLog( '- in utility_code.makeEbRequest(); eb_request.__dict__ is: %s' % eb_request.__dict__, log_identifier )
+    # updateLog( '- in utility_code.makeEbRequest(); eb_request.__dict__ is: %s' % eb_request.__dict__, log_identifier )
+    logger.debug( 'id, `%s`; eb_request.__dict__ is: %s' % (log_identifier, eb_request.__dict__) )
     return_dict = { 'status': 'success', 'eb_request': eb_request }
-    updateLog( '- in utility_code.makeEbRequest(); return_dict is: %s' % return_dict, log_identifier )
+    logger.debug( 'id, `%s`; return_dict is: %s' % (log_identifier, pprint.pformat(return_dict)) )
     return return_dict
   except:
     message = '- in utility_code.updateLog(); error detail: %s' % makeErrorString()
-    updateLog( message, log_identifier, message_importance='high' )
+    # updateLog( message, log_identifier, message_importance='high' )
+    web_logger.post_message( message='- in utility_code.makeEbRequest(); exception, `%s`' % message, identifier=log_identifier, importance='error' )
     return { 'status': 'failure', 'message': message }
   # end def makeEbRequest()
 
@@ -170,13 +178,16 @@ def make_datetime_string():
 
 def makeIlliadParametersV2( itemInstance, settings, log_identifier ):
   try:
-    updateLog( '- in utility_code.makeIlliadParametersV2(); starting...', log_identifier, message_importance='high' )  # TODO: lower hardcoded message_importance
+    # updateLog( '- in utility_code.makeIlliadParametersV2(); starting...', log_identifier, message_importance='high' )  # TODO: lower hardcoded message_importance
+    web_logger.post_message( message='- in utility_code.makeIlliadParametersV2(); starting...', identifier=log_identifier, importance='info' )
     try:
       patron_info = itemInstance.grabPatronApiInfo( itemInstance.patronId )
       itemInstance.grabConvertedPatronApiInfo( patron_info) # grabs converted info and stores it to attributes
-      updateLog( '- in utility_code.makeIlliadParametersV2(); patron-api work done; ii.patronId is: %s; ii.patronEmail is: %s' % (itemInstance.patronId, itemInstance.patronEmail), log_identifier, message_importance='low' )
+      # updateLog( '- in utility_code.makeIlliadParametersV2(); patron-api work done; ii.patronId is: %s; ii.patronEmail is: %s' % (itemInstance.patronId, itemInstance.patronEmail), log_identifier, message_importance='low' )
+      logger.debug( 'id, `%s`; patron-api work done; ii.patronId is: %s; ii.patronEmail is: %s' % (log_identifier, itemInstance.patronId, itemInstance.patronEmail) )
     except Exception, e:
-      updateLog( '- in utility_code.makeIlliadParametersV2(); patron-api work failed; exception is: %s' % e, log_identifier, message_importance='high' )
+      # updateLog( '- in utility_code.makeIlliadParametersV2(); patron-api work failed; exception is: %s' % e, log_identifier, message_importance='high' )
+      web_logger.post_message( message='- in utility_code.makeIlliadParametersV2(); patron-api work failed; exception is: %s' % unicode(repr(e)), identifier=log_identifier, importance='error' )
     parameter_dict = {
       'auth_key': settings.ILLIAD_API_KEY,
       'request_id': log_identifier,
@@ -197,8 +208,9 @@ def makeIlliadParametersV2( itemInstance, settings, log_identifier ):
     web_logger.post_message( message='- in utility_code.makeIlliadParametersV2()-wl; parameter_dict: %s' % unicode(repr(parameter_dict)), identifier=log_identifier, importance='info' )
     return { 'parameter_dict': parameter_dict }
   except:
-    message = '- in utility_code.makeIlliadParametersV2(); error detail: %s' % makeErrorString()
-    updateLog( message, log_identifier, message_importance='high' )
+    # message = '- in utility_code.makeIlliadParametersV2(); error detail: %s' % makeErrorString()
+    # updateLog( message, log_identifier, message_importance='high' )
+    web_logger.post_message( message=message, identifier=log_identifier, importance='error' )
     return { 'error_message': message }
 
 
@@ -210,15 +222,18 @@ def sendEmail( eb_request, log_identifier ):
   - Note: this will be built out to handle all emails.
   '''
   try:
-    updateLog( '- in utility_code.sendEmail(); eb_request is: %s' % eb_request, log_identifier )
+    # updateLog( '- in utility_code.sendEmail(); eb_request is: %s' % eb_request, log_identifier )
+    logger.debug( 'id, `%s`; eb_request is: %s' % (log_identifier, unicode(repr(eb_request))) )
     if eb_request.request_current_tunneler_service == 'illiad':
       if eb_request.request_current_tunneler_status == 'login_failed_possibly_blocked':
         result_dict = sendEmailIlliadBlocked( eb_request, log_identifier )
-    updateLog( '- in utility_code.sendEmail(); result_dict is: %s' % result_dict, log_identifier )
+    # updateLog( '- in utility_code.sendEmail(); result_dict is: %s' % result_dict, log_identifier )
+    logger.debug( 'id, `%s`; result_dict is, ```%s```' % (log_identifier, pprint.pformat(result_dict)) )
     return result_dict
   except:
     message = '- in utility_code.sendEmail(); error detail: %s' % makeErrorString()
-    updateLog( message, log_identifier, message_importance='high' )
+    # updateLog( message, log_identifier, message_importance='high' )
+    web_logger.post_message( message=message, identifier=log_identifier, importance='error' )
     return { 'status': 'failure', 'message': message }
   # end def sendEmail()
 
@@ -231,33 +246,41 @@ def sendEmailActualSend( sender, recipient_list, full_message, log_identifier ):
   '''
   smtp_server = settings.MAIL_SMTP_SERVER
   smtp_result = 'init'
-  updateLog( '- in uc.sendEmailActualSend(); starting send', log_identifier )
+  # updateLog( '- in uc.sendEmailActualSend(); starting send', log_identifier )
+  logger.debug( 'id, `%s`; starting send' % log_identifier )
   try:
     mail_session = smtplib.SMTP( smtp_server )
     smtp_result = mail_session.sendmail( sender, recipient_list, full_message )
-    updateLog( '- in uc.sendEmailActualSend(); email sent successfully; smtp_result is: %s' % smtp_result, log_identifier )
+    # updateLog( '- in uc.sendEmailActualSend(); email sent successfully; smtp_result is: %s' % smtp_result, log_identifier )
+    logger.debug( 'id, `%s`; email sent successfully; smtp_result is: ```%s```' % (log_identifier, unicode(repr(smtp_result))) )
   except Exception, e:
     mail_session.quit()
-    message = '- in uc.sendEmailActualSend(); attempt to send email failed; exception is: %s; smtp_result is: %s' % (e, smtp_result)
-    updateLog( message, log_identifier, message_importance='high' )
+    message = '- in uc.sendEmailActualSend(); attempt to send email failed; exception is: %s; smtp_result is: %s' % ( unicode(repr(e)), unicode(repr(smtp_result)) )
+    # updateLog( message, log_identifier, message_importance='high' )
+    web_logger.post_message( message=message, identifier=log_identifier, importance='error' )
     try:
       time.sleep(5) # 5 seconds of peace to recharge karma
-      updateLog( '- second email attempt starting', log_identifier, message_importance='high' )
+      # updateLog( '- second email attempt starting', log_identifier, message_importance='high' )
+      web_logger.post_message( message='- in uc.sendEmailActualSend(); second email attempt starting', identifier=log_identifier, importance='info' )
       mail_session_2 = smtplib.SMTP(smtp_server)
       smtp_result_2 = mail_session_2.sendmail(sender, recipient_list, full_message)
-      updateLog( '- in uc.sendEmailActualSend(); second email sent successfully; smtp_result_2 is: %s' % smtp_result_2, log_identifier, message_importance='high' )
+      # updateLog( '- in uc.sendEmailActualSend(); second email sent successfully; smtp_result_2 is: %s' % smtp_result_2, log_identifier, message_importance='high' )
+      web_logger.post_message( message='- in uc.sendEmailActualSend(); second email sent successfully; smtp_result_2 is: %s' % unicode(repr(smtp_result_2)), identifier=log_identifier, importance='info' )
     except Exception, e:
       mail_session_2.quit()
-      message = '- in uc.sendEmailActualSend(); second mail attempt failed; exception is: %s: smtp_result is: <<%s>>; and smtp_result_2 is: <<%s>>.' % (e, smtp_result, smtp_result_2)
-      updateLog( message, log_identifier, message_importance='high' )
+      message = '- in uc.sendEmailActualSend(); second mail attempt failed; exception is: %s: smtp_result is: <<%s>>; and smtp_result_2 is: <<%s>>.' % ( unicode(repr(e)), unicode(repr(smtp_result)), unicode(repr(smtp_result_2)) )
+      # updateLog( message, log_identifier, message_importance='high' )
+      web_logger.post_message( message=message, identifier=log_identifier, importance='error' )
       return { 'status': 'failure', 'message': message }
     else:
       mail_session_2.quit()
-      updateLog('- in uc.sendEmailActualSend(); mail_session2 quit normally; smtp_result_2 is: %s' % smtp_result_2, log_identifier )
+      # updateLog('- in uc.sendEmailActualSend(); mail_session2 quit normally; smtp_result_2 is: %s' % smtp_result_2, log_identifier )
+      logger.debug( 'id, `%s`; mail_session2 quit normally; smtp_result_2 is: `%s`' % (log_identifier, unicode(repr(smtp_result_2))) )
       return { 'status': 'success' }
   else:
     mail_session.quit()
-    updateLog('- in uc.sendEmailActualSend(); mail_session1 quit normally; smtp_result is: %s' % smtp_result, log_identifier )
+    # updateLog('- in uc.sendEmailActualSend(); mail_session1 quit normally; smtp_result is: %s' % smtp_result, log_identifier )
+    logger.debug( 'id, `%s`; mail_session1 quit normally; smtp_result is: %s' % (log_identifier, unicode(repr(smtp_result))) )
     return { 'status': 'success' }
   # end def sendEmailActualSend()
 
@@ -298,18 +321,21 @@ Once your account issue is cleared up, click on this link to re-request the item
     eb_request.request_ezb_reference_number,
     )
     full_message = header_info + "\n" + message
-    updateLog( '- in utility_code.sendEmailIlliadBlocked(); sender: %s; recipient_list: %s; full_message: %s' % (sender, recipient_list, full_message), log_identifier )
+    # updateLog( '- in utility_code.sendEmailIlliadBlocked(); sender: %s; recipient_list: %s; full_message: %s' % (sender, recipient_list, full_message), log_identifier )
+    logger.debug( 'id, `%s`; sender: %s; recipient_list: %s; full_message: %s' % (log_identifier, unicode(repr(sender)), unicode(repr(recipient_list)), unicode(repr(full_message)) ) )
     ## send the email
     send_result = sendEmailActualSend( sender, recipient_list, full_message, log_identifier )
     if send_result['status'] == 'success':
       return_dict = { 'status': 'success' }
     else:
       return_dict = { 'status': 'failure', 'message': send_result }
-    updateLog( '- in utility_code.sendEmailIlliadBlocked(); return_dict: %s' % return_dict, log_identifier )
+    # updateLog( '- in utility_code.sendEmailIlliadBlocked(); return_dict: %s' % return_dict, log_identifier )
+    logger.debug( 'id, `%s`; return_dict: %s' % (log_identifier, pprint.pformat(return_dict)) )
     return return_dict
   except:
     message = '- in utility_code.sendEmailIlliadBlocked(); error detail: %s' % makeErrorString()
-    updateLog( message, log_identifier, message_importance='high' )
+    # updateLog( message, log_identifier, message_importance='high' )
+    web_logger.post_message( message=message, identifier=log_identifier, importance='error' )
     return { 'status': 'failure', 'message': message }
   # end def sendEmailIlliadBlocked()
 
@@ -324,20 +350,22 @@ def submitIlliadRequest( parameter_dict, log_identifier ):
 
   try:
 
-    updateLog( '- in utility_code.submitIlliadRequest(); parameter_dict is: %s' % parameter_dict, log_identifier, message_importance='high' )
+    # updateLog( '- in utility_code.submitIlliadRequest(); parameter_dict is: %s' % parameter_dict, log_identifier, message_importance='high' )
+    web_logger.post_message( message='- in utility_code.submitIlliadRequest(); parameter_dict is: %s' % pprint.pformat(parameter_dict), identifier=log_identifier, importance='info' )
 
     data = urllib.urlencode( parameter_dict )
     request = urllib2.Request( settings.ILLIAD_REQUEST_URL, data )
     response = urllib2.urlopen( request )
     json_string = response.read()
     json_dict = json.loads( json_string )
-    updateLog( '- in utility_code.submitIlliadRequest(); submission result is: %s' % json_dict, log_identifier, message_importance='high' )
-
+    # updateLog( '- in utility_code.submitIlliadRequest(); submission result is: %s' % json_dict, log_identifier, message_importance='high' )
+    web_logger.post_message( message='- in utility_code.submitIlliadRequest(); submission result is: %s' % pprint.pformat(json_dict), identifier=log_identifier, importance='info' )
     return json_dict
 
   except:
     message = '- in utility_code.submitIlliadRequest(); error detail: %s' % makeErrorString()
     # updateLog( message, log_identifier, message_importance='high' )
+    web_logger.post_message( message=message, identifier=log_identifier, importance='error' )
     return { 'status': 'failure', 'message': message }
 
   # end def submitIlliadRequest()
@@ -349,13 +377,16 @@ def submitIlliadRemoteAuthRequestV2( parameter_dict, log_identifier ):
     url = settings.ILLIAD_API_URL
     headers = { 'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8' }
     r = requests.post( url, data=parameter_dict, headers=headers, timeout=60, verify=False )
-    updateLog( '- in utility_code.submitIlliadRequestV2(); ws response text: %s' % r.text, log_identifier )
+    # updateLog( '- in utility_code.submitIlliadRequestV2(); ws response text: %s' % r.text, log_identifier )
+    logger.debug( 'id, `%s`; ws response text, ```%s```' % (log_identifier, r.text) )
     return_dict = json.loads( r.text )
-    updateLog( '- in utility_code.submitIlliadRequestV2(); return_dict: %s' % return_dict, log_identifier, message_importance='high' )  # TODO: remove hardcoded importance
+    # updateLog( '- in utility_code.submitIlliadRequestV2(); return_dict: %s' % return_dict, log_identifier, message_importance='high' )  # TODO: remove hardcoded importance
+    web_logger.post_message( message='- in utility_code.submitIlliadRequestV2(); return_dict: %s' % pprint.pformat(return_dict), identifier=log_identifier, importance='info' )
     return return_dict
   except:
     message = '- in utility_code.submitIlliadRequestV2(); error detail: %s' % makeErrorString()
-    updateLog( message, log_identifier, message_importance='high' )
+    # updateLog( message, log_identifier, message_importance='high' )
+    web_logger.post_message( message=message, identifier=log_identifier, importance='error' )
     return { 'error_message': message }
   # end def submitIlliadRemoteAuthRequestV2()
 
