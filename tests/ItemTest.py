@@ -81,29 +81,29 @@ class ItemTest(unittest.TestCase):
 
 
 
-  def testCheckIlliad_forUrl(self):
+  # def testCheckIlliad_forUrl(self):
 
-    itemInstance = Item.Item()
-    itemInstance.itemDbId = '123'
-    itemInstance.sfxurl = 'TODO - add test env-var'
-    itemInstance.firstname = 'TODO - add test env-var'
-    itemInstance.lastname = 'TODO - add test env-var'
-    itemInstance.patronEmail = 'TODO - add test env-var'
-    itemInstance.patronStatus = 'undergraduate'
-    itemInstance.volumesPreference = 'Volumes 2 - 5'
-    itemInstance.oclcNumber = '1234'
-    eb_request_number = 'test-case test-request-number'
-    try:
-      itemInstance.checkIlliad( eb_request_number )
-      expected = '''TODO - add test env-var'''
-      result = itemInstance.illiadUrl
-      self.assertEqual(expected, result, "result is: " + str(result))
-    except:
-      expected = '''TODO - add test env-var'''
-      result = itemInstance.illiadUrl
-      self.assertTrue( expected == result, '\nExpected: ->%s<-; \nresult is: ->%s<-' % (expected, result,) )
+  #   itemInstance = Item.Item()
+  #   itemInstance.itemDbId = '123'
+  #   itemInstance.sfxurl = 'TODO - add test env-var'
+  #   itemInstance.firstname = 'TODO - add test env-var'
+  #   itemInstance.lastname = 'TODO - add test env-var'
+  #   itemInstance.patronEmail = 'TODO - add test env-var'
+  #   itemInstance.patronStatus = 'undergraduate'
+  #   itemInstance.volumesPreference = 'Volumes 2 - 5'
+  #   itemInstance.oclcNumber = '1234'
+  #   eb_request_number = 'test-case test-request-number'
+  #   try:
+  #     itemInstance.checkIlliad( eb_request_number )
+  #     expected = '''TODO - add test env-var'''
+  #     result = itemInstance.illiadUrl
+  #     self.assertEqual(expected, result, "result is: " + str(result))
+  #   except:
+  #     expected = '''TODO - add test env-var'''
+  #     result = itemInstance.illiadUrl
+  #     self.assertTrue( expected == result, '\nExpected: ->%s<-; \nresult is: ->%s<-' % (expected, result,) )
 
-    # end def testCheckIlliad_forUrl()
+  #   # end def testCheckIlliad_forUrl()
 
 
 
