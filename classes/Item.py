@@ -209,28 +209,28 @@ class Item( object ):
     return status
 
 
-  def checkIlliad( self, eb_request_number ):
+  # def checkIlliad( self, eb_request_number ):
 
-    utCdInstance = UtilityCode.UtilityCode( self.logger )
+  #   utCdInstance = UtilityCode.UtilityCode( self.logger )
 
-    # prepare segments
-    openurlSegment = self.convertSfxurlToOpenurlSegment(self.sfxurl)
-    #
-    volumesKeyString = 'volumes'
-    volumesValueString = self.volumesPreference
-    volumesSegment = self.encodeTextForUrl( volumesKeyString, volumesValueString )
+  #   # prepare segments
+  #   openurlSegment = self.convertSfxurlToOpenurlSegment(self.sfxurl)
+  #   #
+  #   volumesKeyString = 'volumes'
+  #   volumesValueString = self.volumesPreference
+  #   volumesSegment = self.encodeTextForUrl( volumesKeyString, volumesValueString )
 
-    tempIlliadUrl = '''TODO - delete this old function''' % (self.itemDbId, openurlSegment, urllib.quote(self.firstname), urllib.quote(self.lastname), self.patronEmail, self.patronStatus, volumesSegment, self.oclcNumber )
-    self.illiadUrl = tempIlliadUrl # allows testing
-    utCdInstance.updateLog( message="- in controller.Item.checkIlliad(); illiadUrl is: %s" % self.illiadUrl, message_importance='low', identifier=eb_request_number )
+  #   tempIlliadUrl = '''TODO - delete this old function''' % (self.itemDbId, openurlSegment, urllib.quote(self.firstname), urllib.quote(self.lastname), self.patronEmail, self.patronStatus, volumesSegment, self.oclcNumber )
+  #   self.illiadUrl = tempIlliadUrl # allows testing
+  #   utCdInstance.updateLog( message="- in controller.Item.checkIlliad(); illiadUrl is: %s" % self.illiadUrl, message_importance='low', identifier=eb_request_number )
 
-    try:
-      illiadResultData = urllib.urlopen(self.illiadUrl).read()
-      utCdInstance.updateLog( message="- in controller.Item.checkIlliad(); illiadResultData is: %s" % illiadResultData, message_importance='low', identifier=eb_request_number )
-    except:
-      utCdInstance.updateLog( message="- in controller.Item.checkIlliad(); illiad url-request didn\'t go through", message_importance='high', identifier=eb_request_number )
+  #   try:
+  #     illiadResultData = urllib.urlopen(self.illiadUrl).read()
+  #     utCdInstance.updateLog( message="- in controller.Item.checkIlliad(); illiadResultData is: %s" % illiadResultData, message_importance='low', identifier=eb_request_number )
+  #   except:
+  #     utCdInstance.updateLog( message="- in controller.Item.checkIlliad(); illiad url-request didn\'t go through", message_importance='high', identifier=eb_request_number )
 
-    return illiadResultData
+  #   return illiadResultData
 
 
   def parseVirtualCatalogResultData(self, virtualCatalogDataString):
