@@ -2,7 +2,7 @@
 
 from __future__ import unicode_literals
 
-import json, os, sys, urllib
+import json, logging, os, sys, urllib
 from xml.dom import minidom
 #
 from easyborrow_controller_code import settings
@@ -10,6 +10,16 @@ from easyborrow_controller_code.classes import UtilityCode
 from easyborrow_controller_code.classes.web_logger import WebLogger
 from inrhode_tunneler.inrhode_controller import InRhodeController
 
+
+## file and web-loggers
+LOG_PATH = settings.LOG_PATH
+LOG_LEVEL = settings.LOG_LEVEL
+level_dct = { 'DEBUG': logging.DEBUG, 'INFO': logging.INFO }
+logging.basicConfig(
+    filename=LOG_PATH, level=level_dct[LOG_LEVEL],
+    format='[%(asctime)s] %(levelname)s [%(module)s-%(funcName)s()::%(lineno)d] %(message)s', datefmt='%d/%b/%Y %H:%M:%S' )
+logger = logging.getLogger(__name__)
+web_logger = WebLogger( logger )
 
 
 class Item( object ):
@@ -120,11 +130,14 @@ class Item( object ):
       url = '%s?%s' % ( self.papi_converter_url, encodedString )
 
       data = json.load( urllib.urlopen(url) )
-      utCdInstance.updateLog( message="- in controller.Item.grabConvertedPatronApiInfo(); data is: %s" % data, message_importance='high', identifier='NA' )
+      # utCdInstance.updateLog( message="- in controller.Item.grabConvertedPatronApiInfo(); data is: %s" % data, message_importance='high', identifier='NA' )
+      web_logger.post_message( message='- in classes.Item.grabConvertedPatronApiInfo(); data is: %s' % unicode(repr(data)), identifier='NA', importance='info' )
 
       self.patron_api_address = data['ADDRESS']
       self.patron_api_telephone = data['TELEPHONE']
-      utCdInstance.updateLog( message="- in controller.Item.grabConvertedPatronApiInfo(); self.patron_api_telephone is: %s" % self.patron_api_telephone, message_importance='high', identifier='NA' )
+      # utCdInstance.updateLog( message="- in controller.Item.grabConvertedPatronApiInfo(); self.patron_api_telephone is: %s" % self.patron_api_telephone, message_importance='high', identifier='NA' )
+      web_logger.post_message( message='- in classes.Item.grabConvertedPatronApiInfo(); self.patron_api_telephone is: %s' % self.patron_api_telephone, identifier='NA', importance='info' )
+
       self.patron_api_dept = data['DEPT']
       self.patron_api_pcode3 = data['pcode3_text']
 
@@ -147,7 +160,9 @@ class Item( object ):
 
     except Exception, e:
 
-      utCdInstance.updateLog( message="- in controller.Item.grabConvertedPatronApiInfo(); exception is: %s" % e, message_importance='high', identifier='NA' )
+      # utCdInstance.updateLog( message="- in controller.Item.grabConvertedPatronApiInfo(); exception is: %s" % e, message_importance='high', identifier='NA' )
+      web_logger.post_message( message='- in classes.Item.grabConvertedPatronApiInfo(); exception is: %s' % unicode(repr(e)), identifier='NA', importance='error' )
+
       return 'Exception: %s' % e
 
     # end def grabConvertedPatronApiInfo()
@@ -282,11 +297,11 @@ class Item( object ):
       return inRhodeResultData
 
     except Exception, e:
-      utCdInstance.updateLog(
-        message='error-type - %s; error-message - %s; line-number - %s' % ( sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2].tb_lineno, ),
-        # message='In Item.checkInRhode; exception is: %s' % e,
-        message_importance='high',
-        identifier=eb_request_number )
+      # utCdInstance.updateLog(
+      #   message='error-type - %s; error-message - %s; line-number - %s' % ( sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2].tb_lineno, ),
+      #   message_importance='high',
+      #   identifier=eb_request_number )
+      web_logger.post_message( message='- in classes.Item.checkInRhode(); exception is: %s' % unicode(repr(e)), identifier=eb_request_number, importance='error' )
 
 
   def updateRequestStatus(self, newStatus):
