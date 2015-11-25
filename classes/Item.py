@@ -130,12 +130,10 @@ class Item( object ):
       url = '%s?%s' % ( self.papi_converter_url, encodedString )
 
       data = json.load( urllib.urlopen(url) )
-      # utCdInstance.updateLog( message="- in controller.Item.grabConvertedPatronApiInfo(); data is: %s" % data, message_importance='high', identifier='NA' )
       web_logger.post_message( message='- in classes.Item.grabConvertedPatronApiInfo(); data is: %s' % unicode(repr(data)), identifier='NA', importance='info' )
 
       self.patron_api_address = data['ADDRESS']
       self.patron_api_telephone = data['TELEPHONE']
-      # utCdInstance.updateLog( message="- in controller.Item.grabConvertedPatronApiInfo(); self.patron_api_telephone is: %s" % self.patron_api_telephone, message_importance='high', identifier='NA' )
       web_logger.post_message( message='- in classes.Item.grabConvertedPatronApiInfo(); self.patron_api_telephone is: %s' % self.patron_api_telephone, identifier='NA', importance='info' )
 
       self.patron_api_dept = data['DEPT']
@@ -160,7 +158,6 @@ class Item( object ):
 
     except Exception, e:
 
-      # utCdInstance.updateLog( message="- in controller.Item.grabConvertedPatronApiInfo(); exception is: %s" % e, message_importance='high', identifier='NA' )
       web_logger.post_message( message='- in classes.Item.grabConvertedPatronApiInfo(); exception is: %s' % unicode(repr(e)), identifier='NA', importance='error' )
 
       return 'Exception: %s' % e
@@ -224,30 +221,6 @@ class Item( object ):
     return status
 
 
-  # def checkIlliad( self, eb_request_number ):
-
-  #   utCdInstance = UtilityCode.UtilityCode( self.logger )
-
-  #   # prepare segments
-  #   openurlSegment = self.convertSfxurlToOpenurlSegment(self.sfxurl)
-  #   #
-  #   volumesKeyString = 'volumes'
-  #   volumesValueString = self.volumesPreference
-  #   volumesSegment = self.encodeTextForUrl( volumesKeyString, volumesValueString )
-
-  #   tempIlliadUrl = '''TODO - delete this old function''' % (self.itemDbId, openurlSegment, urllib.quote(self.firstname), urllib.quote(self.lastname), self.patronEmail, self.patronStatus, volumesSegment, self.oclcNumber )
-  #   self.illiadUrl = tempIlliadUrl # allows testing
-  #   utCdInstance.updateLog( message="- in controller.Item.checkIlliad(); illiadUrl is: %s" % self.illiadUrl, message_importance='low', identifier=eb_request_number )
-
-  #   try:
-  #     illiadResultData = urllib.urlopen(self.illiadUrl).read()
-  #     utCdInstance.updateLog( message="- in controller.Item.checkIlliad(); illiadResultData is: %s" % illiadResultData, message_importance='low', identifier=eb_request_number )
-  #   except:
-  #     utCdInstance.updateLog( message="- in controller.Item.checkIlliad(); illiad url-request didn\'t go through", message_importance='high', identifier=eb_request_number )
-
-  #   return illiadResultData
-
-
   def parseVirtualCatalogResultData(self, virtualCatalogDataString):
 
     vcXmlDoc = minidom.parseString(virtualCatalogDataString)
@@ -297,10 +270,6 @@ class Item( object ):
       return inRhodeResultData
 
     except Exception, e:
-      # utCdInstance.updateLog(
-      #   message='error-type - %s; error-message - %s; line-number - %s' % ( sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2].tb_lineno, ),
-      #   message_importance='high',
-      #   identifier=eb_request_number )
       web_logger.post_message( message='- in classes.Item.checkInRhode(); exception is: %s' % unicode(repr(e)), identifier=eb_request_number, importance='error' )
 
 

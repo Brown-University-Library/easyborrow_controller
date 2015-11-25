@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 import datetime, imp, json, os, pprint, sys, time
 import requests
 from easyborrow_controller_code import settings
+from easyborrow_controller_code.classes.web_logger import WebLogger
 from types import InstanceType, ModuleType, NoneType
 
 
@@ -15,6 +16,8 @@ class BD_ApiRunner( object ):
         """ Loads env vars.
             Called by EzBorrowController.py """
         self.logger = logger
+        self.web_logger = None
+        self._prep_web_logger()
         self.log_identifier = log_identifier
         self.bdpyweb_defaults = {
             'url': settings.BDPYWEB_URL,
@@ -26,6 +29,12 @@ class BD_ApiRunner( object ):
         self.api_found = None  # will be boolean
         self.api_requestable = None  # will be boolean
         self.HISTORY_SQL_PATTERN = settings.HISTORY_ACTION_SQL
+
+    def _prep_web_logger( self ):
+        """ Initializes web_logger.
+            Called by __init__() """
+        self.web_logger = WebLogger( logger )
+        return
 
     def setup_api_hit( self, item_instance, web_logger ):
         """ Sets the currently-active-service and updates weblog.
@@ -90,7 +99,8 @@ class BD_ApiRunner( object ):
         ( api_confirmation_code, history_table_message ) = self.prep_code_message()
         utf8_sql = self.prep_history_sql( api_confirmation_code, history_table_message )
         utility_code_instance.connectExecute( utf8_sql )
-        utility_code_instance.updateLog( message='- in tunneler_runners.BD_ApiRunner.update_history_table(); history table updated for ezb#: %s' % self.log_identifier, message_importance='low', identifier=self.log_identifier )
+        # utility_code_instance.updateLog( message='- in tunneler_runners.BD_ApiRunner.update_history_table(); history table updated for ezb#: %s' % self.log_identifier, message_importance='low', identifier=self.log_identifier )
+        self.web_logger.post_message( message='- in tunneler_runners.BD_ApiRunner.update_history_table(); history table updated for ezb#: %s' % self.log_identifier, identifier=self.log_identifier, importance='info' )
         self.logger.debug( '%s- update_history_table complete' )
         return
 
