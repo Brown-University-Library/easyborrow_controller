@@ -33,7 +33,7 @@ class BD_ApiRunner( object ):
     def _prep_web_logger( self ):
         """ Initializes web_logger.
             Called by __init__() """
-        self.web_logger = WebLogger( logger )
+        self.web_logger = WebLogger( self.logger )
         return
 
     def setup_api_hit( self, item_instance, web_logger ):
