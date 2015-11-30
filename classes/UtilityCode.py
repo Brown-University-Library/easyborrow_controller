@@ -660,7 +660,7 @@ The easyBorrow automated borrowing encountered a problem requesting via Illiad t
     ## message ##
 
     # self.updateLog( message='- in controller.uc.sendEmail(); preparing email; currentlyActiveService is: %s; requestSuccessStatus is: %s' % (itemInstance.currentlyActiveService, itemInstance.requestSuccessStatus), message_importance='low', identifier=eb_request_number )
-    logger.debug( 'currentlyActiveService is: %s; requestSuccessStatus is: %s' % (itemInstance.currentlyActiveService, itemInstance.requestSuccessStatus) )
+    logger.debug( 'id, `%s`; currentlyActiveService is: `%s`; requestSuccessStatus is: `%s`' % (eb_request_number, itemInstance.currentlyActiveService, itemInstance.requestSuccessStatus) )
 
     if ( itemInstance.currentlyActiveService == 'inRhode' ):
       # self.updateLog( message="- in controller.uc.sendEmail(); sendMail_if-activeService; in 'inRhode'", message_importance='low', identifier=eb_request_number )
