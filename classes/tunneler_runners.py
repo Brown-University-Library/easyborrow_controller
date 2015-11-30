@@ -99,7 +99,6 @@ class BD_ApiRunner( object ):
         ( api_confirmation_code, history_table_message ) = self.prep_code_message()
         utf8_sql = self.prep_history_sql( api_confirmation_code, history_table_message )
         utility_code_instance.connectExecute( utf8_sql )
-        # utility_code_instance.updateLog( message='- in tunneler_runners.BD_ApiRunner.update_history_table(); history table updated for ezb#: %s' % self.log_identifier, message_importance='low', identifier=self.log_identifier )
         self.web_logger.post_message( message='- in tunneler_runners.BD_ApiRunner.update_history_table(); history table updated for ezb#: %s' % self.log_identifier, identifier=self.log_identifier, importance='info' )
         self.logger.debug( '%s- update_history_table complete' )
         return
