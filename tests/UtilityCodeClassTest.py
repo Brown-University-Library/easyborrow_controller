@@ -33,20 +33,6 @@ class UtilityCodeTest(unittest.TestCase):
 
 
 
-  def testUpdateLog(self):
-
-    ucInstance = UtilityCode.UtilityCode()
-    message = 'test-case test-message'
-    importance = 'high'
-    identifier = 'test-case test-identifier'
-
-    expected = 'success'
-    result = ucInstance.updateLog( message, importance, identifier )
-    self.assertTrue( expected == result, '\nExpected: ->%s<-; \nresult is: ->%s<-' % (expected, result,) )
-
-    # end def testUpdateLog()
-
-
 
 if __name__ == "__main__":
   ## get the project's enclosing directory for import references
