@@ -66,7 +66,6 @@ class UtilityCode( object ):
         returnVal = "failure"
       return returnVal
     except Exception, e:
-      # self.updateLog( message='- in controller.uc.connectExecute(); exception is: %s' % repr(e).decode('utf-8', 'replace'), message_importance='high', identifier='unavailable' )
       web_logger.post_message( message='- in classes.UtilityCode.connectExecute(); exception is: %s' % unicode(repr(e)), identifier='unavailable', importance='error' )
     # end def connectExecute()
 
@@ -309,7 +308,6 @@ If you have any questions, contact the Library's Rockefeller Gateway staff at ro
         itemInstance.genericAssignedUserEmail )
 
     except Exception, e:
-      # self.updateLog( message="- in controller.uc.prepFirstEmailMessage_Illiad_success(); exception is: %s; itemInstance.__dict__ is: %s" % (e, itemInstance.__dict__), message_importance='high', identifier='unavailable' )
       web_logger.post_message( message='- in classes.UtilityCode.prepFirstEmailMessage_Illiad_success(); exception is: %s' % unicode(repr(e)), identifier='unavailable', importance='error' )
 
     return message
@@ -617,10 +615,6 @@ The easyBorrow automated borrowing encountered a problem requesting via Illiad t
       return recipientList
 
     except:
-      # self.updateLog(
-      #   message='- in UtilityCode.prepFirstEmailRecipientList; error-type - %s; error-message - %s; line-number - %s' % ( sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2].tb_lineno, ),
-      #   message_importance='high',
-      #   identifier=eb_request_number )
       web_logger.post_message( message='- in classes.UtilityCode.prepFirstEmailRecipientList(); error-type - %s; error-message - %s; line-number - %s' % (sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2].tb_lineno), identifier=eb_request_number, importance='error' )
 
     # end def prepFirstEmailRecipientList()
@@ -659,75 +653,56 @@ The easyBorrow automated borrowing encountered a problem requesting via Illiad t
 
     ## message ##
 
-    # self.updateLog( message='- in controller.uc.sendEmail(); preparing email; currentlyActiveService is: %s; requestSuccessStatus is: %s' % (itemInstance.currentlyActiveService, itemInstance.requestSuccessStatus), message_importance='low', identifier=eb_request_number )
     logger.debug( 'id, `%s`; currentlyActiveService is: `%s`; requestSuccessStatus is: `%s`' % (eb_request_number, itemInstance.currentlyActiveService, itemInstance.requestSuccessStatus) )
 
     if ( itemInstance.currentlyActiveService == 'inRhode' ):
-      # self.updateLog( message="- in controller.uc.sendEmail(); sendMail_if-activeService; in 'inRhode'", message_importance='low', identifier=eb_request_number )
       logger.debug( 'id, `%s`; in if currentlyActiveService is `inRhode`' % eb_request_number )
       message = self.prepFirstEmailMessage_InRhode( itemInstance )
 
     elif( itemInstance.currentlyActiveService == 'borrowDirect' ):
-      # self.updateLog( message="- in controller.uc.sendEmail(); sendMail_if-activeService; in 'borrowDirect'", message_importance='low', identifier=eb_request_number )
       logger.debug( 'id, `%s`; in if currentlyActiveService is `borrowDirect`' % eb_request_number )
       message = self.prepFirstEmailMessage_BorrowDirect( itemInstance )
 
     elif( itemInstance.currentlyActiveService == 'virtualCatalog' ):
-      # self.updateLog( message="- in controller.uc.sendEmail(); sendMail_if-activeService; in 'virtualCatalog'", message_importance='low', identifier=eb_request_number)
       logger.debug( 'id, `%s`; in if currentlyActiveService is `virtualCatalog`' % eb_request_number )
       message = self.prepFirstEmailMessage_VirtualCatalog( itemInstance )
 
     elif( itemInstance.currentlyActiveService == 'illiad' and itemInstance.requestSuccessStatus == 'success' ):
-      # self.updateLog( message="- in controller.uc.sendEmail(); sendMail_if-activeService; in 'illiad->success'", message_importance='low', identifier=eb_request_number )
       logger.debug( 'id, `%s`; in if currentlyActiveService is `illiad` and requestSuccessStatus is `success`' % eb_request_number )
       try:
         message = self.prepFirstEmailMessage_Illiad_success( itemInstance )
-        # self.updateLog( message="- in controller.uc.sendEmail(); sendMail_if-activeService; in 'illiad->success'; message is: %s" % message, message_importance='low', identifier=eb_request_number )
         logger.debug( 'id, `%s`; in if currentlyActiveService is `illiad` and requestSuccessStatus is `success`; message is, ```%s```' % (eb_request_number, message) )
       except Exception, e:
-        # self.updateLog( message="- in controller.uc.sendEmail(); sendMail_if-activeService; in 'illiad->success'; exception is: %s" % e, message_importance='high', identifier=eb_request_number )
         web_logger.post_message( message='- in classes.UtilityCode.sendEmail(); error, ```%s```' % unicode(repr(e)), identifier=eb_request_number, importance='error' )
 
     elif( itemInstance.currentlyActiveService == 'illiad' and itemInstance.requestSuccessStatus == 'illiad_new_user' ):
-      # self.updateLog( message="- in controller.uc.sendEmail(); sendMail_if-activeService; in 'illiad->illiad_new_user'", message_importance='low', identifier=eb_request_number )
       logger.debug( 'id, `%s`; in if currentlyActiveService is `illiad` and requestSuccessStatus is `illiad_new_user`' % eb_request_number )
       message = self.prepFirstEmailMessage_Illiad_illiadNewUser( itemInstance )
-      # self.updateLog( message="- in controller.uc.sendEmail(); in illiad new_user if-statement; *staff* 'new-user' message composed", message_importance='low', identifier=eb_request_number )
       logger.debug( 'id, `%s`; in if currentlyActiveService is `illiad` and requestSuccessStatus is `illiad_new_user`; new-user message composed' % eb_request_number )
 
     elif( itemInstance.currentlyActiveService == 'illiad' and itemInstance.requestSuccessStatus == 'create_illiad_user_failed' ):
-      # self.updateLog( message="- in controller.uc.sendEmail(); sendMail_if-activeService; in 'create_illiad_user_failed'", message_importance='low', identifier=eb_request_number )
       logger.debug( 'id, `%s`; in if currentlyActiveService is `illiad` and requestSuccessStatus is `create_illiad_user_failed`' % eb_request_number )
       message = self.prepFirstEmailMessage_Illiad_createIlliadUserFailed( itemInstance )
-      # self.updateLog( message="- in controller.uc.sendEmail(); in illiad new_user if-statement; *staff* 'new-user' message composed", message_importance='low', identifier=eb_request_number )
       logger.debug( 'id, `%s`; in if currentlyActiveService is `illiad` and requestSuccessStatus is `create_illiad_user_failed`; failed message composed' % eb_request_number )
 
     elif( itemInstance.currentlyActiveService == 'illiad' and itemInstance.requestSuccessStatus == 'login_failed_possibly_blocked' ):
-      # self.updateLog( message="- in controller.uc.sendEmail(); sendMail_if-activeService; in 'illiad->login_failed_possibly_blocked'", message_importance='low', identifier=eb_request_number )
       logger.debug( 'id, `%s`; in if currentlyActiveService is `illiad` and requestSuccessStatus is `login_failed_possibly_blocked`' % eb_request_number )
       message = self.prepFirstEmailMessage_Illiad_loginFailedPossiblyBlocked( itemInstance )
-      # self.updateLog( message="- in controller.uc.sendEmail(); in illiad login_failed_possibly_blocked if-statement; *staff* message composed", message_importance='low', identifier=eb_request_number )
       logger.debug( 'id, `%s`; in if currentlyActiveService is `illiad` and requestSuccessStatus is `login_failed_possibly_blocked`; blocked message composed' % eb_request_number )
 
     elif( itemInstance.currentlyActiveService == 'illiad' and itemInstance.requestSuccessStatus == 'failure_no_sfx-link_to_illiad' ):
-      # self.updateLog( message="- in controller.uc.sendEmail(); sendMail_if-activeService; in 'illiad->failure_no_sfx-link_to_illiad'", message_importance='low', identifier=eb_request_number )
       logger.debug( 'id, `%s`; in if currentlyActiveService is `illiad` and requestSuccessStatus is `failure_no_sfx-link_to_illiad`' % eb_request_number )
       message = self.prepFirstEmailMessage_Illiad_failureNoSfxLinkToIlliad( itemInstance )
-      # self.updateLog( message="- in controller.uc.sendEmail(); in illiad new_user if-statement; *staff* 'no-sfx-link' message composed", message_importance='low', identifier=eb_request_number )
       logger.debug( 'id, `%s`; in if currentlyActiveService is `illiad` and requestSuccessStatus is `failure_no_sfx-link_to_illiad`; failed message composed' % eb_request_number )
 
     elif( itemInstance.currentlyActiveService == 'illiad' and itemInstance.requestSuccessStatus == 'illiad_unknown_failure' ):
-      # self.updateLog( message="- in controller.uc.sendEmail(); sendMail_if-activeService; in 'illiad->illiad_unknown_failure'", message_importance='low', identifier=eb_request_number )
       logger.debug( 'id, `%s`; in if currentlyActiveService is `illiad` and requestSuccessStatus is `illiad_unknown_failure`' % eb_request_number )
       message = self.prepFirstEmailMessage_Illiad_illiadUnknownFailure( itemInstance )
-      # self.updateLog( message="- in controller.uc.sendEmail(); in 'illiad->illiad_unknown_failure' if-statement; message to admin composed", message_importance='low', identifier=eb_request_number )
       logger.debug( 'id, `%s`; in if currentlyActiveService is `illiad` and requestSuccessStatus is `illiad_unknown_failure`; unknown failure message composed' % eb_request_number )
 
     else:
-      # self.updateLog( message="- in controller.uc.sendEmail(); sendMail_if-activeService; default unhandled situation", message_importance='low', identifier=eb_request_number )
       logger.debug( 'id, `%s`; in if currentlyActiveService is `illiad`; default unhandled situation`' % eb_request_number )
       message = '''BJD - handle this situation.'''
-      # self.updateLog( message="- in controller.uc.sendEmail(); sendMail_if-activeService; default message to admin composed", message_importance='low', identifier=eb_request_number)
       logger.debug( 'id, `%s`; in if currentlyActiveService is `illiad`; default unhandled situation message composed' % eb_request_number )
 
       # end of message-body if statements
@@ -735,7 +710,6 @@ The easyBorrow automated borrowing encountered a problem requesting via Illiad t
     ## complete message ##
 
     fullMessage = headerInfo + "\n" + message
-    # self.updateLog( message="- in controller.uc.sendEmail(); fullMessage prepared", message_importance='low', identifier=eb_request_number)
     logger.debug( 'id, `%s`; fullMessage prepared' % eb_request_number )
     fullMessage = fullMessage.encode( 'utf-8', 'ignore' )
 
@@ -745,52 +719,37 @@ The easyBorrow automated borrowing encountered a problem requesting via Illiad t
     try:
       recipientList = self.prepFirstEmailRecipientList( itemInstance, eb_request_number )
     except Exception, e:
-      # self.updateLog(
-      #   message='- in controller.uc.sendEmail(); error-type - %s; error-message - %s; line-number - %s' % ( sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2].tb_lineno, ),
-      #   message_importance='high',
-      #   identifier=eb_request_number )
       web_logger.post_message( message='- in classes.UtilityCode.sendEmail(); error preparing recipientList, ```%s```' % unicode(repr(e)), identifier=eb_request_number, importance='error' )
 
-    # self.updateLog( message="- in controller.uc.sendEmail(); sender and recipientList prepared", message_importance='low', identifier=eb_request_number)
     logger.debug( 'id, `%s`; sender and recipientList prepared' % eb_request_number )
 
     ## try the send ##
 
     returnValue = "init"
     try:
-      # self.updateLog(  message='- in controller.uc.sendEmail(); email attempt starting', message_importance='low', identifier=eb_request_number )
       logger.debug( 'id, `%s`; email attempt starting' % eb_request_number )
       smtpResult = mailSession.sendmail(sender, recipientList, fullMessage)
-      # self.updateLog( message='- in controller.uc.sendEmail(); email sent successfully', message_importance='low', identifier=eb_request_number )
       logger.debug( 'id, `%s`; email sent successfully' % eb_request_number )
       returnValue = 'success' # tentatively
     except Exception as e:
       mailSession.quit()
-      # self.updateLog(  message='- in controller.uc.sendEmail(); attempt to send email failed with errors', message_importance='low', identifier=eb_request_number )
       logger.error( 'id, `%s`; attempt to send email failed with error, ```%s```' % (eb_request_number, unicode(repr(e))) )
-      # self.updateLog(  message='- in controller.uc.sendEmail(); the errors: %s' % smtpResult, message_importance='low', identifier=eb_request_number )
       try:
         time.sleep(5) # 5 seconds of peace to recharge karma
-        # self.updateLog(  message='- in controller.uc.sendEmail(); second email attempt starting' )
         logger.debug( 'id, `%s`; second email attempt starting' % eb_request_number )
         mailSession2 = smtplib.SMTP(smtpServer)
         smtpResult2 = mailSession2.sendmail(sender, recipientList, fullMessage)
-        # self.updateLog( message='- in controller.uc.sendEmail(); second email sent successfully', message_importance='low', identifier=eb_request_number )
         logger.error( 'id, `%s`; second email sent successfully' % eb_request_number )
       except Exception as e:
         logger.error( 'id, `%s`; sencond attempt to send email failed with error, ```%s```' % (eb_request_number, unicode(repr(e))) )
         mailSession2.quit()
-        # self.updateLog(  message='- in controller.uc.sendEmail(); attempt to send second email failed with errors', message_importance='low', identifier=eb_request_number )
-        # self.updateLog(  message='- in controller.uc.sendEmail(); the errors: first, <<%s>>; and second, <<%s>>.' % (smtpResult, smtpResult2), message_importance='low', identifier=eb_request_number )
         returnValue = 'failure'
       else:
         mailSession2.quit()
         returnValue = "success"
-        # self.updateLog( message='- in controller.uc.sendEmail(); second mail session quit normally', message_importance='low', identifier=eb_request_number )
         logger.debug( 'id, `%s`; second mail session quit normally' % eb_request_number )
     else:
       mailSession.quit()
-      # self.updateLog(message='- in controller.uc.sendEmail(); mailSession1 quit normally', message_importance='low', identifier=eb_request_number )
       logger.debug( 'id, `%s`; mailSession1 quit normally' % eb_request_number )
 
     return returnValue
