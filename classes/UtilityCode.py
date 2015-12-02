@@ -29,28 +29,6 @@ class UtilityCode( object ):
     self.logger = logger  # set by Controller() or Item()
 
 
-  # def updateLog( self, message, message_importance, identifier='' ):
-  #   """ Older web-db logging code. TODO: replace with classes.weblogger.WebLogger() calls. """
-  #   try:
-  #     update_log_flag = 'init'
-  #     if message_importance == 'high':
-  #       update_log_flag = 'yes'
-  #     elif (message_importance == 'low' and settings.OLD_WEBLOG_LEVEL == 'low' ):
-  #       update_log_flag = 'yes'
-  #     else:
-  #       pass # there definitely are many other conditions that will get us here -- but the whole point is not to log everything.
-  #     if update_log_flag == 'yes':
-  #       values = { 'message':message, 'identifier':identifier, 'key':settings.LOG_KEY }
-  #       data = urllib.urlencode(values)
-  #       request = urllib2.Request(settings.LOG_URL, data)
-  #       response = urllib2.urlopen(request)
-  #       returned_data = response.read()
-  #       return returned_data
-  #   except Exception, e:
-  #     print '- in UC.updateLog; exception is: %s' % repr(e)
-  #   # end def updateLog()
-
-
   def connectExecute(self, sql):
     """ Older db-access code. TODO: replace with classes.db_handler.Db_Handler() calls. """
     try:
