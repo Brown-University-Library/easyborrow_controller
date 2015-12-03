@@ -13,13 +13,10 @@ LOG_LEVEL = unicode( os.environ['ezbCTL__LOG_LEVEL'] )
 
 
 ## web-log settings
-# LOG_URL = unicode( os.environ['ezbCTL__WEBLOG_URL'] )  # url used to web-log various parts of easyBorrow apps -- TODO: replace these with the explicitly-named 'WEBLOG_' settings
-# LOG_KEY = unicode( os.environ['ezbCTL__WEBLOG_KEY'] )
-# LOGENTRY_MINIMUM_IMPORTANCE_LEVEL = unicode( os.environ['ezbCTL__WEBLOGENTRY_MINIMUM_IMPORTANCE_LEVEL'] ) # 'debug', etc.
-# OLD_WEBLOG_LEVEL = unicode( os.environ['ezbCTL__LOGENTRY_MINIMUM_IMPORTANCE_LEVEL'] ) # 'low' or 'high'
 WEBLOG_URL = unicode( os.environ['ezbCTL__WEBLOG_URL'] )  # url used to web-log various parts of easyBorrow apps
 WEBLOG_KEY = unicode( os.environ['ezbCTL__WEBLOG_KEY'] )
-WEBLOG_LEVEL = unicode( os.environ['ezbCTL__WEBLOGENTRY_MINIMUM_IMPORTANCE_LEVEL'] ) # 'debug', etc.
+# WEBLOG_LEVEL = unicode( os.environ['ezbCTL__WEBLOGENTRY_MINIMUM_IMPORTANCE_LEVEL'] ) # 'debug', etc.
+WEBLOG_LEVEL = unicode( os.environ['ezbCTL__WEBLOG_LEVEL'] ) # 'debug', etc.
 
 
 ## email
