@@ -199,34 +199,34 @@ class ItemTest(unittest.TestCase):
 
 
 
-  def testUpdateHistoryWithStart(self):
+  # def testUpdateHistoryWithStart(self):
 
-    # from easyborrow_controller_code.classes import UtilityCode
+  #   # from easyborrow_controller_code.classes import UtilityCode
 
-    itemInstance = Item.Item()
-    utCdInstance = UtilityCode.UtilityCode()
-    itemInstance.itemDbId = 999999999
-    historyNoteParameter = "test entry abc123"
-    itemInstance.updateHistoryNote( historyNoteParameter )
+  #   itemInstance = Item.Item()
+  #   utCdInstance = UtilityCode.UtilityCode()
+  #   itemInstance.itemDbId = 999999999
+  #   historyNoteParameter = "test entry abc123"
+  #   itemInstance.updateHistoryNote( historyNoteParameter )
 
-    expected = "test entry abc123"
+  #   expected = "test entry abc123"
 
-    sql = 'TODO - add test env var'
-    resultInfo = utCdInstance.connectExecuteSelect(sql) # [ [fieldname01, fieldname02], ( (row01field01_value, row01field02_value), (row02field01_value, row02field02_value) ) ]
+  #   sql = 'TODO - add test env var'
+  #   resultInfo = utCdInstance.connectExecuteSelect(sql) # [ [fieldname01, fieldname02], ( (row01field01_value, row01field02_value), (row02field01_value, row02field02_value) ) ]
 
-    fieldNameList = resultInfo[0]
-    allRowsTuple = resultInfo[1] # all rows
+  #   fieldNameList = resultInfo[0]
+  #   allRowsTuple = resultInfo[1] # all rows
 
-    rowTuple = allRowsTuple[0] # first row
+  #   rowTuple = allRowsTuple[0] # first row
 
-    result = rowTuple[ fieldNameList.index('note') ] # 'note' field
+  #   result = rowTuple[ fieldNameList.index('note') ] # 'note' field
 
-    self.assertEqual(expected, result, "result is: " + str(result))
+  #   self.assertEqual(expected, result, "result is: " + str(result))
 
-    # clean up - delete test record
+  #   # clean up - delete test record
 
-    sql = "DELETE FROM  history WHERE  history.request_id = 999999999"
-    utCdInstance.connectExecute(sql)
+  #   sql = "DELETE FROM  history WHERE  history.request_id = 999999999"
+  #   utCdInstance.connectExecute(sql)
 
 
 
