@@ -48,26 +48,6 @@ class UtilityCode( object ):
     # end def connectExecute()
 
 
-  # def connectExecuteSelect(self, sql):
-  #   """ Older db-access code. TODO: replace with classes.db_handler.Db_Handler() calls. """
-  #   connectionObject = MySQLdb.connect(host=settings.DB_HOST, port=settings.DB_PORT, user=settings.DB_USERNAME, passwd=settings.DB_PASSWORD, db=settings.DB_NAME)
-  #   cursorObject = connectionObject.cursor()
-  #   cursorObject.execute(sql)
-  #   dataTuple = cursorObject.fetchall()
-  #   fields = cursorObject.description
-  #   if( dataTuple == () ):
-  #     return None
-  #   else:
-  #     fieldList = []
-  #     for elementInfo in fields:
-  #       fieldList.append(elementInfo[0])
-  #   resultInfo = [fieldList, dataTuple] # [ [fieldname01, fieldname02], ( (row01field01_value, row01field02_value), (row02field01_value, row02field02_value) ) ]
-  #   cursorObject.close()
-  #   connectionObject.close()
-  #   return resultInfo
-  #   # end def connectExecuteSelect()
-
-
   def prepFirstEmailHeader( self, itemInstance ):
     '''
     - Called by: UtilityCode.py->UtilityCode.sendEmail()

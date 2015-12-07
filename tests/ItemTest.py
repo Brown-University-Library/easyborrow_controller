@@ -81,32 +81,6 @@ class ItemTest(unittest.TestCase):
 
 
 
-  # def testCheckIlliad_forUrl(self):
-
-  #   itemInstance = Item.Item()
-  #   itemInstance.itemDbId = '123'
-  #   itemInstance.sfxurl = 'TODO - add test env-var'
-  #   itemInstance.firstname = 'TODO - add test env-var'
-  #   itemInstance.lastname = 'TODO - add test env-var'
-  #   itemInstance.patronEmail = 'TODO - add test env-var'
-  #   itemInstance.patronStatus = 'undergraduate'
-  #   itemInstance.volumesPreference = 'Volumes 2 - 5'
-  #   itemInstance.oclcNumber = '1234'
-  #   eb_request_number = 'test-case test-request-number'
-  #   try:
-  #     itemInstance.checkIlliad( eb_request_number )
-  #     expected = '''TODO - add test env-var'''
-  #     result = itemInstance.illiadUrl
-  #     self.assertEqual(expected, result, "result is: " + str(result))
-  #   except:
-  #     expected = '''TODO - add test env-var'''
-  #     result = itemInstance.illiadUrl
-  #     self.assertTrue( expected == result, '\nExpected: ->%s<-; \nresult is: ->%s<-' % (expected, result,) )
-
-  #   # end def testCheckIlliad_forUrl()
-
-
-
   def testConvertSfxurlToOpenurlSegment(self):
 
     itemInstance = Item.Item()
@@ -199,34 +173,6 @@ class ItemTest(unittest.TestCase):
 
 
 
-  # def testUpdateHistoryWithStart(self):
-
-  #   # from easyborrow_controller_code.classes import UtilityCode
-
-  #   itemInstance = Item.Item()
-  #   utCdInstance = UtilityCode.UtilityCode()
-  #   itemInstance.itemDbId = 999999999
-  #   historyNoteParameter = "test entry abc123"
-  #   itemInstance.updateHistoryNote( historyNoteParameter )
-
-  #   expected = "test entry abc123"
-
-  #   sql = 'TODO - add test env var'
-  #   resultInfo = utCdInstance.connectExecuteSelect(sql) # [ [fieldname01, fieldname02], ( (row01field01_value, row01field02_value), (row02field01_value, row02field02_value) ) ]
-
-  #   fieldNameList = resultInfo[0]
-  #   allRowsTuple = resultInfo[1] # all rows
-
-  #   rowTuple = allRowsTuple[0] # first row
-
-  #   result = rowTuple[ fieldNameList.index('note') ] # 'note' field
-
-  #   self.assertEqual(expected, result, "result is: " + str(result))
-
-  #   # clean up - delete test record
-
-  #   sql = "DELETE FROM  history WHERE  history.request_id = 999999999"
-  #   utCdInstance.connectExecute(sql)
 
 
 

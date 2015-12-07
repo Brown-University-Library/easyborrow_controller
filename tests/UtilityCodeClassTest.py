@@ -22,14 +22,6 @@ class UtilityCodeTest(unittest.TestCase):
     # end def test_checkExceptionMessageSyntax()
 
 
-  # def testConnectExecuteSelect(self):
-
-  #   # empty resultset
-  #   ucInstance = UtilityCode.UtilityCode()
-  #   sql = 'TODO - add test env var'
-  #   expected = None
-  #   result = ucInstance.connectExecuteSelect(sql) # [ [fieldname01, fieldname02], ( (row01field01_value, row01field02_value), (row02field01_value, row02field02_value) ) ]
-  #   self.assertEqual(expected, result, "result is: " + str(result))
 
 
 
