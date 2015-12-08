@@ -108,14 +108,6 @@ class Item( object ):
     return encodedString
 
 
-  # def updateHistoryReferenceNumber(self, number):
-  #   """ Updates history table with service's transaction number.
-  #       Called by: TODO, see if this is still used and delete if not. """
-  #   sql = self.hist_reference_sql % ( self.itemDbId, number )  # inserts the id & number into the sql-pattern
-  #   utCdInstance = UtilityCode.UtilityCode( self.logger )
-  #   utCdInstance.connectExecute(sql)
-  #   return
-
 
   def grabConvertedPatronApiInfo( self, patronApiInfo ):
 

@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 import datetime, imp, json, os, pprint, sys, time
 import requests
 from easyborrow_controller_code import settings
+from easyborrow_controller_code.classes.db_handler import Db_Handler
 from easyborrow_controller_code.classes.web_logger import WebLogger
 from types import InstanceType, ModuleType, NoneType
 
@@ -18,6 +19,8 @@ class BD_ApiRunner( object ):
         self.logger = logger
         self.web_logger = None
         self._prep_web_logger()
+        self.db_handler = None
+        self._prep_db_handler()
         self.log_identifier = log_identifier
         self.bdpyweb_defaults = {
             'url': settings.BDPYWEB_URL,
@@ -34,6 +37,12 @@ class BD_ApiRunner( object ):
         """ Initializes web_logger.
             Called by __init__() """
         self.web_logger = WebLogger( self.logger )
+        return
+
+    def _prep_db_handler( self ):
+        """ Initializes db_handler.
+            Called by __init__() """
+        self.db_handler = Db_Handler( self.logger )
         return
 
     def setup_api_hit( self, item_instance, web_logger ):

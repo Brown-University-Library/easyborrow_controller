@@ -19,6 +19,7 @@ class Db_Handler(object):
         self.DB_NAME = settings.DB_NAME
         self.connection_object = None  # populated during queries
         self.cursor_object = None  # populated during queries
+        self.hist_action_sql = settings.HISTORY_ACTION_SQL
         self.logger = logger
         self.logger.debug( 'DB_Handler instantiated' )
 
@@ -39,6 +40,26 @@ class Db_Handler(object):
             raise Exception( unicode(repr(e)) )
         finally:
             self._close_db_connection()
+
+
+
+
+    def update_history_action(self, request_id, service_name, action, result, number):
+        """ Updates history table.
+            Called by TBD. """
+        sql = self.hist_action_sql % ( request_id, service_name, action, result, number )
+        self._setup_db_connection()
+        try:
+            self.cursor_object.execute( sql )
+            record_id = int( self.cursor_object.insert_id() )
+            log.debug( 'record_id, `%s`' % record_id )
+        except Exception as e:
+            log.error( 'error updating history action, `%s`' % unicode(repr(e)) )
+        finally:
+            self._close_db_connection()
+
+
+
 
     ## helper functions ##
 
