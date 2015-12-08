@@ -97,38 +97,7 @@ class Controller( object ):
             for service in flowList:
 
                 if (service == 'ir'):
-
-                    ##
-                    ## send a request to InRhode
-                    ##
-
-                    itemInstance.currentlyActiveService = 'inRhode'
-
-                    web_logger.post_message( message='- in controller; checking InRhode...', identifier=self.log_identifier, importance='info' )
-                    try:
-                      inRhodeResultData = itemInstance.checkInRhode(eb_request_number)
-                    except Exception, e:
-                      print 'checkInRhode() failed, exception is: %s' % e
-
-                    # examine InRhode results
-                    try:
-                      web_logger.post_message( message='- in controller; InRhode resultData: %s' % inRhodeResultData, identifier=self.log_identifier, importance='info' )
-                    except Exception, e:
-                      print 'web_logger-post showing inrhode resultData failed, exception is: %s' % e
-                    inRhodeStatus = inRhodeResultData # simple string
-                    web_logger.post_message( message='- in controller; InRhode status: %s' % inRhodeStatus, identifier=self.log_identifier, importance='info' )
-                    # update history table
-
-                    parameterDict = {'serviceName':'inrhode', 'action':'attempt', 'result':inRhodeStatus, 'number':'N.A.'}
-                    itemInstance.updateHistoryAction( parameterDict['serviceName'], parameterDict['action'], parameterDict['result'], parameterDict['number'] )
-
-                    # end section
-
-                    if ( inRhodeStatus == 'request_successful' ):
-                      itemInstance.requestSuccessStatus = 'success'
-                      itemInstance.genericAssignedUserEmail = itemInstance.patronEmail
-                      itemInstance.genericAssignedReferenceNumber = 'N.A.'
-                      break # out of the 'for' loop
+                    pass
 
                 elif(service == "bd"):
 
@@ -182,11 +151,11 @@ class Controller( object ):
               web_logger.post_message( message='- in controller; request successful; preparing to send email', identifier=self.log_identifier, importance='info' )
               utCdInstance.sendEmail( itemInstance, eb_request_number )
 
-            elif( itemInstance.requestSuccessStatus == "create_illiad_user_failed" ):
-              web_logger.post_message( message='- in controller; create_illiad_user_failed detected; preparing to send email to staff', identifier=self.log_identifier, importance='info' )
-              utCdInstance.sendEmail( itemInstance, eb_request_number )
-              parameterDict = {'serviceName':'illiad', 'action':'followup', 'result':'ill_staff_emailed', 'number':''}
-              itemInstance.updateHistoryAction( parameterDict['serviceName'], parameterDict['action'], parameterDict['result'], parameterDict['number'] )
+            # elif( itemInstance.requestSuccessStatus == "create_illiad_user_failed" ):
+            #   web_logger.post_message( message='- in controller; create_illiad_user_failed detected; preparing to send email to staff', identifier=self.log_identifier, importance='info' )
+            #   utCdInstance.sendEmail( itemInstance, eb_request_number )
+            #   parameterDict = {'serviceName':'illiad', 'action':'followup', 'result':'ill_staff_emailed', 'number':''}
+            #   itemInstance.updateHistoryAction( parameterDict['serviceName'], parameterDict['action'], parameterDict['result'], parameterDict['number'] )
 
             elif( itemInstance.requestSuccessStatus == 'login_failed_possibly_blocked' ):
               web_logger.post_message( message='- in controller; "blocked" detected; will send user email', identifier=self.log_identifier, importance='info' )
