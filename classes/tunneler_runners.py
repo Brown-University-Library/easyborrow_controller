@@ -107,7 +107,8 @@ class BD_ApiRunner( object ):
             TODO: Call a db class. """
         ( api_confirmation_code, history_table_message ) = self.prep_code_message()
         utf8_sql = self.prep_history_sql( api_confirmation_code, history_table_message )
-        utility_code_instance.connectExecute( utf8_sql )
+        utility_code_instance.connectExecute( utf8_sql )  # TODO, remove once subsequent call is working
+        self.db_handler.run_sql( utf8_sql )
         self.web_logger.post_message( message='- in tunneler_runners.BD_ApiRunner.update_history_table(); history table updated for ezb#: %s' % self.log_identifier, identifier=self.log_identifier, importance='info' )
         self.logger.debug( '%s- update_history_table complete' )
         return

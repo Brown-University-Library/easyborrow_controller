@@ -41,22 +41,37 @@ class Db_Handler(object):
         finally:
             self._close_db_connection()
 
-
-
-
-    def update_history_action(self, request_id, service_name, action, result, number):
-        """ Updates history table.
-            Called by TBD. """
-        sql = self.hist_action_sql % ( request_id, service_name, action, result, number )
-        self._setup_db_connection()
+    def run_sql( self, sql ):
+        """ Executes sql; returns nothing.
+            Called by, initially, tunneler_runners.BD_ApiRunner.update_history_table() """
+        if type( sql ) == unicode:
+            sql = sql.encode( 'utf-8' )
         try:
+            self._setup_db_connection()
             self.cursor_object.execute( sql )
-            record_id = int( self.cursor_object.insert_id() )
-            log.debug( 'record_id, `%s`' % record_id )
         except Exception as e:
-            log.error( 'error updating history action, `%s`' % unicode(repr(e)) )
+            self.logger.error( 'error: %s' % unicode(repr(e)) )
+            raise Exception( unicode(repr(e)) )
         finally:
             self._close_db_connection()
+        return
+
+
+
+
+    # def update_history_action(self, request_id, service_name, action, result, number):
+    #     """ Updates history table.
+    #         Called by TBD. """
+    #     sql = self.hist_action_sql % ( request_id, service_name, action, result, number )
+    #     self._setup_db_connection()
+    #     try:
+    #         self.cursor_object.execute( sql )
+    #         record_id = int( self.cursor_object.insert_id() )
+    #         log.debug( 'record_id, `%s`' % record_id )
+    #     except Exception as e:
+    #         log.error( 'error updating history action, `%s`' % unicode(repr(e)) )
+    #     finally:
+    #         self._close_db_connection()
 
 
 
