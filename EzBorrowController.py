@@ -44,7 +44,9 @@ class Controller( object ):
     def __init__( self ):
         """ Grabs settings from environment and sets up logger. """
         self.SELECT_SQL = settings.CONTROLLER_SELECT_SQL
+        self.HISTORY_NOTE_SQL = settings.HISTORY_NOTE_SQL
         self.log_identifier = 'temp--%s--%s' % ( datetime.datetime.now().strftime('%Y-%m-%d-%H:%M:%S'), random.randint(1000,9999) )    # will be ezb-request-number: helps track which log-entries go with which request
+        self.db_handler = None
 
     def run_code( self ):
         """ Coordinates processing.
@@ -56,13 +58,15 @@ class Controller( object ):
             # setup
             #######
 
-            ( dbh, itemInstance, utCdInstance, web_logger ) = self.setup()
+            # ( dbh, itemInstance, utCdInstance, web_logger ) = self.setup()
+            ( itemInstance, utCdInstance, web_logger ) = self.setup()
 
             #######
             # check for a request-record
             #######
 
-            record_search = self.run_record_search( dbh, web_logger )
+            # record_search = self.run_record_search( dbh, web_logger )
+            record_search = self.run_record_search( web_logger )
 
             #######
             # set identifier
@@ -83,6 +87,7 @@ class Controller( object ):
             # update request and history tables
             itemInstance.updateRequestStatus("in_process")
             itemInstance.updateHistoryNote( "Processing started" )
+            self.update_history_note( eb_request_number, 'Processing started' )
 
             #######
             # process flow
@@ -210,12 +215,14 @@ class Controller( object ):
 
         # end def run_code()
 
+    ## helper functions called by run_code() ##
 
     def setup( self ):
         """ Calls initial weblog entry and returns class instances.
             Called by run_code() """
         try:
-            dbh = db_handler.Db_Handler( logger )
+            # dbh = db_handler.Db_Handler( logger )
+            self.db_handler = db_handler.Db_Handler( logger )
         except Exception as e:
             logger.error( 'e, `%s`' % e )
         itemInstance = Item.Item( logger )
@@ -224,12 +231,15 @@ class Controller( object ):
         formatted_time = time.strftime( '%a %b %d %H:%M:%S %Z %Y', time.localtime() )  # eg 'Wed Jul 13 13:41:39 EDT 2005'
         web_logger.post_message( message='EZBorrowController session starting at %s' % formatted_time, identifier=self.log_identifier, importance='info' )
         logger.debug( 'setup() complete' )
-        return ( dbh, itemInstance, utCdInstance, web_logger )
+        # return ( dbh, itemInstance, utCdInstance, web_logger )
+        return ( itemInstance, utCdInstance, web_logger )
 
-    def run_record_search( self, dbh, web_logger ):
+    # def run_record_search( self, dbh, web_logger ):
+    def run_record_search( self, web_logger ):
         """ Searches for new request.
             Called by run_code() """
-        result_dcts = dbh.run_select( self.SELECT_SQL )  # [ {row01field01_key: row01field01_value}, fieldname02], ( (row01field01_value, row01field02_value), (row02field01_value, row02field02_value) ) ]
+        # result_dcts = dbh.run_select( self.SELECT_SQL )  # [ {row01field01_key: row01field01_value}, fieldname02], ( (row01field01_value, row01field02_value), (row02field01_value, row02field02_value) ) ]
+        result_dcts = self.db_handler.run_select( self.SELECT_SQL )  # [ {row01field01_key: row01field01_value}, fieldname02], ( (row01field01_value, row01field02_value), (row02field01_value, row02field02_value) ) ]
         logger.debug( '(new) record_search, `%s`' % result_dcts )
         if not result_dcts:
             web_logger.post_message( message='- in controller; no new request found; quitting', identifier=self.log_identifier, importance='info' )
@@ -242,9 +252,9 @@ class Controller( object ):
     def set_identifier( self, record_search, web_logger ):
         """ Sets the identifier with the db id.
             Called by run_code() """
-        eb_request_number = record_search['id']  # older identifier, still used
+        eb_request_number = record_search['id']
         web_logger.post_message( message='- in controller; updating identifier', identifier='was_%s_now_%s' % (self.log_identifier, eb_request_number), importance='info' )
-        self.log_identifier = record_search['id']  # newer identifier
+        self.log_identifier = record_search['id']
         return eb_request_number
 
     def determine_flow( self, itemInstance ):
@@ -257,6 +267,13 @@ class Controller( object ):
                 flow = [ 'bd', 'illiad' ]
         logger.debug( 'determine_flow() complete' )
         return flow
+
+    def update_history_note( self, request_id, note ):
+        """ Updates history note, either that processing has started, or what the flow is.
+            Called by run_code() """
+        sql = self.HISTORY_NOTE_SQL
+        # self.db_handler.run_sql( sql )
+        return
 
     # end class Controller
 
