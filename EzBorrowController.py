@@ -250,6 +250,17 @@ class Controller( object ):
         self.log_identifier = record_search['id']
         return eb_request_number
 
+    def update_history_note( self, request_id, note ):
+        """ Updates history note, either that processing has started, or what the flow is.
+            Called by run_code() """
+        try:
+            sql = self.HISTORY_NOTE_SQL
+            logger.debug( 'update_history_note sql, `%s`' % sql )
+            self.db_handler.run_sql( sql )
+        except Exception as e:
+            logger.error( 'update_history_note error, ```%s```' % unicode(repr(e)) )
+        return
+
     def determine_flow( self, itemInstance ):
         """ Determines services to try, and order.
             No longer allows for BorrowDirect string requesting since new API doesn't permit it.
@@ -260,13 +271,6 @@ class Controller( object ):
                 flow = [ 'bd', 'illiad' ]
         logger.debug( 'determine_flow() complete' )
         return flow
-
-    def update_history_note( self, request_id, note ):
-        """ Updates history note, either that processing has started, or what the flow is.
-            Called by run_code() """
-        sql = self.HISTORY_NOTE_SQL
-        self.db_handler.run_sql( sql )
-        return
 
     # end class Controller
 
