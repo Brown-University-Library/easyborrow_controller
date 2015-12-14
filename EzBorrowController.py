@@ -254,7 +254,7 @@ class Controller( object ):
         """ Updates history note, either that processing has started, or what the flow is.
             Called by run_code() """
         try:
-            sql = self.HISTORY_NOTE_SQL
+            sql = self.HISTORY_NOTE_SQL % ( request_id, note )
             logger.debug( 'update_history_note sql, `%s`' % sql )
             self.db_handler.run_sql( sql )
         except Exception as e:
