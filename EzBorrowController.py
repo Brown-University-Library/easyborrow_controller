@@ -58,14 +58,12 @@ class Controller( object ):
             # setup
             #######
 
-            # ( dbh, itemInstance, utCdInstance, web_logger ) = self.setup()
             ( itemInstance, utCdInstance, web_logger ) = self.setup()
 
             #######
             # check for a request-record
             #######
 
-            # record_search = self.run_record_search( dbh, web_logger )
             record_search = self.run_record_search( web_logger )
 
             #######
@@ -86,7 +84,7 @@ class Controller( object ):
 
             # update request and history tables
             itemInstance.updateRequestStatus("in_process")
-            itemInstance.updateHistoryNote( "Processing started" )
+            # itemInstance.updateHistoryNote( "Processing started" )
             self.update_history_note( eb_request_number, 'Processing started' )
 
             #######
@@ -113,7 +111,6 @@ class Controller( object ):
                     # setup
                     bd_api_runner = BD_ApiRunner( logger, self.log_identifier )
                     itemInstance = bd_api_runner.setup_api_hit( itemInstance, web_logger )
-                    # itemInstance = bd_api_runner.setup_api_hit( itemInstance, utCdInstance )
 
                     # prepare data
                     bd_data = bd_api_runner.prepare_params( itemInstance )
@@ -221,7 +218,6 @@ class Controller( object ):
         """ Calls initial weblog entry and returns class instances.
             Called by run_code() """
         try:
-            # dbh = db_handler.Db_Handler( logger )
             self.db_handler = db_handler.Db_Handler( logger )
         except Exception as e:
             logger.error( 'e, `%s`' % e )
@@ -231,14 +227,11 @@ class Controller( object ):
         formatted_time = time.strftime( '%a %b %d %H:%M:%S %Z %Y', time.localtime() )  # eg 'Wed Jul 13 13:41:39 EDT 2005'
         web_logger.post_message( message='EZBorrowController session starting at %s' % formatted_time, identifier=self.log_identifier, importance='info' )
         logger.debug( 'setup() complete' )
-        # return ( dbh, itemInstance, utCdInstance, web_logger )
         return ( itemInstance, utCdInstance, web_logger )
 
-    # def run_record_search( self, dbh, web_logger ):
     def run_record_search( self, web_logger ):
         """ Searches for new request.
             Called by run_code() """
-        # result_dcts = dbh.run_select( self.SELECT_SQL )  # [ {row01field01_key: row01field01_value}, fieldname02], ( (row01field01_value, row01field02_value), (row02field01_value, row02field02_value) ) ]
         result_dcts = self.db_handler.run_select( self.SELECT_SQL )  # [ {row01field01_key: row01field01_value}, fieldname02], ( (row01field01_value, row01field02_value), (row02field01_value, row02field02_value) ) ]
         logger.debug( '(new) record_search, `%s`' % result_dcts )
         if not result_dcts:
@@ -272,7 +265,7 @@ class Controller( object ):
         """ Updates history note, either that processing has started, or what the flow is.
             Called by run_code() """
         sql = self.HISTORY_NOTE_SQL
-        # self.db_handler.run_sql( sql )
+        self.db_handler.run_sql( sql )
         return
 
     # end class Controller
