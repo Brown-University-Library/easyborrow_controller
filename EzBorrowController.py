@@ -84,7 +84,6 @@ class Controller( object ):
 
             # update request and history tables
             itemInstance.updateRequestStatus("in_process")
-            # itemInstance.updateHistoryNote( "Processing started" )
             self.update_history_note( eb_request_number, 'Processing started' )
 
             #######
@@ -95,7 +94,8 @@ class Controller( object ):
             web_logger.post_message( message='- in controller; flowList is: %s' % flowList, identifier=self.log_identifier, importance='info' )
 
             flowString = string.join( flowList, ', ' )
-            itemInstance.updateHistoryNote( "Flow: %s" % flowString )
+            # itemInstance.updateHistoryNote( "Flow: %s" % flowString )
+            self.update_history_note( eb_request_number, 'Flow: %s' % flowString )
 
             for service in flowList:
 

@@ -327,12 +327,12 @@ class Item( object ):
     self.eppn = rowTuple[ fieldNameList.index('eppn') ]  # new as of 2012-05
 
 
-  def updateHistoryNote(self, note):
+  # def updateHistoryNote(self, note):
 
-    sql = self.hist_note_sql % ( self.itemDbId, note )
+  #   sql = self.hist_note_sql % ( self.itemDbId, note )
 
-    utCdInstance = UtilityCode.UtilityCode( self.logger )
-    utCdInstance.connectExecute(sql)
+  #   utCdInstance = UtilityCode.UtilityCode( self.logger )
+  #   utCdInstance.connectExecute(sql)
 
 
   # end class Item
