@@ -17,7 +17,6 @@ from __future__ import unicode_literals
 import datetime, json, logging, os, pprint, random, string, sys, time
 from easyborrow_controller_code import settings, utility_code
 from easyborrow_controller_code.classes import db_handler, Item, UtilityCode
-# from easyborrow_controller_code.classes.tunneler_runners import BD_Runner, BD_ApiRunner
 from easyborrow_controller_code.classes.tunneler_runners import BD_ApiRunner
 from easyborrow_controller_code.classes.web_logger import WebLogger
 
@@ -42,9 +41,11 @@ logging.getLogger("urllib3").setLevel(logging.WARNING)
 class Controller( object ):
 
     def __init__( self ):
-        """ Grabs settings from environment and sets up logger. """
+        """ Grabs settings from environment and sets up logger.
+            Note: SQL attributes are pattern-statements; string-substitution completes them. """
         self.SELECT_SQL = settings.CONTROLLER_SELECT_SQL
         self.HISTORY_NOTE_SQL = settings.HISTORY_NOTE_SQL
+        self.HISTORY_ACTION_SQL = settings.HISTORY_NOTE_SQL
         self.log_identifier = 'temp--%s--%s' % ( datetime.datetime.now().strftime('%Y-%m-%d-%H:%M:%S'), random.randint(1000,9999) )    # will be ezb-request-number: helps track which log-entries go with which request
         self.db_handler = None
 
@@ -94,7 +95,6 @@ class Controller( object ):
             web_logger.post_message( message='- in controller; flowList is: %s' % flowList, identifier=self.log_identifier, importance='info' )
 
             flowString = string.join( flowList, ', ' )
-            # itemInstance.updateHistoryNote( "Flow: %s" % flowString )
             self.update_history_note( eb_request_number, 'Flow: %s' % flowString )
 
             for service in flowList:
@@ -168,6 +168,8 @@ class Controller( object ):
               #
               parameterDict = {'serviceName':'illiad', 'action':'followup', 'result':'blocked_user_emailed', 'number':''}
               itemInstance.updateHistoryAction( parameterDict['serviceName'], parameterDict['action'], parameterDict['result'], parameterDict['number'] )
+              # dct = { 'svcnm': 'illiad', 'actn': 'followup', 'rslt': 'blocked_user_emailed', 'nmbr': '' }
+              # self.update_history_action( eb_request_number, dct['svcnm'], dct['actn'], dct['rslt'], dct['nmbr'] )
               #
               if result_dict['status'] == 'success':
                 itemInstance.updateRequestStatus("illiad_block_user_emailed")
@@ -271,6 +273,17 @@ class Controller( object ):
                 flow = [ 'bd', 'illiad' ]
         logger.debug( 'determine_flow() complete' )
         return flow
+
+    def update_history_action( self, request_id, service_name, action, result, number ):
+        """ Updates history table's service name-action-result info.
+            Called by run_code() """
+        try:
+            sql = self.HISTORY_ACTION_SQL % ( request_id, service_name, action, result, number )
+            logger.debug( 'update_history_action sql, `%s`' % sql )
+            self.db_handler.run_sql( sql )
+        except Exception as e:
+            logger.error( 'update_history_action error, ```%s```' % unicode(repr(e)) )
+        return
 
     # end class Controller
 
