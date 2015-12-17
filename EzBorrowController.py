@@ -153,12 +153,6 @@ class Controller( object ):
               web_logger.post_message( message='- in controller; request successful; preparing to send email', identifier=self.log_identifier, importance='info' )
               utCdInstance.sendEmail( itemInstance, eb_request_number )
 
-            # elif( itemInstance.requestSuccessStatus == "create_illiad_user_failed" ):
-            #   web_logger.post_message( message='- in controller; create_illiad_user_failed detected; preparing to send email to staff', identifier=self.log_identifier, importance='info' )
-            #   utCdInstance.sendEmail( itemInstance, eb_request_number )
-            #   parameterDict = {'serviceName':'illiad', 'action':'followup', 'result':'ill_staff_emailed', 'number':''}
-            #   itemInstance.updateHistoryAction( parameterDict['serviceName'], parameterDict['action'], parameterDict['result'], parameterDict['number'] )
-
             elif( itemInstance.requestSuccessStatus == 'login_failed_possibly_blocked' ):
               web_logger.post_message( message='- in controller; "blocked" detected; will send user email', identifier=self.log_identifier, importance='info' )
               result_dict = utility_code.makeEbRequest( itemInstance, self.log_identifier )  # eb_request is a storage-object; NOTE: as code is migrated toward newer architecture; this line will occur near beginning of runCode()
@@ -166,10 +160,9 @@ class Controller( object ):
               result_dict = utility_code.sendEmail( result_dict['eb_request'], self.log_identifier )
               web_logger.post_message( message='- in controller; "blocked" detected; sendEmail() was called', identifier=self.log_identifier, importance='info' )
               #
-              parameterDict = {'serviceName':'illiad', 'action':'followup', 'result':'blocked_user_emailed', 'number':''}
-              itemInstance.updateHistoryAction( parameterDict['serviceName'], parameterDict['action'], parameterDict['result'], parameterDict['number'] )
-              # dct = { 'svcnm': 'illiad', 'actn': 'followup', 'rslt': 'blocked_user_emailed', 'nmbr': '' }
-              # self.update_history_action( eb_request_number, dct['svcnm'], dct['actn'], dct['rslt'], dct['nmbr'] )
+              # parameterDict = {'serviceName':'illiad', 'action':'followup', 'result':'blocked_user_emailed', 'number':''}
+              # itemInstance.updateHistoryAction( parameterDict['serviceName'], parameterDict['action'], parameterDict['result'], parameterDict['number'] )
+              self.update_history_action( eb_request_number, 'illiad', 'followup', 'blocked_user_emailed', '' )  # request_num, service, action, result, transaction_num
               #
               if result_dict['status'] == 'success':
                 itemInstance.updateRequestStatus("illiad_block_user_emailed")
@@ -178,20 +171,23 @@ class Controller( object ):
               itemInstance.updateRequestStatus("processed")
               web_logger.post_message( message='- in controller; illiad "no sfx link" message detected; preparing to send email to staff', identifier=self.log_identifier, importance='info' )
               utCdInstance.sendEmail( itemInstance, eb_request_number )
-              parameterDict = {'serviceName':'illiad', 'action':'followup', 'result':'ill_staff_emailed', 'number':''}
-              itemInstance.updateHistoryAction( parameterDict['serviceName'], parameterDict['action'], parameterDict['result'], parameterDict['number'] )
+              # parameterDict = {'serviceName':'illiad', 'action':'followup', 'result':'ill_staff_emailed', 'number':''}
+              # itemInstance.updateHistoryAction( parameterDict['serviceName'], parameterDict['action'], parameterDict['result'], parameterDict['number'] )
+              self.update_history_action( eb_request_number, 'illiad', 'followup', 'ill_staff_emailed', '' )  # request_num, service, action, result, transaction_num
 
             elif( itemInstance.requestSuccessStatus == "unknown_illiad_failure" ):
               web_logger.post_message( message='- in controller; illiad request #2 failed for unknown reason', identifier=self.log_identifier, importance='info' )
               utCdInstance.sendEmail( itemInstance, eb_request_number )
-              parameterDict = {'serviceName':'illiad', 'action':'followup', 'result':'admin_emailed', 'number':''}
-              itemInstance.updateHistoryAction( parameterDict['serviceName'], parameterDict['action'], parameterDict['result'], parameterDict['number'] )
+              # parameterDict = {'serviceName':'illiad', 'action':'followup', 'result':'admin_emailed', 'number':''}
+              # itemInstance.updateHistoryAction( parameterDict['serviceName'], parameterDict['action'], parameterDict['result'], parameterDict['number'] )
+              self.update_history_action( eb_request_number, 'illiad', 'followup', 'admin_emailed', '' )  # request_num, service, action, result, transaction_num
 
             else:
               web_logger.post_message( message='- in controller; unknown itemInstance.requestSuccessStatus; it is: %s' % itemInstance.requestSuccessStatus, identifier=self.log_identifier, importance='info' )
               utCdInstance.sendEmail( itemInstance, eb_request_number )
-              parameterDict = {'serviceName':'illiad', 'action':'followup', 'result':'admin_emailed', 'number':''}
-              itemInstance.updateHistoryAction( parameterDict['serviceName'], parameterDict['action'], parameterDict['result'], parameterDict['number'] )
+              # parameterDict = {'serviceName':'illiad', 'action':'followup', 'result':'admin_emailed', 'number':''}
+              # itemInstance.updateHistoryAction( parameterDict['serviceName'], parameterDict['action'], parameterDict['result'], parameterDict['number'] )
+              self.update_history_action( eb_request_number, 'illiad', 'followup', 'admin_emailed', '' )  # request_num, service, action, result, transaction_num
 
             #######
             # end process
