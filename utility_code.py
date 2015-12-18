@@ -171,12 +171,12 @@ def make_datetime_string():
 def makeIlliadParametersV2( itemInstance, settings, log_identifier ):
   try:
     web_logger.post_message( message='- in utility_code.makeIlliadParametersV2(); starting...', identifier=log_identifier, importance='info' )
-    try:
-      patron_info = itemInstance.grabPatronApiInfo( itemInstance.patronId )
-      itemInstance.grabConvertedPatronApiInfo( patron_info) # grabs converted info and stores it to attributes
-      logger.debug( 'id, `%s`; patron-api work done; ii.patronId is: %s; ii.patronEmail is: %s' % (log_identifier, itemInstance.patronId, itemInstance.patronEmail) )
-    except Exception, e:
-      web_logger.post_message( message='- in utility_code.makeIlliadParametersV2(); patron-api work failed; exception is: %s' % unicode(repr(e)), identifier=log_identifier, importance='error' )
+    # try:
+    #   patron_info = itemInstance.grabPatronApiInfo( itemInstance.patronId )
+    #   itemInstance.grabConvertedPatronApiInfo( patron_info) # grabs converted info and stores it to attributes
+    #   logger.debug( 'id, `%s`; patron-api work done; ii.patronId is: %s; ii.patronEmail is: %s' % (log_identifier, itemInstance.patronId, itemInstance.patronEmail) )
+    # except Exception, e:
+    #   web_logger.post_message( message='- in utility_code.makeIlliadParametersV2(); patron-api work failed; exception is: %s' % unicode(repr(e)), identifier=log_identifier, importance='error' )
     parameter_dict = {
       'auth_key': settings.ILLIAD_API_KEY,
       'request_id': log_identifier,
