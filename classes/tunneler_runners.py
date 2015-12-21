@@ -101,7 +101,7 @@ class BD_ApiRunner( object ):
         self.logger.debug( '%s- process_response complete; code, `%s`; found, `%s`; requestable, `%s`' % (self.log_identifier, self.api_confirmation_code, self.api_found, self.api_requestable) )
         return
 
-    def update_history_table( self, utility_code_instance ):
+    def update_history_table( self ):
         """ Populates history table based on request result.
             Called by controller.run_code()
             TODO: Call a db class. """
@@ -111,6 +111,17 @@ class BD_ApiRunner( object ):
         self.web_logger.post_message( message='- in tunneler_runners.BD_ApiRunner.update_history_table(); history table updated for ezb#: %s' % self.log_identifier, identifier=self.log_identifier, importance='info' )
         self.logger.debug( '%s- update_history_table complete' )
         return
+
+    # def update_history_table( self, utility_code_instance ):
+    #     """ Populates history table based on request result.
+    #         Called by controller.run_code()
+    #         TODO: Call a db class. """
+    #     ( api_confirmation_code, history_table_message ) = self.prep_code_message()
+    #     utf8_sql = self.prep_history_sql( api_confirmation_code, history_table_message )
+    #     self.db_handler.run_sql( utf8_sql )
+    #     self.web_logger.post_message( message='- in tunneler_runners.BD_ApiRunner.update_history_table(); history table updated for ezb#: %s' % self.log_identifier, identifier=self.log_identifier, importance='info' )
+    #     self.logger.debug( '%s- update_history_table complete' )
+    #     return
 
     def prep_code_message( self ):
         """ Sets api_confirmation_code and history_table_message vars.

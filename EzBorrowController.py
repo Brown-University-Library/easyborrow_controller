@@ -122,7 +122,8 @@ class Controller( object ):
                     bd_api_runner.process_response()  # populates class attributes api_confirmation_code, api_found, & api_requestable
 
                     # update history table
-                    bd_api_runner.update_history_table( utCdInstance )
+                    bd_api_runner.update_history_table()  # uses new classes/db_handler.py code
+                    # bd_api_runner.update_history_table( utCdInstance )
 
                     # handle success (processing just continues if request not successful)
                     if bd_api_runner.api_requestable == True:
