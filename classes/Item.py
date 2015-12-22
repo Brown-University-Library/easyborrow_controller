@@ -6,7 +6,7 @@ import json, logging, os, sys, urllib
 from xml.dom import minidom
 #
 from easyborrow_controller_code import settings
-from easyborrow_controller_code.classes import UtilityCode
+from easyborrow_controller_code.classes import db_handler, UtilityCode
 from easyborrow_controller_code.classes.web_logger import WebLogger
 from inrhode_tunneler.inrhode_controller import InRhodeController
 
@@ -243,13 +243,20 @@ class Item( object ):
 
 
   def updateHistoryAction(self, serviceName, action, result, number):
-
+    db_hndlr = db_handler.Db_Handler( self.logger )
     sql = self.hist_action_sql % ( self.itemDbId, serviceName, action, result, number )
+    self.db_hndlr.run_sql( sql )
+    return
 
-    utCdInstance = UtilityCode.UtilityCode( self.logger )
-    recordId = utCdInstance.connectExecute(sql)
 
-    return recordId
+  # def updateHistoryAction(self, serviceName, action, result, number):
+
+  #   sql = self.hist_action_sql % ( self.itemDbId, serviceName, action, result, number )
+
+  #   utCdInstance = UtilityCode.UtilityCode( self.logger )
+  #   recordId = utCdInstance.connectExecute(sql)
+
+  #   return recordId
 
 
   def checkInRhode(self, eb_request_number):
