@@ -245,7 +245,8 @@ class Item( object ):
   def updateHistoryAction(self, serviceName, action, result, number):
     db_hndlr = db_handler.Db_Handler( self.logger )
     sql = self.hist_action_sql % ( self.itemDbId, serviceName, action, result, number )
-    self.db_hndlr.run_sql( sql )
+    self.logger.debug( 'history-action-sql, `%s`' % sql )
+    db_hndlr.run_sql( sql )
     return
 
 
