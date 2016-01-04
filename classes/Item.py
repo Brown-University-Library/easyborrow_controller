@@ -243,21 +243,13 @@ class Item( object ):
 
 
   def updateHistoryAction(self, serviceName, action, result, number):
+    """ Updates history-action.
+        Called by, for now, utility_code.py evaluateIlliadSubmissionV2() """
     db_hndlr = db_handler.Db_Handler( self.logger )
     sql = self.hist_action_sql % ( self.itemDbId, serviceName, action, result, number )
     self.logger.debug( 'history-action-sql, `%s`' % sql )
     db_hndlr.run_sql( sql )
     return
-
-
-  # def updateHistoryAction(self, serviceName, action, result, number):
-
-  #   sql = self.hist_action_sql % ( self.itemDbId, serviceName, action, result, number )
-
-  #   utCdInstance = UtilityCode.UtilityCode( self.logger )
-  #   recordId = utCdInstance.connectExecute(sql)
-
-  #   return recordId
 
 
   def checkInRhode(self, eb_request_number):

@@ -46,6 +46,7 @@ class Controller( object ):
         self.SELECT_SQL = settings.CONTROLLER_SELECT_SQL
         self.HISTORY_NOTE_SQL = settings.HISTORY_NOTE_SQL
         self.HISTORY_ACTION_SQL = settings.HISTORY_NOTE_SQL
+        self.REQUEST_UPDATE_SQL = settings.REQUEST_UPDATE_SQL
         self.log_identifier = 'temp--%s--%s' % ( datetime.datetime.now().strftime('%Y-%m-%d-%H:%M:%S'), random.randint(1000,9999) )    # will be ezb-request-number: helps track which log-entries go with which request
         self.db_handler = None
 
@@ -84,7 +85,8 @@ class Controller( object ):
             itemInstance.fill_from_db_row( record_search )
 
             # update request and history tables
-            itemInstance.updateRequestStatus("in_process")
+            # itemInstance.updateRequestStatus("in_process")
+            self.update_request_status( 'in_process', eb_request_number )
             self.update_history_note( eb_request_number, 'Processing started' )
 
             #######
@@ -273,11 +275,23 @@ class Controller( object ):
             logger.error( 'update_history_action error, ```%s```' % unicode(repr(e)) )
         return
 
+    def update_request_status( self, new_status, request_id ):
+        """ Updates request table's status info.
+            Called by run_code() """
+        try:
+            sql = self.REQUEST_UPDATE_SQL % ( new_status, request_id )
+            logger.debug( 'update_request_status sql, `%s`' % sql )
+            self.db_handler.run_sql( sql )
+        except Exception as e:
+            logger.error( 'update_request_status error, ```%s```' % unicode(repr(e)) )
+            raise Exception( unicode(repr(e)) )
+        return
+
     # end class Controller
 
 
 
 
 if __name__ == '__main__':
-  controller_instance = Controller()
-  controller_instance.run_code()
+    controller_instance = Controller()
+    controller_instance.run_code()
