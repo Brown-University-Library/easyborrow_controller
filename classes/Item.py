@@ -265,12 +265,12 @@ class Item( object ):
       web_logger.post_message( message='- in classes.Item.checkInRhode(); exception is: %s' % unicode(repr(e)), identifier=eb_request_number, importance='error' )
 
 
-  def updateRequestStatus(self, newStatus):
+  # def updateRequestStatus(self, newStatus):
 
-    sql = self.request_status_sql % ( newStatus, self.itemDbId )
+  #   sql = self.request_status_sql % ( newStatus, self.itemDbId )
 
-    utCdInstance = UtilityCode.UtilityCode( self.logger )
-    utCdInstance.connectExecute(sql)
+  #   utCdInstance = UtilityCode.UtilityCode( self.logger )
+  #   utCdInstance.connectExecute(sql)
 
 
   def fill_from_db_row( self, db_dct ):
