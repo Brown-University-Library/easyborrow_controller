@@ -265,14 +265,6 @@ class Item( object ):
       web_logger.post_message( message='- in classes.Item.checkInRhode(); exception is: %s' % unicode(repr(e)), identifier=eb_request_number, importance='error' )
 
 
-  # def updateRequestStatus(self, newStatus):
-
-  #   sql = self.request_status_sql % ( newStatus, self.itemDbId )
-
-  #   utCdInstance = UtilityCode.UtilityCode( self.logger )
-  #   utCdInstance.connectExecute(sql)
-
-
   def fill_from_db_row( self, db_dct ):
     """ Updates attributes from found record data.
         Called by controller.run_code() """
@@ -325,14 +317,6 @@ class Item( object ):
     self.patronStatus = rowTuple[ fieldNameList.index('group') ] # for temp ILL staff manual new-user registration
     self.oclcNumber = rowTuple[ fieldNameList.index('wc_accession') ] # for temp ILL staff manual new-user registration
     self.eppn = rowTuple[ fieldNameList.index('eppn') ]  # new as of 2012-05
-
-
-  # def updateHistoryNote(self, note):
-
-  #   sql = self.hist_note_sql % ( self.itemDbId, note )
-
-  #   utCdInstance = UtilityCode.UtilityCode( self.logger )
-  #   utCdInstance.connectExecute(sql)
 
 
   # end class Item

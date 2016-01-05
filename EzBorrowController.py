@@ -85,7 +85,6 @@ class Controller( object ):
             itemInstance.fill_from_db_row( record_search )
 
             # update request and history tables
-            # itemInstance.updateRequestStatus("in_process")
             self.update_request_status( 'in_process', eb_request_number )
             self.update_history_note( eb_request_number, 'Processing started' )
 
@@ -152,7 +151,6 @@ class Controller( object ):
             web_logger.post_message( message='- in controller; itemInstance.requestSuccessStatus is: %s' % itemInstance.requestSuccessStatus, identifier=self.log_identifier, importance='info' )
 
             if( itemInstance.requestSuccessStatus == "success" ):
-              # itemInstance.updateRequestStatus("processed")
               self.update_request_status( 'processed', eb_request_number )
               web_logger.post_message( message='- in controller; request successful; preparing to send email', identifier=self.log_identifier, importance='info' )
               utCdInstance.sendEmail( itemInstance, eb_request_number )
@@ -166,11 +164,9 @@ class Controller( object ):
               self.update_history_action( eb_request_number, 'illiad', 'followup', 'blocked_user_emailed', '' )  # request_num, service, action, result, transaction_num
               #
               if result_dict['status'] == 'success':
-                # itemInstance.updateRequestStatus("illiad_block_user_emailed")
                 self.update_request_status( 'illiad_block_user_emailed', eb_request_number )
 
             elif( itemInstance.requestSuccessStatus == "failure_no_sfx-link_to_illiad" ):
-              # itemInstance.updateRequestStatus("processed")
               self.update_request_status( 'processed', eb_request_number )
               web_logger.post_message( message='- in controller; illiad "no sfx link" message detected; preparing to send email to staff', identifier=self.log_identifier, importance='info' )
               utCdInstance.sendEmail( itemInstance, eb_request_number )
