@@ -29,25 +29,6 @@ class UtilityCode( object ):
     self.logger = logger  # set by Controller() or Item()
 
 
-  # def connectExecute(self, sql):
-  #   """ Older db-access code. TODO: replace with classes.db_handler.Db_Handler() calls. """
-  #   try:
-  #     try:
-  #       connectionObject = MySQLdb.connect(host=settings.DB_HOST, port=settings.DB_PORT, user=settings.DB_USERNAME, passwd=settings.DB_PASSWORD, db=settings.DB_NAME)
-  #       cursorObject = connectionObject.cursor()
-  #       cursorObject.execute(sql)
-  #       recordId = int( cursorObject.insert_id() )
-  #       cursorObject.close()
-  #       connectionObject.close()
-  #       returnVal = recordId  # 2012-10-04: this doesn't seem to work, thus always generating a returnVal of 'failure', which doesn't matter since it's not used.
-  #     except Exception, e:
-  #       returnVal = "failure"
-  #     return returnVal
-  #   except Exception, e:
-  #     web_logger.post_message( message='- in classes.UtilityCode.connectExecute(); exception is: %s' % unicode(repr(e)), identifier='unavailable', importance='error' )
-  #   # end def connectExecute()
-
-
   def prepFirstEmailHeader( self, itemInstance ):
     '''
     - Called by: UtilityCode.py->UtilityCode.sendEmail()
