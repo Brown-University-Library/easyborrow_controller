@@ -154,6 +154,7 @@ class Controller( object ):
               self.update_request_status( 'processed', eb_request_number )
               web_logger.post_message( message='- in controller; request successful; preparing to send email', identifier=self.log_identifier, importance='info' )
               utCdInstance.sendEmail( itemInstance, eb_request_number )
+              # mail_builder.prep_email( service, status )
 
             elif( itemInstance.requestSuccessStatus == 'login_failed_possibly_blocked' ):
               web_logger.post_message( message='- in controller; "blocked" detected; will send user email', identifier=self.log_identifier, importance='info' )
