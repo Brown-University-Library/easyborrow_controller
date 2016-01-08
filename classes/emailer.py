@@ -97,7 +97,8 @@ If you have any questions, contact the Library's Rockefeller Gateway staff at ro
         self.EZB_REQUEST.request_number,
         self.EZB_REQUEST.reference_number,
         self.PATRON.email )
-        return message  # end make_borrowdirect_message()
+        return message
+        ####### end make_borrowdirect_message() #######
 
     def make_illiad_success_message( self ):
         """ Preps illiad success message.
@@ -128,7 +129,8 @@ If you have any questions, contact the Library's Interlibrary Loan office at int
         self.EZB_REQUEST.request_number,
         self.EZB_REQUEST.reference_number,
         self.PATRON.email )
-        return message  # end make_illiad_success_message()
+        return message
+        ###### end make_illiad_success_message() ######
 
     def make_illiad_blocked_message( self ):
         """ Preps illiad blocked message.
@@ -152,7 +154,8 @@ Once your account issue is cleared up, click on this link to re-request the item
         self.ITEM.title,
         'http://worldcat.org/oclc/%s' % self.ITEM.oclc_number,
         self.EZB_REQUEST.request_number )
-        return message  # end make_illiad_blocked_message()
+        return message
+        ####### end make_illiad_blocked_message() #######
 
     # end class MailBuilder
 
