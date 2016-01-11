@@ -16,29 +16,34 @@ logger = logging.getLogger(__name__)
 web_logger = WebLogger( logger )
 
 
-class EB_Request:
+class Request_Meta:
+    """ Holds non-patron, non-item info about the request. """
 
     def __init__( self ):
-        self.patron = None
-        self.item = None
-        self.request_ezb_reference_number = ''  # the easyBorrow id
-        self.request_current_tunneler_service = ''
-        self.request_current_tunneler_status = ''
+        self.request_number = ''  # the easyBorrow db-id
+        self.datetime = None
+        self.service = ''
+        self.status = ''
 
     # end class EB_Request
 
 
 class Patron:
+    """ Holds patron info. """
 
     def __init__( self ):
-        self.name_first = None
+        self.firstname = ''
+        self.lastname = ''
+        self.email = ''
 
     # end class Patron
 
 
 class Item:
+    """ Holds item info. """
 
     def __init__( self ):
-        self.title = None
+        self.title = ''
+        self.oclc_num = ''
 
     # end class Item
