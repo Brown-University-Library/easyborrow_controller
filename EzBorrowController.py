@@ -19,7 +19,7 @@ from easyborrow_controller_code import settings, utility_code
 from easyborrow_controller_code.classes import db_handler, Item, UtilityCode
 from easyborrow_controller_code.classes.tunneler_runners import BD_ApiRunner
 from easyborrow_controller_code.classes.web_logger import WebLogger
-from easyborrow_controller_code.classes.basics import Request_Meta, Patron_Obj, Item_Obj
+from easyborrow_controller_code.classes.basics import Request_Meta as Request_Obj, Patron as Patron_Obj, Item as Item_Obj
 
 
 ## set up file logger

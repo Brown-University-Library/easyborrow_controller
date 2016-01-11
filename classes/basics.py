@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import unicode_literals
+import logging
 from easyborrow_controller_code import settings
 from easyborrow_controller_code.classes.web_logger import WebLogger
 
@@ -25,7 +26,7 @@ class Request_Meta:
         self.service = ''
         self.status = ''
 
-    # end class EB_Request
+    # end class Request_Meta
 
 
 class Patron:
