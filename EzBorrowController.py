@@ -38,6 +38,12 @@ logging.getLogger("requests").setLevel(logging.WARNING)
 logging.getLogger("urllib3").setLevel(logging.WARNING)
 
 
+## some instantiations
+request_inst = Request_Obj()
+patron_inst = Patron_Obj()
+item_inst = Item_Obj()
+
+
 ## get to work
 class Controller( object ):
 
@@ -84,6 +90,7 @@ class Controller( object ):
 
             # setup data
             itemInstance.fill_from_db_row( record_search )
+            ( request_inst, patron_inst, item_inst ) = self.fill_from_db_row( record_search )  # will eventuall take the place of the above itemInstance call
 
             # update request and history tables
             self.update_request_status( 'in_process', eb_request_number )
@@ -287,6 +294,22 @@ class Controller( object ):
             logger.error( 'update_request_status error, ```%s```' % unicode(repr(e)) )
             raise Exception( unicode(repr(e)) )
         return
+
+    def fill_from_db_row( self, db_dct ):
+        """ Updates attributes from found record data.
+            Note: db_dct contains more data; just storing what's needed.
+            Will eventually fully take the place of the similar Item.fill_from_db_row() call.
+            Called by run_code() """
+        request_inst.request_number = db_dct['id']
+        patron_inst.firstname = db_dct['firstname'].strip()
+        patron_inst.lastname = db_dct['lastname'].strip()
+        patron_inst.barcode = db_dct['barcode']
+        patron_inst.email = db_dct['email']
+        item_inst.title = db_dct['title']
+        item_inst.isbn = db_dct['isbn']
+        item_inst.oclc_num = db_dct['wc_accession']
+        item_inst.volumes_info = db_dct['volumes']
+        return ( request_inst, patron_inst, item_inst )
 
     # end class Controller
 

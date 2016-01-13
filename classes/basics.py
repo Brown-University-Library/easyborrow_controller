@@ -35,6 +35,7 @@ class Patron:
     def __init__( self ):
         self.firstname = ''
         self.lastname = ''
+        self.barcode = ''
         self.email = ''
 
     # end class Patron
@@ -45,6 +46,8 @@ class Item:
 
     def __init__( self ):
         self.title = ''
+        self.isbn = ''
         self.oclc_num = ''
+        self.volumes_info = ''
 
     # end class Item
