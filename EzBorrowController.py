@@ -91,6 +91,10 @@ class Controller( object ):
             # setup data
             itemInstance.fill_from_db_row( record_search )
             ( request_inst, patron_inst, item_inst ) = self.fill_from_db_row( record_search )  # will eventuall take the place of the above itemInstance call
+            logger.debug( 'itemInstance.volumesPreference, `%s`' % itemInstance.volumesPreference )
+            logger.debug( 'itemInstance.itemIsbn, `%s`' % itemInstance.itemIsbn )
+            logger.debug( 'item_inst.volumes_info, `%s`' % item_inst.volumes_info )
+            logger.debug( 'item_inst.isbn, `%s`' % item_inst.isbn )
 
             # update request and history tables
             self.update_request_status( 'in_process', eb_request_number )
