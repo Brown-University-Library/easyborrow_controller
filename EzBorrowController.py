@@ -104,7 +104,8 @@ class Controller( object ):
             # process flow
             #######
 
-            flowList = self.determine_flow( itemInstance )
+            # flowList = self.determine_flow( itemInstance )
+            flowList = self.determine_flow( item_inst )
             web_logger.post_message( message='- in controller; flowList is: %s' % flowList, identifier=self.log_identifier, importance='info' )
 
             flowString = string.join( flowList, ', ' )
@@ -265,16 +266,27 @@ class Controller( object ):
             logger.error( 'update_history_note error, ```%s```' % unicode(repr(e)) )
         return
 
-    def determine_flow( self, itemInstance ):
+    def determine_flow( self, item_inst ):
         """ Determines services to try, and order.
             No longer allows for BorrowDirect string requesting since new API doesn't permit it.
             Called by run_code() """
         flow = [ 'illiad' ]
-        if len( itemInstance.volumesPreference ) == 0:
-            if len( itemInstance.itemIsbn ) > 0:
+        if len( item_inst.volumes_info ) == 0:
+            if len( item_inst.isbn ) > 0:
                 flow = [ 'bd', 'illiad' ]
-        logger.debug( 'determine_flow() complete' )
+        logger.debug( 'determine_flow() result, `%s`' % flow )
         return flow
+
+    # def determine_flow( self, itemInstance ):
+    #     """ Determines services to try, and order.
+    #         No longer allows for BorrowDirect string requesting since new API doesn't permit it.
+    #         Called by run_code() """
+    #     flow = [ 'illiad' ]
+    #     if len( itemInstance.volumesPreference ) == 0:
+    #         if len( itemInstance.itemIsbn ) > 0:
+    #             flow = [ 'bd', 'illiad' ]
+    #     logger.debug( 'determine_flow() complete' )
+    #     return flow
 
     def update_history_action( self, request_id, service_name, action, result, number ):
         """ Updates history table's service name-action-result info.
