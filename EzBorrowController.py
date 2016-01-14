@@ -104,14 +104,14 @@ class Controller( object ):
             # process flow
             #######
 
-            # flowList = self.determine_flow( itemInstance )
-            flowList = self.determine_flow( item_inst )
-            web_logger.post_message( message='- in controller; flowList is: %s' % flowList, identifier=self.log_identifier, importance='info' )
+            # flow_list = self.determine_flow( itemInstance )
+            flow_list = self.determine_flow( item_inst )
+            web_logger.post_message( message='- in controller; flow_list is: %s' % flow_list, identifier=self.log_identifier, importance='info' )
 
-            flowString = string.join( flowList, ', ' )
-            self.update_history_note( eb_request_number, 'Flow: %s' % flowString )
+            flow_string = string.join( flow_list, ', ' )
+            self.update_history_note( eb_request_number, 'Flow: %s' % flow_string )
 
-            for service in flowList:
+            for service in flow_list:
 
                 if (service == 'ir'):
                     pass
@@ -155,7 +155,7 @@ class Controller( object ):
                     send_result_dict = utility_code.submitIlliadRemoteAuthRequestV2( prep_result_dict['parameter_dict'], self.log_identifier )  # send request to illiad
                     eval_result_dict = utility_code.evaluateIlliadSubmissionV2( itemInstance, send_result_dict, self.log_identifier )  # evaluate result (update itemInstance, & history & request tables)
 
-            # end of '''for service in flowList:'''
+            # end of '''for service in flow_list:'''
 
             #######
             # update 'requests' table & send email on success ('for' loop is over)
