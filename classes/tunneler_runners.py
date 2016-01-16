@@ -45,26 +45,40 @@ class BD_ApiRunner( object ):
         self.db_handler = Db_Handler( self.logger )
         return
 
-    def setup_api_hit( self, item_instance, web_logger ):
+    def setup_api_hit( self, item_inst, web_logger ):
         """ Sets the currently-active-service and updates weblog.
             Called by controller.run_code() """
-        item_instance.currentlyActiveService = 'borrowDirect'
+        item_inst.current_service = 'borrowDirect'
         web_logger.post_message( message='- in controller; checking BorrowDirect...', identifier=self.log_identifier, importance='info' )
         self.logger.debug( '- identifier, %s; setup_api_hit() complete' % self.log_identifier )
-        return item_instance
+        return item_inst
 
-    def prepare_params( self, itemInstance ):
-        """ Updates item-instance attributes.
-            Called by controller.run_code()
-            TODO: remove legacy code. """
-        if type(itemInstance.patronBarcode) == str:
-            itemInstance.patronBarcode = itemInstance.patronBarcode.decode( 'utf-8', 'replace' )
-        if type(itemInstance.itemIsbn) == str:
-            itemInstance.itemIsbn = itemInstance.itemIsbn.decode( 'utf-8', 'replace' )
-        if type(itemInstance.sfxurl) == str:
-            itemInstance.sfxurl = itemInstance.sfxurl.decode( 'utf-8', 'replace' )
-        bd_data = { 'isbn': itemInstance.itemIsbn, 'user_barcode': itemInstance.patronBarcode }
+    # def setup_api_hit( self, item_instance, web_logger ):
+    #     """ Sets the currently-active-service and updates weblog.
+    #         Called by controller.run_code() """
+    #     item_instance.currentlyActiveService = 'borrowDirect'
+    #     web_logger.post_message( message='- in controller; checking BorrowDirect...', identifier=self.log_identifier, importance='info' )
+    #     self.logger.debug( '- identifier, %s; setup_api_hit() complete' % self.log_identifier )
+    #     return item_instance
+
+    def prepare_params( self,  patron_inst, item_inst ):
+        """ Preps bd-api parameters.
+            Called by controller.run_code() """
+        bd_data = { 'isbn': item_inst.isbn, 'user_barcode': patron_inst.barcode }
         return bd_data
+
+    # def prepare_params( self, itemInstance ):
+    #     """ Updates item-instance attributes.
+    #         Called by controller.run_code()
+    #         TODO: remove legacy code. """
+    #     if type(itemInstance.patronBarcode) == str:
+    #         itemInstance.patronBarcode = itemInstance.patronBarcode.decode( 'utf-8', 'replace' )
+    #     if type(itemInstance.itemIsbn) == str:
+    #         itemInstance.itemIsbn = itemInstance.itemIsbn.decode( 'utf-8', 'replace' )
+    #     if type(itemInstance.sfxurl) == str:
+    #         itemInstance.sfxurl = itemInstance.sfxurl.decode( 'utf-8', 'replace' )
+    #     bd_data = { 'isbn': itemInstance.itemIsbn, 'user_barcode': itemInstance.patronBarcode }
+    #     return bd_data
 
     def hit_bd_api( self, isbn, user_barcode ):
         """ Handles bdpyweb call.

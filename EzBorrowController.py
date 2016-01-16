@@ -104,7 +104,6 @@ class Controller( object ):
             # process flow
             #######
 
-            # flow_list = self.determine_flow( itemInstance )
             flow_list = self.determine_flow( item_inst )
             web_logger.post_message( message='- in controller; flow_list is: %s' % flow_list, identifier=self.log_identifier, importance='info' )
 
@@ -124,10 +123,13 @@ class Controller( object ):
 
                     # setup
                     bd_api_runner = BD_ApiRunner( logger, self.log_identifier )
-                    itemInstance = bd_api_runner.setup_api_hit( itemInstance, web_logger )
+                    # itemInstance = bd_api_runner.setup_api_hit( itemInstance, web_logger )
+                    itemInstance.currentlyActiveService = 'borrowDirect'  # TODO, get rid of this once item_inst is doing all the work
+                    item_inst = bd_api_runner.setup_api_hit( item_inst, web_logger )
 
                     # prepare data
-                    bd_data = bd_api_runner.prepare_params( itemInstance )
+                    # bd_data = bd_api_runner.prepare_params( itemInstance )
+                    bd_data = bd_api_runner.prepare_params( patron_inst, item_inst )
 
                     # hit api
                     bd_api_runner.hit_bd_api( bd_data['isbn'], bd_data['user_barcode'] )  # response in bd_api_runner.bdpyweb_response_dct
@@ -276,17 +278,6 @@ class Controller( object ):
                 flow = [ 'bd', 'illiad' ]
         logger.debug( 'determine_flow() result, `%s`' % flow )
         return flow
-
-    # def determine_flow( self, itemInstance ):
-    #     """ Determines services to try, and order.
-    #         No longer allows for BorrowDirect string requesting since new API doesn't permit it.
-    #         Called by run_code() """
-    #     flow = [ 'illiad' ]
-    #     if len( itemInstance.volumesPreference ) == 0:
-    #         if len( itemInstance.itemIsbn ) > 0:
-    #             flow = [ 'bd', 'illiad' ]
-    #     logger.debug( 'determine_flow() complete' )
-    #     return flow
 
     def update_history_action( self, request_id, service_name, action, result, number ):
         """ Updates history table's service name-action-result info.

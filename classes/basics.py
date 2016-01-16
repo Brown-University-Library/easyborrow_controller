@@ -23,8 +23,8 @@ class Request_Meta:
     def __init__( self ):
         self.request_number = ''  # the easyBorrow db-id
         self.datetime = None
-        self.service = ''
-        self.status = ''
+        self.current_service = ''
+        self.current_status = ''
 
     # end class Request_Meta
 
