@@ -123,12 +123,10 @@ class Controller( object ):
 
                     # setup
                     bd_api_runner = BD_ApiRunner( logger, self.log_identifier )
-                    # itemInstance = bd_api_runner.setup_api_hit( itemInstance, web_logger )
                     itemInstance.currentlyActiveService = 'borrowDirect'  # TODO, get rid of this once item_inst is doing all the work
                     item_inst = bd_api_runner.setup_api_hit( item_inst, web_logger )
 
                     # prepare data
-                    # bd_data = bd_api_runner.prepare_params( itemInstance )
                     bd_data = bd_api_runner.prepare_params( patron_inst, item_inst )
 
                     # hit api
@@ -139,11 +137,15 @@ class Controller( object ):
 
                     # update history table
                     bd_api_runner.update_history_table()  # uses new classes/db_handler.py code
-                    # bd_api_runner.update_history_table( utCdInstance )
 
                     # handle success (processing just continues if request not successful)
                     if bd_api_runner.api_requestable == True:
-                        itemInstance = bd_api_runner.handle_success( itemInstance )
+                        # itemInstance = bd_api_runner.handle_success( itemInstance )
+                        request_inst = bd_api_runner.handle_success( request_inst )
+                        ## deprecated itemInstance code below will be removed when itemInstance is retired
+                        itemInstance.requestSuccessStatus = request_inst.current_status
+                        itemInstance.genericAssignedUserEmail = patron_inst.email
+                        itemInstance.genericAssignedReferenceNumber = request_inst.confirmation_code
                         break
 
                 elif(service == "vc"):

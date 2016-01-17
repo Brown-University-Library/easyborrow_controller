@@ -25,6 +25,7 @@ class Request_Meta:
         self.datetime = None
         self.current_service = ''
         self.current_status = ''
+        self.confirmation_code = ''
 
     # end class Request_Meta
 
