@@ -82,19 +82,19 @@ class IlliadApiRunner( object ):
     #     web_logger.post_message( message=message, identifier=log_identifier, importance='error' )
     #     return { 'error_message': message }
 
-def _make_openurl_segment( self, initial_url ):
-    """ Prepares the openurl segment.
-        Called by make_parameters() """
-    try:
-        logger.debug( 'id, `%s`; initial_url is: %s' % (self.log_identifier, initial_url) )
-        openurl = initial_url[ initial_url.find( 'serialssolutions.com/?' ) + 22 : ]  # TODO: change this to use the urlparse library
-        openurl = openurl.replace( 'genre=unknown', 'genre=book' )
-        logger.debug( 'id, `%s`; openurl is: %s' % (self.log_identifier, openurl) )
-        return openurl
-    except Exception as e:
-        message = '- in tunneler_runners.IlliadApiRunner._make_openurl_segment(); exception, `%s`' % unicode( repr(e) )
-        web_logger.post_message( message=message, identifier=log_identifier, importance='error' )
-        raise Exception( message )
+    def _make_openurl_segment( self, initial_url ):
+        """ Prepares the openurl segment.
+            Called by make_parameters() """
+        try:
+            logger.debug( 'id, `%s`; initial_url is: %s' % (self.log_identifier, initial_url) )
+            openurl = initial_url[ initial_url.find( 'serialssolutions.com/?' ) + 22 : ]  # TODO: change this to use the urlparse library
+            openurl = openurl.replace( 'genre=unknown', 'genre=book' )
+            logger.debug( 'id, `%s`; openurl is: %s' % (self.log_identifier, openurl) )
+            return openurl
+        except Exception as e:
+            message = '- in tunneler_runners.IlliadApiRunner._make_openurl_segment(); exception, `%s`' % unicode( repr(e) )
+            web_logger.post_message( message=message, identifier=log_identifier, importance='error' )
+            raise Exception( message )
 
     def submit_request( self ):
         return 'bah2'
