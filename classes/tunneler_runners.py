@@ -48,40 +48,8 @@ class IlliadApiRunner( object ):
             'volumes': '',  # perceived but not handled by dj_ill_submission -- 2016-01-17 TODO, I think this should be added to the `notes`
             }
         return_dct = { 'parameter_dict': parameter_dict }
-        # logger.debug( 'new not-yet-used make_parameters() parameter_dict, ```%s```' % pprint.pformat(parameter_dict) )
+        logger.debug( 'return_dct, ```%s```' % pprint.pformat(return_dct) )
         return return_dct
-
-    # def makeIlliadParametersV2( itemInstance, settings, log_identifier ):
-    #   try:
-    #     web_logger.post_message( message='- in utility_code.makeIlliadParametersV2(); starting...', identifier=log_identifier, importance='info' )
-    #     # try:
-    #     #   patron_info = itemInstance.grabPatronApiInfo( itemInstance.patronId )
-    #     #   itemInstance.grabConvertedPatronApiInfo( patron_info) # grabs converted info and stores it to attributes
-    #     #   logger.debug( 'id, `%s`; patron-api work done; ii.patronId is: %s; ii.patronEmail is: %s' % (log_identifier, itemInstance.patronId, itemInstance.patronEmail) )
-    #     # except Exception, e:
-    #     #   web_logger.post_message( message='- in utility_code.makeIlliadParametersV2(); patron-api work failed; exception is: %s' % unicode(repr(e)), identifier=log_identifier, importance='error' )
-    #     parameter_dict = {
-    #       'auth_key': settings.ILLIAD_API_KEY,
-    #       'request_id': log_identifier,
-    #       'first_name': itemInstance.firstname,  # used for new_user registration
-    #       'last_name': itemInstance.lastname,  # used for new_user registration
-    #       'username': itemInstance.eppn,  # for login _and_ new_user registration
-    #       'address': '',  # used for new_user registration
-    #       'email': itemInstance.patronEmail,  # used for new_user registration
-    #       'oclc_number': itemInstance.oclcNumber,
-    #       'openurl': makeOpenUrlSegment( itemInstance.sfxurl, log_identifier )['openurl_segment'],
-    #       'patron_barcode': itemInstance.patronBarcode,
-    #       'patron_department': itemInstance.patron_api_dept,  # used for new_user registration
-    #       'patron_status': itemInstance.patronStatus,  # used for new_user registration
-    #       'phone': '',  # used for new_user registration
-    #       'volumes': '',  # perceived but not handled by dj_ill_submission
-    #       }
-    #     web_logger.post_message( message='- in utility_code.makeIlliadParametersV2()-wl; parameter_dict: %s' % unicode(repr(parameter_dict)), identifier=log_identifier, importance='info' )
-    #     return { 'parameter_dict': parameter_dict }
-    #   except:
-    #     # message = '- in utility_code.makeIlliadParametersV2(); error detail: %s' % makeErrorString()
-    #     web_logger.post_message( message=message, identifier=log_identifier, importance='error' )
-    #     return { 'error_message': message }
 
     def _make_openurl_segment( self, initial_url ):
         """ Prepares the openurl segment.
@@ -96,6 +64,7 @@ class IlliadApiRunner( object ):
             message = '- in tunneler_runners.IlliadApiRunner._make_openurl_segment(); exception, `%s`' % unicode( repr(e) )
             web_logger.post_message( message=message, identifier=log_identifier, importance='error' )
             raise Exception( message )
+            return
 
     def submit_request( self ):
         return 'bah2'

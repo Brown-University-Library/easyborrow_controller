@@ -153,37 +153,12 @@ class Controller( object ):
 
                 elif service == 'illiad':
                     web_logger.post_message( message='- in controller; service is now illiad', identifier=self.log_identifier, importance='info' )
-                    illiad_api_runner = IlliadApiRunner( request_inst, patron_inst, item_inst )  # not yet being fully used
+                    illiad_api_runner = IlliadApiRunner( request_inst, patron_inst, item_inst )
                     request_inst.current_service = 'illiad'
-                    itemInstance.currentlyActiveService = 'illiad'
-                    #
-                    prep_result_dict = utility_code.makeIlliadParametersV2( itemInstance, settings, self.log_identifier )  # prepare parameters
-                    logger.debug( 'prep_result_dict, ```%s```' % pprint.pformat(prep_result_dict) )
-                    #
-                    test_prep_result_dct = illiad_api_runner.make_parameters( request_inst, patron_inst, item_inst )  # prepare parameters
-                    logger.debug( 'test_prep_result_dct, ```%s```' % pprint.pformat(test_prep_result_dct) )
-                    #
-                    try:
-                        assert prep_result_dict == test_prep_result_dct
-                        logger.debug( 'prep-dcts same' )
-                    except Exception as e:
-                        logger.debug( 'exception, ```%s```' % unicode(repr(e)) )
-                        # for ( key, val ) in prep_result_dict.items():
-                        #     logger.debug( 'testing prod key, `%s`; val, `%s`' %  (key, val) )
-                        #     assert prep_result_dict[key] == test_prep_result_dict[key]
-                        logger.debug( 'prep-dcts DIFFERENT' )
-                    #
-                    send_result_dict = utility_code.submitIlliadRemoteAuthRequestV2( prep_result_dict['parameter_dict'], self.log_identifier )  # send request to illiad
+                    itemInstance.currentlyActiveService = 'illiad'  # TODO, retire this
+                    prep_result_dct = illiad_api_runner.make_parameters( request_inst, patron_inst, item_inst )  # prepare parameters
+                    send_result_dict = utility_code.submitIlliadRemoteAuthRequestV2( prep_result_dct['parameter_dict'], self.log_identifier )  # send request to illiad
                     eval_result_dict = utility_code.evaluateIlliadSubmissionV2( itemInstance, send_result_dict, self.log_identifier )  # evaluate result (update itemInstance, & history & request tables)
-
-                # elif service == 'illiad':
-                #     web_logger.post_message( message='- in controller; service is now illiad', identifier=self.log_identifier, importance='info' )
-                #     itemInstance.currentlyActiveService = 'illiad'
-                #     request_inst.current_service = 'illiad'
-                #     prep_result_dict = utility_code.makeIlliadParametersV2( itemInstance, settings, self.log_identifier )  # prepare parameters
-                #     test_prep_result_dict = utility_code.makeIlliadParametersV2( itemInstance, settings, self.log_identifier )  # prepare parameters
-                #     send_result_dict = utility_code.submitIlliadRemoteAuthRequestV2( prep_result_dict['parameter_dict'], self.log_identifier )  # send request to illiad
-                #     eval_result_dict = utility_code.evaluateIlliadSubmissionV2( itemInstance, send_result_dict, self.log_identifier )  # evaluate result (update itemInstance, & history & request tables)
 
             # end of '''for service in flow_list:'''
 
