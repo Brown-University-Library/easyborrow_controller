@@ -193,6 +193,7 @@ def makeIlliadParametersV2( itemInstance, settings, log_identifier ):
       'phone': '',  # used for new_user registration
       'volumes': '',  # perceived but not handled by dj_ill_submission
       }
+    logger.debug( '%s - parameter_dict, ```%s```' % (log_identifier, pprint.pformat(parameter_dict)) )
     web_logger.post_message( message='- in utility_code.makeIlliadParametersV2()-wl; parameter_dict: %s' % unicode(repr(parameter_dict)), identifier=log_identifier, importance='info' )
     return { 'parameter_dict': parameter_dict }
   except:
