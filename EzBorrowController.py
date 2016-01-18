@@ -158,6 +158,12 @@ class Controller( object ):
                     itemInstance.currentlyActiveService = 'illiad'
                     prep_result_dict = utility_code.makeIlliadParametersV2( itemInstance, settings, self.log_identifier )  # prepare parameters
                     test_prep_result_dict = illiad_api_runner.make_parameters( request_inst, patron_inst, item_inst )  # prepare parameters
+                    try:
+                        assert test_prep_result_dict == prep_result_dict
+                        logger.debug( 'prep-dcts same' )
+                    except:
+                        logger.debug( 'prep-dcts DIFFERENT' )
+                    #
                     send_result_dict = utility_code.submitIlliadRemoteAuthRequestV2( prep_result_dict['parameter_dict'], self.log_identifier )  # send request to illiad
                     eval_result_dict = utility_code.evaluateIlliadSubmissionV2( itemInstance, send_result_dict, self.log_identifier )  # evaluate result (update itemInstance, & history & request tables)
 
