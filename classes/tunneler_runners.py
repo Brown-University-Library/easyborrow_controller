@@ -34,11 +34,11 @@ class IlliadApiRunner( object ):
         parameter_dict = {
             'auth_key': settings.ILLIAD_API_KEY,
             'request_id': self.log_identifier,
-            'first_name': item_inst.firstname,  # was used for new_user registration
-            'last_name': item_inst.lastname,  # wasused for new_user registration
-            'username': item_inst.eppn,  # was for login _and_ new_user registration
+            'first_name': patron_inst.firstname,  # was used for new_user registration
+            'last_name': patron_inst.lastname,  # wasused for new_user registration
+            'username': patron_inst.eppn,  # was for login _and_ new_user registration
             'address': '',  # was used for new_user registration
-            'email': item_inst.email,  # was used for new_user registration
+            'email': patron_inst.email,  # was used for new_user registration
             'oclc_number': item_inst.oclc_num,
             'openurl': self._make_openurl_segment( item_inst.knowledgebase_openurl ),
             'patron_barcode': patron_inst.barcode,
