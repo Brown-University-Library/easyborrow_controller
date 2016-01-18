@@ -47,8 +47,9 @@ class IlliadApiRunner( object ):
             'phone': '',  # was used for new_user registration
             'volumes': '',  # perceived but not handled by dj_ill_submission -- 2016-01-17 TODO, I think this should be added to the `notes`
             }
-        logger.debug( 'new not-yet-used make_parameters() parameter_dict, ```%s```' % pprint.pformat(parameter_dict) )
-        return parameter_dict
+        return_dct = { 'parameter_dict': parameter_dict }
+        # logger.debug( 'new not-yet-used make_parameters() parameter_dict, ```%s```' % pprint.pformat(parameter_dict) )
+        return return_dct
 
     # def makeIlliadParametersV2( itemInstance, settings, log_identifier ):
     #   try:
