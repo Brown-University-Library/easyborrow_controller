@@ -17,7 +17,7 @@ from __future__ import unicode_literals
 import datetime, json, logging, os, pprint, random, string, sys, time
 from easyborrow_controller_code import settings, utility_code
 from easyborrow_controller_code.classes import db_handler, Item, UtilityCode
-from easyborrow_controller_code.classes.tunneler_runners import BD_ApiRunner
+from easyborrow_controller_code.classes.tunneler_runners import BD_ApiRunner, IlliadApiRunner
 from easyborrow_controller_code.classes.web_logger import WebLogger
 from easyborrow_controller_code.classes.basics import Request_Meta as Request_Obj, Patron as Patron_Obj, Item as Item_Obj
 
@@ -149,15 +149,26 @@ class Controller( object ):
                         break
 
                 elif(service == "vc"):
-
                     pass
 
                 elif service == 'illiad':
                     web_logger.post_message( message='- in controller; service is now illiad', identifier=self.log_identifier, importance='info' )
+                    illiad_api_runner = IlliadApiRunner( request_inst, patron_inst, item_inst )  # not yet being fully used
+                    request_inst.current_service = 'illiad'
                     itemInstance.currentlyActiveService = 'illiad'
                     prep_result_dict = utility_code.makeIlliadParametersV2( itemInstance, settings, self.log_identifier )  # prepare parameters
+                    test_prep_result_dict = illiad_api_runner.make_parameters( request_inst, patron_inst, item_inst )  # prepare parameters
                     send_result_dict = utility_code.submitIlliadRemoteAuthRequestV2( prep_result_dict['parameter_dict'], self.log_identifier )  # send request to illiad
                     eval_result_dict = utility_code.evaluateIlliadSubmissionV2( itemInstance, send_result_dict, self.log_identifier )  # evaluate result (update itemInstance, & history & request tables)
+
+                # elif service == 'illiad':
+                #     web_logger.post_message( message='- in controller; service is now illiad', identifier=self.log_identifier, importance='info' )
+                #     itemInstance.currentlyActiveService = 'illiad'
+                #     request_inst.current_service = 'illiad'
+                #     prep_result_dict = utility_code.makeIlliadParametersV2( itemInstance, settings, self.log_identifier )  # prepare parameters
+                #     test_prep_result_dict = utility_code.makeIlliadParametersV2( itemInstance, settings, self.log_identifier )  # prepare parameters
+                #     send_result_dict = utility_code.submitIlliadRemoteAuthRequestV2( prep_result_dict['parameter_dict'], self.log_identifier )  # send request to illiad
+                #     eval_result_dict = utility_code.evaluateIlliadSubmissionV2( itemInstance, send_result_dict, self.log_identifier )  # evaluate result (update itemInstance, & history & request tables)
 
             # end of '''for service in flow_list:'''
 
@@ -312,12 +323,14 @@ class Controller( object ):
         request_inst.request_number = db_dct['id']
         patron_inst.firstname = db_dct['firstname'].strip()
         patron_inst.lastname = db_dct['lastname'].strip()
+        patron_inst.eppn = db_dct['eppn'].strip()  # really just the username part
         patron_inst.barcode = db_dct['barcode']
         patron_inst.email = db_dct['email']
         item_inst.title = db_dct['title']
         item_inst.isbn = db_dct['isbn']
         item_inst.oclc_num = db_dct['wc_accession']
         item_inst.volumes_info = db_dct['volumes']
+        item_inst.knowledgebase_openurl = db_dct['sfxurl']
         return ( request_inst, patron_inst, item_inst )
 
     # end class Controller
