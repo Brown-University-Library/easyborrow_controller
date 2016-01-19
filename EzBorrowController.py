@@ -153,7 +153,7 @@ class Controller( object ):
 
                 elif service == 'illiad':
                     web_logger.post_message( message='- in controller; service is now illiad', identifier=self.log_identifier, importance='info' )
-                    illiad_api_runner = IlliadApiRunner( request_inst, patron_inst, item_inst )
+                    illiad_api_runner = IlliadApiRunner( request_inst )
                     request_inst.current_service = 'illiad'
                     itemInstance.currentlyActiveService = 'illiad'  # TODO, retire this
                     prep_result_dct = illiad_api_runner.make_parameters( request_inst, patron_inst, item_inst )  # prepare parameters

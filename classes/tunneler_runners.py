@@ -24,7 +24,7 @@ web_logger = WebLogger( logger )
 class IlliadApiRunner( object ):
     """ Handles calls to the illiad api. """
 
-    def __init__( self, request_inst, patron_inst, item_inst ):
+    def __init__( self, request_inst ):
         self.log_identifier = request_inst.request_number
 
     def make_parameters( self, request_inst, patron_inst, item_inst ):
