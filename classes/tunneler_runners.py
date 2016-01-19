@@ -30,7 +30,7 @@ class IlliadApiRunner( object ):
     def make_parameters( self, request_inst, patron_inst, item_inst ):
         """ Builds parameter_dict for the api hit.
             Note that this tunneler api-hit _used to_ handle new-user registration; that is all now handled at the landing page.
-            WILL BE Called by controller.run_code() """
+            Called by controller.run_code() """
         parameter_dict = {
             'auth_key': settings.ILLIAD_API_KEY,
             'request_id': self.log_identifier,
@@ -66,8 +66,35 @@ class IlliadApiRunner( object ):
             raise Exception( message )
             return
 
-    def submit_request( self ):
-        return 'bah2'
+    def submit_request( self, parameter_dict ):
+        """ Submits the illiad request.
+            WILL BE Called by controller.run_code() """
+        try:
+            url = settings.ILLIAD_API_URL
+            headers = { 'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8' }
+            r = requests.post( url, data=parameter_dict, headers=headers, timeout=60, verify=False )
+            logger.debug( 'id, `%s`; ws response text, ```%s```' % (self.log_identifier, r.text) )  # TODO, log used encoding and set it explicitly
+            return_dict = json.loads( r.text )
+            web_logger.post_message( message='- in IlliadApiRunner.submit_request(); return_dict: %s' % pprint.pformat(return_dict), identifier=self.log_identifier, importance='info' )
+            return return_dict
+        except Exception as e:
+            message = '- in IlliadApiRunner.submit_request(); exception: %s' % unicode( repr(e) )
+            web_logger.post_message( message=message, identifier=self.log_identifier, importance='error' )
+            return { 'error_message': message }
+
+    # def submitIlliadRemoteAuthRequestV2( parameter_dict, log_identifier ):
+    #     try:
+    #         url = settings.ILLIAD_API_URL
+    #         headers = { 'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8' }
+    #         r = requests.post( url, data=parameter_dict, headers=headers, timeout=60, verify=False )
+    #         logger.debug( 'id, `%s`; ws response text, ```%s```' % (log_identifier, r.text) )
+    #         return_dict = json.loads( r.text )
+    #         web_logger.post_message( message='- in utility_code.submitIlliadRequestV2(); return_dict: %s' % pprint.pformat(return_dict), identifier=log_identifier, importance='info' )
+    #         return return_dict
+    #     except:
+    #         message = '- in utility_code.submitIlliadRequestV2(); error detail: %s' % makeErrorString()
+    #         web_logger.post_message( message=message, identifier=log_identifier, importance='error' )
+    #         return { 'error_message': message }
 
     def evaluate_response( self ):
         return 'bah3'

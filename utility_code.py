@@ -95,25 +95,6 @@ def jsonify(structure, rq_indent=2):
 
 
 
-# def makeOpenUrlSegment( initial_url, log_identifier ):
-#   try:
-#     if not type( initial_url ) == unicode:
-#       initial_url = unicode( initial_url )
-#     if not type( log_identifier ) == unicode:
-#       log_identifier = unicode( log_identifier )
-#     logger.debug( 'id, `%s`; initial_url is: %s' % (log_identifier, initial_url) )
-#     parsed_url = initial_url[ initial_url.find( 'serialssolutions.com/?' ) + 22 : ]  # TODO: change this to use the urlparse library
-#     # parsed_url = initial_url[ initial_url.find( 'sid' ) : ]
-#     parsed_url = parsed_url.replace( 'genre=unknown', 'genre=book' )
-#     logger.debug( 'id, `%s`; parsed_url is: %s' % (log_identifier, parsed_url) )
-#     return { 'openurl_segment': parsed_url }
-#   except:
-#     message = '- in utility_code.makeOpenUrlSegment(); error detail: %s' % makeErrorString()
-#     web_logger.post_message( message='- in utility_code.makeOpenUrlSegment(); exception, `%s`' % message, identifier=log_identifier, importance='error' )
-#     return { 'status': 'failure', 'message': message }
-
-
-
 def makeEbRequest( itemInstance, log_identifier ):
   '''
   - Purpose: temporary transitional hack while new controller architecture is slowly implemented; converts itemInstance to an EB_Request instance.
@@ -165,41 +146,6 @@ def make_datetime_string():
   time_object = time.localtime(); assert type(time_object) == time.struct_time
   time_string = time.strftime( '%a %b %d %H:%M:%S %Z %Y', time_object )
   return time_string
-
-
-
-# def makeIlliadParametersV2( itemInstance, settings, log_identifier ):
-#   try:
-#     web_logger.post_message( message='- in utility_code.makeIlliadParametersV2(); starting...', identifier=log_identifier, importance='info' )
-#     # try:
-#     #   patron_info = itemInstance.grabPatronApiInfo( itemInstance.patronId )
-#     #   itemInstance.grabConvertedPatronApiInfo( patron_info) # grabs converted info and stores it to attributes
-#     #   logger.debug( 'id, `%s`; patron-api work done; ii.patronId is: %s; ii.patronEmail is: %s' % (log_identifier, itemInstance.patronId, itemInstance.patronEmail) )
-#     # except Exception, e:
-#     #   web_logger.post_message( message='- in utility_code.makeIlliadParametersV2(); patron-api work failed; exception is: %s' % unicode(repr(e)), identifier=log_identifier, importance='error' )
-#     parameter_dict = {
-#       'auth_key': settings.ILLIAD_API_KEY,
-#       'request_id': log_identifier,
-#       'first_name': itemInstance.firstname,  # used for new_user registration
-#       'last_name': itemInstance.lastname,  # used for new_user registration
-#       'username': itemInstance.eppn,  # for login _and_ new_user registration
-#       'address': '',  # used for new_user registration
-#       'email': itemInstance.patronEmail,  # used for new_user registration
-#       'oclc_number': itemInstance.oclcNumber,
-#       'openurl': makeOpenUrlSegment( itemInstance.sfxurl, log_identifier )['openurl_segment'],
-#       'patron_barcode': itemInstance.patronBarcode,
-#       'patron_department': itemInstance.patron_api_dept,  # used for new_user registration
-#       'patron_status': itemInstance.patronStatus,  # used for new_user registration
-#       'phone': '',  # used for new_user registration
-#       'volumes': '',  # perceived but not handled by dj_ill_submission
-#       }
-#     # logger.debug( '%s - parameter_dict, ```%s```' % (log_identifier, pprint.pformat(parameter_dict)) )
-#     web_logger.post_message( message='- in utility_code.makeIlliadParametersV2()-wl; parameter_dict: %s' % unicode(repr(parameter_dict)), identifier=log_identifier, importance='info' )
-#     return { 'parameter_dict': parameter_dict }
-#   except:
-#     # message = '- in utility_code.makeIlliadParametersV2(); error detail: %s' % makeErrorString()
-#     web_logger.post_message( message=message, identifier=log_identifier, importance='error' )
-#     return { 'error_message': message }
 
 
 
@@ -315,55 +261,55 @@ Once your account issue is cleared up, click on this link to re-request the item
 
 
 
-def submitIlliadRequest( parameter_dict, log_identifier ):
-  '''
-  - Purpose: hits the django illiad submission web-service.
-  - Called by: controller.runCode()
-  - Usage: see tests.doc_tests.test_submitIlliadRequest()
-  '''
+# def submitIlliadRequest( parameter_dict, log_identifier ):
+#   '''
+#   - Purpose: hits the django illiad submission web-service.
+#   - Called by: controller.runCode()
+#   - Usage: see tests.doc_tests.test_submitIlliadRequest()
+#   '''
 
-  try:
+#   try:
 
-    web_logger.post_message( message='- in utility_code.submitIlliadRequest(); parameter_dict is: %s' % pprint.pformat(parameter_dict), identifier=log_identifier, importance='info' )
+#     web_logger.post_message( message='- in utility_code.submitIlliadRequest(); parameter_dict is: %s' % pprint.pformat(parameter_dict), identifier=log_identifier, importance='info' )
 
-    data = urllib.urlencode( parameter_dict )
-    request = urllib2.Request( settings.ILLIAD_REQUEST_URL, data )
-    response = urllib2.urlopen( request )
-    json_string = response.read()
-    json_dict = json.loads( json_string )
-    web_logger.post_message( message='- in utility_code.submitIlliadRequest(); submission result is: %s' % pprint.pformat(json_dict), identifier=log_identifier, importance='info' )
-    return json_dict
+#     data = urllib.urlencode( parameter_dict )
+#     request = urllib2.Request( settings.ILLIAD_REQUEST_URL, data )
+#     response = urllib2.urlopen( request )
+#     json_string = response.read()
+#     json_dict = json.loads( json_string )
+#     web_logger.post_message( message='- in utility_code.submitIlliadRequest(); submission result is: %s' % pprint.pformat(json_dict), identifier=log_identifier, importance='info' )
+#     return json_dict
 
-  except:
-    message = '- in utility_code.submitIlliadRequest(); error detail: %s' % makeErrorString()
-    web_logger.post_message( message=message, identifier=log_identifier, importance='error' )
-    return { 'status': 'failure', 'message': message }
+#   except:
+#     message = '- in utility_code.submitIlliadRequest(); error detail: %s' % makeErrorString()
+#     web_logger.post_message( message=message, identifier=log_identifier, importance='error' )
+#     return { 'status': 'failure', 'message': message }
 
-  # end def submitIlliadRequest()
-
-
-
-def submitIlliadRemoteAuthRequestV2( parameter_dict, log_identifier ):
-  try:
-    url = settings.ILLIAD_API_URL
-    headers = { 'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8' }
-    r = requests.post( url, data=parameter_dict, headers=headers, timeout=60, verify=False )
-    logger.debug( 'id, `%s`; ws response text, ```%s```' % (log_identifier, r.text) )
-    return_dict = json.loads( r.text )
-    web_logger.post_message( message='- in utility_code.submitIlliadRequestV2(); return_dict: %s' % pprint.pformat(return_dict), identifier=log_identifier, importance='info' )
-    return return_dict
-  except:
-    message = '- in utility_code.submitIlliadRequestV2(); error detail: %s' % makeErrorString()
-    web_logger.post_message( message=message, identifier=log_identifier, importance='error' )
-    return { 'error_message': message }
-  # end def submitIlliadRemoteAuthRequestV2()
+#   # end def submitIlliadRequest()
 
 
 
-def jsonify_db_data( data_dict ):
-  """ Returns json string for given tuple of row-dict entries.
-      Allows result to be logged easily.
-      Called by ezb_controller.py """
-  data_dict['created'] = unicode( data_dict['created'] )
-  jstring = json.dumps( data_dict, sort_keys=True, indent=2 )
-  return jstring
+# def submitIlliadRemoteAuthRequestV2( parameter_dict, log_identifier ):
+#   try:
+#     url = settings.ILLIAD_API_URL
+#     headers = { 'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8' }
+#     r = requests.post( url, data=parameter_dict, headers=headers, timeout=60, verify=False )
+#     logger.debug( 'id, `%s`; ws response text, ```%s```' % (log_identifier, r.text) )
+#     return_dict = json.loads( r.text )
+#     web_logger.post_message( message='- in utility_code.submitIlliadRequestV2(); return_dict: %s' % pprint.pformat(return_dict), identifier=log_identifier, importance='info' )
+#     return return_dict
+#   except:
+#     message = '- in utility_code.submitIlliadRequestV2(); error detail: %s' % makeErrorString()
+#     web_logger.post_message( message=message, identifier=log_identifier, importance='error' )
+#     return { 'error_message': message }
+#   # end def submitIlliadRemoteAuthRequestV2()
+
+
+
+# def jsonify_db_data( data_dict ):
+#   """ Returns json string for given tuple of row-dict entries.
+#       Allows result to be logged easily.
+#       Called by ezb_controller.py """
+#   data_dict['created'] = unicode( data_dict['created'] )
+#   jstring = json.dumps( data_dict, sort_keys=True, indent=2 )
+#   return jstring
