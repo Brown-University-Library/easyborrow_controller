@@ -160,7 +160,10 @@ class Controller( object ):
                     send_result_dct = illiad_api_runner.submit_request( prep_result_dct['parameter_dict'] )  # send request to illiad
                     eval_result_dict = utility_code.evaluateIlliadSubmissionV2( itemInstance, send_result_dct, self.log_identifier )  # evaluate result (update itemInstance, & history & request tables)
                     #
-                    request_inst = illiad_api_runner.evaluate_response( request_inst, send_result_dct )  # updates request_inst and history note; updated request_inst not yet used
+                    try:
+                        request_inst = illiad_api_runner.evaluate_response( request_inst, send_result_dct )  # updates request_inst and history note; updated request_inst not yet used
+                    except Exception as e:
+                        logger.error( 'exception, `%s`' % unicode(repr(e)) )
 
             # end of '''for service in flow_list:'''
 
