@@ -158,8 +158,9 @@ class Controller( object ):
                     itemInstance.currentlyActiveService = 'illiad'  # TODO, retire this
                     prep_result_dct = illiad_api_runner.make_parameters( request_inst, patron_inst, item_inst )  # prepare parameters
                     send_result_dct = illiad_api_runner.submit_request( prep_result_dct['parameter_dict'] )  # send request to illiad
-                    # send_result_dict = utility_code.submitIlliadRemoteAuthRequestV2( prep_result_dct['parameter_dict'], self.log_identifier )  # send request to illiad
                     eval_result_dict = utility_code.evaluateIlliadSubmissionV2( itemInstance, send_result_dct, self.log_identifier )  # evaluate result (update itemInstance, & history & request tables)
+                    #
+                    request_inst = illiad_api_runner.evaluate_response( request_inst )  # updates request_inst and history note; updated request_inst not yet used
 
             # end of '''for service in flow_list:'''
 

@@ -24,8 +24,14 @@ web_logger = WebLogger( logger )
 class IlliadApiRunner( object ):
     """ Handles calls to the illiad api. """
 
+    # def __init__( self, request_inst ):
+    #     self.log_identifier = request_inst.request_number
+
     def __init__( self, request_inst ):
         self.log_identifier = request_inst.request_number
+        self.HISTORY_SQL_PATTERN = settings.HISTORY_ACTION_SQL
+        self.db_handler = Db_Handler( logger )
+        self.web_logger = WebLogger( logger )
 
     def make_parameters( self, request_inst, patron_inst, item_inst ):
         """ Builds parameter_dict for the api hit.
@@ -68,7 +74,7 @@ class IlliadApiRunner( object ):
 
     def submit_request( self, parameter_dict ):
         """ Submits the illiad request.
-            WILL BE Called by controller.run_code() """
+            Called by controller.run_code() """
         try:
             url = settings.ILLIAD_API_URL
             headers = { 'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8' }
@@ -82,22 +88,36 @@ class IlliadApiRunner( object ):
             web_logger.post_message( message=message, identifier=self.log_identifier, importance='error' )
             return { 'error_message': message }
 
-    # def submitIlliadRemoteAuthRequestV2( parameter_dict, log_identifier ):
-    #     try:
-    #         url = settings.ILLIAD_API_URL
-    #         headers = { 'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8' }
-    #         r = requests.post( url, data=parameter_dict, headers=headers, timeout=60, verify=False )
-    #         logger.debug( 'id, `%s`; ws response text, ```%s```' % (log_identifier, r.text) )
-    #         return_dict = json.loads( r.text )
-    #         web_logger.post_message( message='- in utility_code.submitIlliadRequestV2(); return_dict: %s' % pprint.pformat(return_dict), identifier=log_identifier, importance='info' )
-    #         return return_dict
-    #     except:
-    #         message = '- in utility_code.submitIlliadRequestV2(); error detail: %s' % makeErrorString()
-    #         web_logger.post_message( message=message, identifier=log_identifier, importance='error' )
-    #         return { 'error_message': message }
+    def evaluate_response( self, request_inst ):
+        """ Updates request_inst and updates history note.
+            Called by controller.run_code() """
+        request_inst.current_status = send_result_dct['status']
+        request_inst.confirmation_code = send_result_dct['transaction_number']
+        self.update_history_table( request_inst )
+        return request_inst
 
-    def evaluate_response( self ):
-        return 'bah3'
+    def update_history_table( self, request_inst ):
+        """ Populates history table based on request result.
+            Called by evaluate_response() """
+        ( api_confirmation_code, history_table_message ) = self.prep_code_message()
+        sql = self.prep_history_sql( api_confirmation_code, history_table_message )
+        self.db_handler.run_sql( sql )
+        self.web_logger.post_message( message='- in tunneler_runners.IlliadApiRunner.update_history_table(); history table updated for ezb#: %s' % self.log_identifier, identifier=self.log_identifier, importance='info' )
+        logger.debug( 'update_history_table complete' )
+        return
+
+    def prep_history_sql( self, request_inst ):
+        """ Prepares history table update sql.
+            Called by update_history_table() """
+        sql = self.HISTORY_SQL_PATTERN % (
+          request_inst.request_number,
+          'illiad',
+          'attempt',
+          request_inst.current_status,
+          request_inst.confirmation_code
+          )
+        logger.debug( '%s- history_sql, `%s`' % (self.log_identifier, sql) )
+        return sql
 
     # end class IlliadApiRunner
 
@@ -188,8 +208,7 @@ class BD_ApiRunner( object ):
 
     def update_history_table( self ):
         """ Populates history table based on request result.
-            Called by controller.run_code()
-            TODO: Call a db class. """
+            Called by controller.run_code() """
         ( api_confirmation_code, history_table_message ) = self.prep_code_message()
         utf8_sql = self.prep_history_sql( api_confirmation_code, history_table_message )
         self.db_handler.run_sql( utf8_sql )
@@ -223,15 +242,6 @@ class BD_ApiRunner( object ):
         utf8_sql = sql.encode( 'utf-8' )  # old code expects utf-8 string
         self.logger.debug( '%s- prep_history_sql complete; utf8_sql, `%s`' % (self.log_identifier, sql.decode('utf-8')) )
         return utf8_sql
-
-    # def handle_success( self, itemInstance ):
-    #     """ Updates item-instance attributes on success.
-    #         Called by controller.run_code()
-    #         TODO: remove legacy code. """
-    #     itemInstance.requestSuccessStatus = 'success'
-    #     itemInstance.genericAssignedUserEmail = itemInstance.patronEmail
-    #     itemInstance.genericAssignedReferenceNumber = self.api_confirmation_code
-    #     return itemInstance
 
     def handle_success( self, request_inst ):
         """ Updates request_inst attributes on success.
