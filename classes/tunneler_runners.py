@@ -88,7 +88,7 @@ class IlliadApiRunner( object ):
             web_logger.post_message( message=message, identifier=self.log_identifier, importance='error' )
             return { 'error_message': message }
 
-    def evaluate_response( self, request_inst ):
+    def evaluate_response( self, request_inst, send_result_dct ):
         """ Updates request_inst and updates history note.
             Called by controller.run_code() """
         if send_result_dict.get('status') == 'submission_successful':
