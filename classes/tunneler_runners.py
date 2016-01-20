@@ -91,7 +91,7 @@ class IlliadApiRunner( object ):
     def evaluate_response( self, request_inst, send_result_dct ):
         """ Updates request_inst and updates history note.
             Called by controller.run_code() """
-        if send_result_dict.get('status') == 'submission_successful':
+        if send_result_dct.get('status') == 'submission_successful':
             request_inst.current_status = 'success'
         else:
             request_inst.current_status = send_result_dct.get('status', 'in_process' )
