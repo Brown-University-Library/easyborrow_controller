@@ -102,23 +102,24 @@ class IlliadApiRunner( object ):
     def update_history_table( self, request_inst ):
         """ Populates history table based on request result.
             Called by evaluate_response() """
-        ( api_confirmation_code, history_table_message ) = self.prep_code_message()
-        sql = self.prep_history_sql( api_confirmation_code, history_table_message )
+        sql = self.prep_history_sql( request_inst )
         self.db_handler.run_sql( sql )
-        self.web_logger.post_message( message='- in tunneler_runners.IlliadApiRunner.update_history_table(); history table updated for ezb#: %s' % self.log_identifier, identifier=self.log_identifier, importance='info' )
+        self.web_logger.post_message( message='- in tunneler_runners.IlliadApiRunner.update_history_table(); history table updated for ezb#: %s' % request_inst.request_number, identifier=self.log_identifier, importance='info' )
         logger.debug( 'update_history_table complete' )
         return
 
     def prep_history_sql( self, request_inst ):
         """ Prepares history table update sql.
             Called by update_history_table() """
+        attempt_result = request_inst.current_status
+        if request_inst.current_status == 'success':  # legacy logic
+            attempt_result = 'Request_Successful'
         sql = self.HISTORY_SQL_PATTERN % (
           request_inst.request_number,
           'illiad',
           'attempt',
-          request_inst.current_status,
-          request_inst.confirmation_code
-          )
+          attempt_result,
+          request_inst.confirmation_code )  # if attempt not successful, confirmation code will be ''
         logger.debug( '%s- history_sql, `%s`' % (self.log_identifier, sql) )
         return sql
 
