@@ -309,7 +309,7 @@ class Controller( object ):
     def update_history_action( self, request_id, service_name, action, result, number ):
         """ Updates history table's service name-action-result info.
             Called by run_code() """
-        log.debug( 'request_id, `%s`; service_name, `%s`; action, `%s`; result, `%s`; number, `%s`' % (request_id, service_name, action, result, number) )
+        logger.debug( 'request_id, `%s`; service_name, `%s`; action, `%s`; result, `%s`; number, `%s`' % (request_id, service_name, action, result, number) )
         try:
             sql = self.HISTORY_ACTION_SQL % ( request_id, service_name, action, result, number )
             logger.debug( 'update_history_action sql, `%s`' % sql )
