@@ -53,7 +53,7 @@ class Controller( object ):
             Note: SQL attributes are pattern-statements; string-substitution completes them. """
         self.SELECT_SQL = settings.CONTROLLER_SELECT_SQL
         self.HISTORY_NOTE_SQL = settings.HISTORY_NOTE_SQL
-        self.HISTORY_ACTION_SQL = settings.HISTORY_NOTE_SQL
+        self.HISTORY_ACTION_SQL = settings.HISTORY_ACTION_SQL
         self.REQUEST_UPDATE_SQL = settings.REQUEST_UPDATE_SQL
         self.log_identifier = 'temp--%s--%s' % ( datetime.datetime.now().strftime('%Y-%m-%d-%H:%M:%S'), random.randint(1000,9999) )    # will be ezb-request-number: helps track which log-entries go with which request
         self.db_handler = None
