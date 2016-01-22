@@ -178,7 +178,7 @@ class Controller( object ):
               utCdInstance.sendEmail( itemInstance, eb_request_number )
 
             elif( itemInstance.requestSuccessStatus == 'login_failed_possibly_blocked' ):
-                if request_inst.current_status == 'login_failed_possibly_blocked' and patron_inst.eppn = 'bdiana':  # temp dev
+                if request_inst.current_status == 'login_failed_possibly_blocked' and patron_inst.eppn == 'bdiana':  # temp dev
                     web_logger.post_message( message='- in controller; "blocked" detected; will send user email', identifier=self.log_identifier, importance='info' )
                     mail_builder = MailBuilder( request_inst, patron_inst, item_inst )
                     mail_builder.prep_email()
