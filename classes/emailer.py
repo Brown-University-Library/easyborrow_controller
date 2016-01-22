@@ -18,10 +18,10 @@ log = logging.getLogger(__name__)
 class MailBuilder( object ):
     """ Preps email that'll be send by Mailer() """
 
-    def __init__( self, EZB_REQUEST, PATRON, ITEM ):
-        self.EZB_REQUEST = EZB_REQUEST  # instance-object (holds request_number, service, status, and reference_number)
-        self.PATRON = PATRON  # instance-object
-        self.ITEM = ITEM  # instance-object
+    def __init__( self, request_inst, patron_inst, item_inst ):
+        self.request_inst = request_inst  # instance-object (holds request_number, service, status, and reference_number)
+        self.patron_inst = patron_inst  # instance-object
+        self.item_inst = item_inst  # instance-object
         self.to = []
         self.apparent_sender = 'brown_library_easyborrow_system'
         self.reply_to = ''
@@ -39,35 +39,35 @@ class MailBuilder( object ):
     def build_to( self ):
         """ Preps `to` data.
             Called by prep_email() """
-        if self.EZB_REQUEST.status == 'error':
+        if self.request_inst.current_status == 'error':
             self.to = [ settings.ADMIN_EMAIL ]
-        elif self.EZB_REQUEST.service == 'borrowDirect':
-            self.to = [ PATRON.email ]
-        elif self.EZB_REQUEST.service == 'illiad':
-            self.to = [ PATRON.email ]
+        elif self.request_inst.current_service == 'borrowDirect':
+            self.to = [ self.patron_inst.email ]
+        elif self.request_inst.current_service == 'illiad':
+            self.to = [ self.patron_inst.email ]
         return
 
     def build_reply_to( self ):
         """ Preps `reply_to` data.
             Called by prep_email() """
-        if self.EZB_REQUEST.status == 'error':
+        if self.request_inst.current_status == 'error':
             self.reply_to = ''
-        elif self.EZB_REQUEST.service == 'borrowDirect':
+        elif self.request_inst.current_service == 'borrowDirect':
             self.reply_to = 'rock@brown.edu'
-        elif self.EZB_REQUEST.service == 'illiad':
+        elif self.request_inst.current_service == 'illiad':
             self.reply_to = 'interlibrary_loan@brown.edu'
         return
 
     def build_message( self ):
         """ Preps `message` data.
             Called by prep_email() """
-        if self.EZB_REQUEST.status == 'error':
+        if self.request_inst.current_status == 'error':
             self.message = 'BJD - handle this situation.'
-        elif self.EZB_REQUEST.service == 'borrowDirect':
+        elif self.request_inst.current_service == 'borrowDirect':
             self.message = self.make_borrowdirect_message()
-        elif self.EZB_REQUEST.service == 'illiad' and self.EZB_REQUEST.status == 'success':
+        elif self.request_inst.current_service == 'illiad' and self.request_inst.current_status == 'success':
             self.message = self.make_illiad_success_message()
-        elif self.EZB_REQUEST.service == 'illiad' and self.EZB_REQUEST.status == 'login_failed_possibly_blocked':
+        elif self.request_inst.current_service == 'illiad' and self.request_inst.current_status == 'login_failed_possibly_blocked':
             self.message = self.make_illiad_blocked_message()
         return
 
@@ -90,13 +90,13 @@ Some useful information for your records:
 If you have any questions, contact the Library's Rockefeller Gateway staff at rock@brown.edu or call 401-863-2165.
 
     ''' % (
-        self.PATRON.firstname,
-        self.PATRON.lastname,
-        self.ITEM.title,
-        self.ITEM.title,
-        self.EZB_REQUEST.request_number,
-        self.EZB_REQUEST.reference_number,
-        self.PATRON.email )
+        self.patron_inst.firstname,
+        self.patron_inst.lastname,
+        self.item_inst.title,
+        self.item_inst.title,
+        self.request_inst.request_number,
+        self.request_inst.confirmation_code,
+        self.patron_inst.email )
         return message
         ####### end make_borrowdirect_message() #######
 
@@ -122,13 +122,13 @@ You can check your Illiad account at the link:
 If you have any questions, contact the Library's Interlibrary Loan office at interlibrary_loan@brown.edu or call 863-2169.
 
   ''' % (
-        self.PATRON.firstname,
-        self.PATRON.lastname,
-        self.ITEM.title,
-        self.ITEM.title,
-        self.EZB_REQUEST.request_number,
-        self.EZB_REQUEST.reference_number,
-        self.PATRON.email )
+        self.patron_inst.firstname,
+        self.patron_inst.lastname,
+        self.item_inst.title,
+        self.item_inst.title,
+        self.request_inst.request_number,
+        self.request_inst.confirmation_code,
+        self.patron_inst.email )
         return message
         ###### end make_illiad_success_message() ######
 
@@ -149,11 +149,11 @@ Once your account issue is cleared up, click on this link to re-request the item
 
 [end]
     ''' % (
-        self.PATRON.firstname,
-        self.PATRON.lastname,
-        self.ITEM.title,
-        'http://worldcat.org/oclc/%s' % self.ITEM.oclc_number,
-        self.EZB_REQUEST.request_number )
+        self.patron_inst.firstname,
+        self.patron_inst.lastname,
+        self.item_inst.title,
+        'http://worldcat.org/oclc/%s' % self.item_inst.oclc_number,
+        self.request_inst.request_number )
         return message
         ####### end make_illiad_blocked_message() #######
 
