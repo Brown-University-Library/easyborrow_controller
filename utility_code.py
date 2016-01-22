@@ -69,8 +69,8 @@ def evaluateIlliadSubmissionV2( itemInstance, send_result_dict, log_identifier )
       elif send_result_dict['status'] == 'login_failed_possibly_blocked':
         itemInstance.requestSuccessStatus = 'login_failed_possibly_blocked'
         itemInstance.genericAssignedUserEmail = itemInstance.patronEmail
-        patronInfo = itemInstance.grabPatronApiInfo(itemInstance.patronId)
-        itemInstance.grabConvertedPatronApiInfo(patronInfo) # grabs converted info and stores it to attributes
+        # patronInfo = itemInstance.grabPatronApiInfo(itemInstance.patronId)
+        # itemInstance.grabConvertedPatronApiInfo(patronInfo) # grabs converted info and stores it to attributes
       if parameterDict == None:
         parameterDict = { 'serviceName': 'illiad', 'action': 'attempt', 'result': send_result_dict['status'], 'number': '' }
       # itemInstance.updateHistoryAction( parameterDict['serviceName'], parameterDict['action'], parameterDict['result'], parameterDict['number'] )
