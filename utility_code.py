@@ -56,7 +56,7 @@ def evaluateIlliadSubmissionV2( itemInstance, send_result_dict, log_identifier )
       if send_result_dict['new_user'] == True:
         web_logger.post_message( message='- in utility_code.evaluateIlliadSubmissionV2(); Illiad user created...', identifier=log_identifier, importance='info' )
         parameterDict = { 'serviceName': 'illiad', 'action': 'create_illiad_user_attempt', 'result': 'success', 'number': '' }
-        itemInstance.updateHistoryAction( parameterDict['serviceName'], parameterDict['action'], parameterDict['result'], parameterDict['number'] )
+        # itemInstance.updateHistoryAction( parameterDict['serviceName'], parameterDict['action'], parameterDict['result'], parameterDict['number'] )
     ## illiad status check
     if 'status' in send_result_dict:
       parameterDict = None  # for history update
@@ -73,7 +73,7 @@ def evaluateIlliadSubmissionV2( itemInstance, send_result_dict, log_identifier )
         itemInstance.grabConvertedPatronApiInfo(patronInfo) # grabs converted info and stores it to attributes
       if parameterDict == None:
         parameterDict = { 'serviceName': 'illiad', 'action': 'attempt', 'result': send_result_dict['status'], 'number': '' }
-      itemInstance.updateHistoryAction( parameterDict['serviceName'], parameterDict['action'], parameterDict['result'], parameterDict['number'] )
+      # itemInstance.updateHistoryAction( parameterDict['serviceName'], parameterDict['action'], parameterDict['result'], parameterDict['number'] )
       return_dict['status'] = 'evaluation_successful'
     web_logger.post_message( message='- in utility_code.evaluateIlliadSubmissionV2(); return_dict: %s' % unicode(repr(return_dict)), identifier=log_identifier, importance='info' )
     return return_dict
