@@ -17,9 +17,10 @@ from __future__ import unicode_literals
 import datetime, json, logging, os, pprint, random, string, sys, time
 from easyborrow_controller_code import settings, utility_code
 from easyborrow_controller_code.classes import db_handler, Item, UtilityCode
+from easyborrow_controller_code.classes.basics import Request_Meta as Request_Obj, Patron as Patron_Obj, Item as Item_Obj
+from easyborrow_controller_code.classes.emailer import MailBuilder, Mailer
 from easyborrow_controller_code.classes.tunneler_runners import BD_ApiRunner, IlliadApiRunner
 from easyborrow_controller_code.classes.web_logger import WebLogger
-from easyborrow_controller_code.classes.basics import Request_Meta as Request_Obj, Patron as Patron_Obj, Item as Item_Obj
 
 
 ## set up file logger
@@ -175,18 +176,37 @@ class Controller( object ):
               self.update_request_status( 'processed', eb_request_number )
               web_logger.post_message( message='- in controller; request successful; preparing to send email', identifier=self.log_identifier, importance='info' )
               utCdInstance.sendEmail( itemInstance, eb_request_number )
-              # mail_builder.prep_email( service, status )
 
             elif( itemInstance.requestSuccessStatus == 'login_failed_possibly_blocked' ):
-              web_logger.post_message( message='- in controller; "blocked" detected; will send user email', identifier=self.log_identifier, importance='info' )
-              result_dict = utility_code.makeEbRequest( itemInstance, self.log_identifier )  # eb_request is a storage-object; NOTE: as code is migrated toward newer architecture; this line will occur near beginning of runCode()
-              web_logger.post_message( message='- in controller; eb_request obtained', identifier=self.log_identifier, importance='info' )
-              result_dict = utility_code.sendEmail( result_dict['eb_request'], self.log_identifier )
-              web_logger.post_message( message='- in controller; "blocked" detected; sendEmail() was called', identifier=self.log_identifier, importance='info' )
-              self.update_history_action( eb_request_number, 'illiad', 'followup', 'blocked_user_emailed', '' )  # request_num, service, action, result, transaction_num
-              #
-              if result_dict['status'] == 'success':
-                self.update_request_status( 'illiad_block_user_emailed', eb_request_number )
+                if request_inst.current_status == 'login_failed_possibly_blocked' and patron_inst.eppn = 'bdiana':  # temp dev
+                    web_logger.post_message( message='- in controller; "blocked" detected; will send user email', identifier=self.log_identifier, importance='info' )
+                    mail_builder = MailBuilder( request_inst, patron_inst, item_inst )
+                    mail_builder.prep_email()
+                    mailer = Mailer( mail_builder.to, mail_builder.reply_to, mail_builder.subject, mail_builder.message, request_inst.request_number  )
+                    if mailer.send_email() is True:
+                        web_logger.post_message( message='- in controller; "blocked" detected; sendEmail() was called', identifier=self.log_identifier, importance='info' )
+                        self.update_request_status( 'illiad_block_user_emailed', request_inst.request_number )
+                else:
+                    web_logger.post_message( message='- in controller; "blocked" detected; will send user email', identifier=self.log_identifier, importance='info' )
+                    result_dict = utility_code.makeEbRequest( itemInstance, self.log_identifier )  # eb_request is a storage-object; NOTE: as code is migrated toward newer architecture; this line will occur near beginning of runCode()
+                    web_logger.post_message( message='- in controller; eb_request obtained', identifier=self.log_identifier, importance='info' )
+                    result_dict = utility_code.sendEmail( result_dict['eb_request'], self.log_identifier )
+                    web_logger.post_message( message='- in controller; "blocked" detected; sendEmail() was called', identifier=self.log_identifier, importance='info' )
+                    self.update_history_action( eb_request_number, 'illiad', 'followup', 'blocked_user_emailed', '' )  # request_num, service, action, result, transaction_num
+                    #
+                    if result_dict['status'] == 'success':
+                        self.update_request_status( 'illiad_block_user_emailed', eb_request_number )
+
+            # elif( itemInstance.requestSuccessStatus == 'login_failed_possibly_blocked' ):
+            #   web_logger.post_message( message='- in controller; "blocked" detected; will send user email', identifier=self.log_identifier, importance='info' )
+            #   result_dict = utility_code.makeEbRequest( itemInstance, self.log_identifier )  # eb_request is a storage-object; NOTE: as code is migrated toward newer architecture; this line will occur near beginning of runCode()
+            #   web_logger.post_message( message='- in controller; eb_request obtained', identifier=self.log_identifier, importance='info' )
+            #   result_dict = utility_code.sendEmail( result_dict['eb_request'], self.log_identifier )
+            #   web_logger.post_message( message='- in controller; "blocked" detected; sendEmail() was called', identifier=self.log_identifier, importance='info' )
+            #   self.update_history_action( eb_request_number, 'illiad', 'followup', 'blocked_user_emailed', '' )  # request_num, service, action, result, transaction_num
+            #   #
+            #   if result_dict['status'] == 'success':
+            #     self.update_request_status( 'illiad_block_user_emailed', eb_request_number )
 
             elif( itemInstance.requestSuccessStatus == "failure_no_sfx-link_to_illiad" ):
               self.update_request_status( 'processed', eb_request_number )
@@ -288,6 +308,7 @@ class Controller( object ):
     def update_history_action( self, request_id, service_name, action, result, number ):
         """ Updates history table's service name-action-result info.
             Called by run_code() """
+        log.debug( 'request_id, `%s`; service_name, `%s`; action, `%s`; result, `%s`; number, `%s`' % (request_id, service_name, action, result, number) )
         try:
             sql = self.HISTORY_ACTION_SQL % ( request_id, service_name, action, result, number )
             logger.debug( 'update_history_action sql, `%s`' % sql )
