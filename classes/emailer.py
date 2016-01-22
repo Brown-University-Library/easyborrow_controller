@@ -152,7 +152,7 @@ Once your account issue is cleared up, click on this link to re-request the item
         self.patron_inst.firstname,
         self.patron_inst.lastname,
         self.item_inst.title,
-        'http://worldcat.org/oclc/%s' % self.item_inst.oclc_number,
+        'http://worldcat.org/oclc/%s' % self.item_inst.oclc_num,
         self.request_inst.request_number )
         return message
         ####### end make_illiad_blocked_message() #######
