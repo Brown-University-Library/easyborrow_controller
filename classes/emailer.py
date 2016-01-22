@@ -181,7 +181,7 @@ class Mailer( object ):
             MESSAGE = self.MESSAGE.encode( 'utf-8', 'replace' )
             payload = self._assemble_payload( TO, MESSAGE )
             s = smtplib.SMTP( self.SMTP_SERVER.encode('utf-8', 'replace') )
-            s.sendmail( self.FROM_REAL.encode('utf-8', 'replace'), TO.encode('utf-8', 'replace'), payload.as_string() )
+            s.sendmail( self.FROM_REAL.encode('utf-8', 'replace'), TO, payload.as_string() )
             s.quit()
             log.debug( 'mail sent' )
             return True
@@ -201,7 +201,7 @@ class Mailer( object ):
         """ Puts together and returns email payload.
             Called by send_email(). """
         payload = MIMEText( MESSAGE )
-        payload['To'] = ', '.join( TO.encode('utf-8', 'replace') )
+        payload['To'] = ', '.join( TO ).encode( 'utf-8', 'replace' )
         payload['From'] = self.FROM_HEADER.encode( 'utf-8', 'replace' )
         payload['Subject'] = Header( self.SUBJECT, 'utf-8' )  # Header handles encoding
         payload['Reply-to'] = self.REPLY_TO_HEADER.encode( 'utf-8', 'replace' )
