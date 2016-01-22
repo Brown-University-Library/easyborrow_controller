@@ -160,10 +160,7 @@ class Controller( object ):
                     send_result_dct = illiad_api_runner.submit_request( prep_result_dct['parameter_dict'] )  # send request to illiad
                     eval_result_dict = utility_code.evaluateIlliadSubmissionV2( itemInstance, send_result_dct, self.log_identifier )  # evaluate result (update itemInstance, & history & request tables)
                     #
-                    try:
-                        request_inst = illiad_api_runner.evaluate_response( request_inst, send_result_dct )  # updates request_inst and history note; updated request_inst not yet used
-                    except Exception as e:
-                        logger.error( 'exception, `%s`' % unicode(repr(e)) )
+                    request_inst = illiad_api_runner.evaluate_response( request_inst, send_result_dct )  # updates request_inst and history note; updated request_inst not yet used
 
             # end of '''for service in flow_list:'''
 
@@ -171,7 +168,8 @@ class Controller( object ):
             # update 'requests' table & send email on success ('for' loop is over)
             #######
 
-            web_logger.post_message( message='- in controller; itemInstance.requestSuccessStatus is: %s' % itemInstance.requestSuccessStatus, identifier=self.log_identifier, importance='info' )
+            # web_logger.post_message( message='- in controller; itemInstance.requestSuccessStatus is: %s' % itemInstance.requestSuccessStatus, identifier=self.log_identifier, importance='info' )
+            web_logger.post_message( message='- in controller; request_inst.current_status is: %s' % request_inst.current_status, identifier=self.log_identifier, importance='info' )
 
             if( itemInstance.requestSuccessStatus == "success" ):
               self.update_request_status( 'processed', eb_request_number )
