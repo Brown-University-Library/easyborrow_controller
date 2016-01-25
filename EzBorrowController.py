@@ -125,6 +125,7 @@ class Controller( object ):
                     # setup
                     bd_api_runner = BD_ApiRunner( logger, self.log_identifier )
                     itemInstance.currentlyActiveService = 'borrowDirect'  # TODO, get rid of this once item_inst is doing all the work
+                    request_inst.current_service = 'borrowDirect'
                     item_inst = bd_api_runner.setup_api_hit( item_inst, web_logger )
 
                     # prepare data
