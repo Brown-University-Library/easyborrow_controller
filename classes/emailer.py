@@ -97,6 +97,7 @@ If you have any questions, contact the Library's Rockefeller Gateway staff at ro
         self.request_inst.request_number,
         self.request_inst.confirmation_code,
         self.patron_inst.email )
+        log.debug( 'borrowdirect message built' )
         return message
         ####### end make_borrowdirect_message() #######
 
@@ -129,6 +130,7 @@ If you have any questions, contact the Library's Interlibrary Loan office at int
         self.request_inst.request_number,
         self.request_inst.confirmation_code,
         self.patron_inst.email )
+        log.debug( 'illiad success message built' )
         return message
         ###### end make_illiad_success_message() ######
 
@@ -154,6 +156,7 @@ Once your account issue is cleared up, click on this link to re-request the item
         self.item_inst.title,
         'http://worldcat.org/oclc/%s' % self.item_inst.oclc_num,
         self.request_inst.request_number )
+        log.debug( 'illiad blocked message built' )
         return message
         ####### end make_illiad_blocked_message() #######
 
