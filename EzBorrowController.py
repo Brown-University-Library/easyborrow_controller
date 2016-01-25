@@ -177,19 +177,13 @@ class Controller( object ):
             #   web_logger.post_message( message='- in controller; request successful; preparing to send email', identifier=self.log_identifier, importance='info' )
             #   utCdInstance.sendEmail( itemInstance, eb_request_number )
 
-            if( request_inst.current_status == 'success' and patron_inst.eppn == 'bdiana' ):  # dev testing
-              self.update_request_status( 'processed', request_inst.request_number )
-              web_logger.post_message( message='- in controller; request successful; preparing to send email', identifier=self.log_identifier, importance='info' )
-              # utCdInstance.sendEmail( itemInstance, eb_request_number )
-              mail_builder = MailBuilder( request_inst, patron_inst, item_inst )
-              mail_builder.prep_email()
-              mailer = Mailer( mail_builder.to, mail_builder.reply_to, mail_builder.subject, mail_builder.message, request_inst.request_number  )
-              mailer.send_email()
-
-            elif( itemInstance.requestSuccessStatus == "success" ):
-                self.update_request_status( 'processed', eb_request_number )
+            if request_inst.current_status == 'success':
+                self.update_request_status( 'processed', request_inst.request_number )
                 web_logger.post_message( message='- in controller; request successful; preparing to send email', identifier=self.log_identifier, importance='info' )
-                utCdInstance.sendEmail( itemInstance, eb_request_number )
+                mail_builder = MailBuilder( request_inst, patron_inst, item_inst )
+                mail_builder.prep_email()
+                mailer = Mailer( mail_builder.to, mail_builder.reply_to, mail_builder.subject, mail_builder.message, request_inst.request_number  )
+                mailer.send_email()
 
             elif( request_inst.current_status == 'login_failed_possibly_blocked' ):
                 web_logger.post_message( message='- in controller; "blocked" detected; will send user email', identifier=self.log_identifier, importance='info' )
@@ -200,18 +194,6 @@ class Controller( object ):
                     web_logger.post_message( message='- in controller; "blocked" detected; sendEmail() was called', identifier=self.log_identifier, importance='info' )
                     self.update_history_action( eb_request_number, 'illiad', 'followup', 'blocked_user_emailed', '' )  # request_num, service, action, result, transaction_num
                     self.update_request_status( 'illiad_block_user_emailed', request_inst.request_number )
-
-            # elif( itemInstance.requestSuccessStatus == "failure_no_sfx-link_to_illiad" ):
-            #   self.update_request_status( 'processed', eb_request_number )
-            #   web_logger.post_message( message='- in controller; illiad "no sfx link" message detected; preparing to send email to staff', identifier=self.log_identifier, importance='info' )
-            #   utCdInstance.sendEmail( itemInstance, eb_request_number )
-            #   self.update_history_action( eb_request_number, 'illiad', 'followup', 'ill_staff_emailed', '' )  # request_num, service, action, result, transaction_num
-
-            # elif( itemInstance.requestSuccessStatus == "unknown_illiad_failure" ):
-            #   web_logger.post_message( message='- in controller; illiad request #2 failed for unknown reason', identifier=self.log_identifier, importance='info' )
-            #   utCdInstance.sendEmail( itemInstance, eb_request_number )
-            #   self.update_history_action( eb_request_number, 'illiad', 'followup', 'admin_emailed', '' )  # request_num, service, action, result, transaction_num
-
             else:
               web_logger.post_message( message='- in controller; unknown itemInstance.requestSuccessStatus; it is: %s' % itemInstance.requestSuccessStatus, identifier=self.log_identifier, importance='info' )
               utCdInstance.sendEmail( itemInstance, eb_request_number )
