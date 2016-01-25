@@ -28,7 +28,7 @@ class MailBuilder( object ):
         self.subject = "Subject: Update on your 'easyBorrow' request"
         self.message = ''
         log.debug( 'MailBuilder instantiated' )
-        log.debug( 'request_inst.current_status, `%`; request_inst.current_service, `%`' % (request_inst.current_status, request_inst.current_service) )
+        log.debug( 'request_inst.current_status, `%s`; request_inst.current_service, `%s`' % (request_inst.current_status, request_inst.current_service) )
 
     def prep_email( self ):
         """ Preps variable email fields.
@@ -179,7 +179,7 @@ class Mailer( object ):
         self.request_number = request_number  # unicode-string
         log.debug( '%s - Mailer instantiated' % self.request_number )
         log.debug( 'to_list, `%s`' % pprint.pformat(to_list) )
-        log.debug( 'reply_to, `%`; subject, `%`' % (reply_to, subject) )
+        log.debug( 'reply_to, `%s`; subject, `%s`' % (reply_to, subject) )
         log.debug( 'message, `%s`' % pprint.pformat(message) )
 
     def send_email( self ):
