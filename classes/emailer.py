@@ -28,7 +28,7 @@ class MailBuilder( object ):
         self.subject = "Subject: Update on your 'easyBorrow' request"
         self.message = ''
         log.debug( 'MailBuilder instantiated' )
-        log.debug( 'request_inst.current_status, `%`; request_inst.current_service, `%`' (request_inst.current_status, request_inst.current_service) )
+        log.debug( 'request_inst.current_status, `%`; request_inst.current_service, `%`' % (request_inst.current_status, request_inst.current_service) )
 
     def prep_email( self ):
         """ Preps variable email fields.
