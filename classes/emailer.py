@@ -178,9 +178,9 @@ class Mailer( object ):
         self.MESSAGE = message  # unicode-string
         self.request_number = request_number  # unicode-string
         log.debug( '%s - Mailer instantiated' % self.request_number )
-        log.debug( 'to_list, `%s`' % pprint.pformat(to_list) )
-        log.debug( 'reply_to, `%s`; subject, `%s`' % (reply_to, subject) )
-        log.debug( 'message, `%s`' % pprint.pformat(message) )
+        # log.debug( 'to_list, `%s`' % pprint.pformat(to_list) )
+        # log.debug( 'reply_to, `%s`; subject, `%s`' % (reply_to, subject) )
+        # log.debug( 'message, `%s`' % pprint.pformat(message) )
 
     def send_email( self ):
         """ Sends email. """

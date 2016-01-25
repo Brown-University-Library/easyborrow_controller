@@ -172,11 +172,6 @@ class Controller( object ):
 
             web_logger.post_message( message='- in controller; request_inst.current_status is: %s' % request_inst.current_status, identifier=self.log_identifier, importance='info' )
 
-            # if( itemInstance.requestSuccessStatus == "success" ):
-            #   self.update_request_status( 'processed', eb_request_number )
-            #   web_logger.post_message( message='- in controller; request successful; preparing to send email', identifier=self.log_identifier, importance='info' )
-            #   utCdInstance.sendEmail( itemInstance, eb_request_number )
-
             if request_inst.current_status == 'success':
                 self.update_request_status( 'processed', request_inst.request_number )
                 web_logger.post_message( message='- in controller; request successful; preparing to send email', identifier=self.log_identifier, importance='info' )
