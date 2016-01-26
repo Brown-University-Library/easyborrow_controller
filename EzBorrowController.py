@@ -172,23 +172,37 @@ class Controller( object ):
 
             web_logger.post_message( message='- in controller; request_inst.current_status is: %s' % request_inst.current_status, identifier=self.log_identifier, importance='info' )
 
+            # if request_inst.current_status == 'success':
+            #     self.update_request_status( 'processed', request_inst.request_number )
+            #     web_logger.post_message( message='- in controller; request successful; preparing to send email', identifier=self.log_identifier, importance='info' )
+            #     mail_builder = MailBuilder( request_inst, patron_inst, item_inst )
+            #     mail_builder.prep_email()
+            #     mailer = Mailer( mail_builder.to, mail_builder.reply_to, mail_builder.subject, mail_builder.message, request_inst.request_number  )
+            #     mailer.send_email()
+
+            # elif( request_inst.current_status == 'login_failed_possibly_blocked' ):
+            #     web_logger.post_message( message='- in controller; "blocked" detected; will send user email', identifier=self.log_identifier, importance='info' )
+            #     mail_builder = MailBuilder( request_inst, patron_inst, item_inst )
+            #     mail_builder.prep_email()
+            #     mailer = Mailer( mail_builder.to, mail_builder.reply_to, mail_builder.subject, mail_builder.message, request_inst.request_number  )
+            #     if mailer.send_email() is True:
+            #         web_logger.post_message( message='- in controller; "blocked" detected; sendEmail() was called', identifier=self.log_identifier, importance='info' )
+            #         self.update_history_action( eb_request_number, 'illiad', 'followup', 'blocked_user_emailed', '' )  # request_num, service, action, result, transaction_num
+            #         self.update_request_status( 'illiad_block_user_emailed', request_inst.request_number )
+
             if request_inst.current_status == 'success':
                 self.update_request_status( 'processed', request_inst.request_number )
                 web_logger.post_message( message='- in controller; request successful; preparing to send email', identifier=self.log_identifier, importance='info' )
-                mail_builder = MailBuilder( request_inst, patron_inst, item_inst )
-                mail_builder.prep_email()
-                mailer = Mailer( mail_builder.to, mail_builder.reply_to, mail_builder.subject, mail_builder.message, request_inst.request_number  )
-                mailer.send_email()
+                self.deliver_mail( request_inst, patron_inst, item_inst )
 
             elif( request_inst.current_status == 'login_failed_possibly_blocked' ):
                 web_logger.post_message( message='- in controller; "blocked" detected; will send user email', identifier=self.log_identifier, importance='info' )
-                mail_builder = MailBuilder( request_inst, patron_inst, item_inst )
-                mail_builder.prep_email()
-                mailer = Mailer( mail_builder.to, mail_builder.reply_to, mail_builder.subject, mail_builder.message, request_inst.request_number  )
-                if mailer.send_email() is True:
-                    web_logger.post_message( message='- in controller; "blocked" detected; sendEmail() was called', identifier=self.log_identifier, importance='info' )
+                delivered = self.deliver_mail( request_inst, patron_inst, item_inst )
+                if delivered is True:
+                    web_logger.post_message( message='- in controller; "blocked" detected; email sent', identifier=self.log_identifier, importance='info' )
                     self.update_history_action( eb_request_number, 'illiad', 'followup', 'blocked_user_emailed', '' )  # request_num, service, action, result, transaction_num
                     self.update_request_status( 'illiad_block_user_emailed', request_inst.request_number )
+
             else:
               web_logger.post_message( message='- in controller; unknown itemInstance.requestSuccessStatus; it is: %s' % itemInstance.requestSuccessStatus, identifier=self.log_identifier, importance='info' )
               utCdInstance.sendEmail( itemInstance, eb_request_number )
@@ -216,6 +230,16 @@ class Controller( object ):
         # end def run_code()
 
     ## helper functions called by run_code() ##
+
+    def deliver_mail( self, request_inst, patron_inst, item_inst ):
+        """ Calls MailBuilder() and Mailer().
+            Returns boolean.
+            Called by run_code() """
+        mail_builder = MailBuilder( request_inst, patron_inst, item_inst )
+        mail_builder.prep_email()
+        mailer = Mailer( mail_builder.to, mail_builder.reply_to, mail_builder.subject, mail_builder.message, request_inst.request_number  )
+        rslt = mailer.send_email()
+        return rslt
 
     def setup( self ):
         """ Calls initial weblog entry and returns class instances.
@@ -252,6 +276,24 @@ class Controller( object ):
         web_logger.post_message( message='- in controller; updating identifier', identifier='was_%s_now_%s' % (self.log_identifier, eb_request_number), importance='info' )
         self.log_identifier = record_search['id']
         return eb_request_number
+
+    def fill_from_db_row( self, db_dct ):
+        """ Updates attributes from found record data.
+            Note: db_dct contains more data; just storing what's needed.
+            Will eventually fully take the place of the similar Item.fill_from_db_row() call.
+            Called by run_code() """
+        request_inst.request_number = db_dct['id']
+        patron_inst.firstname = db_dct['firstname'].strip()
+        patron_inst.lastname = db_dct['lastname'].strip()
+        patron_inst.eppn = db_dct['eppn'].strip()  # really just the username part
+        patron_inst.barcode = db_dct['barcode']
+        patron_inst.email = db_dct['email']
+        item_inst.title = db_dct['title']
+        item_inst.isbn = db_dct['isbn']
+        item_inst.oclc_num = db_dct['wc_accession']
+        item_inst.volumes_info = db_dct['volumes']
+        item_inst.knowledgebase_openurl = db_dct['sfxurl']
+        return ( request_inst, patron_inst, item_inst )
 
     def update_history_note( self, request_id, note ):
         """ Updates history note, either that processing has started, or what the flow is.
@@ -297,24 +339,6 @@ class Controller( object ):
             logger.error( 'update_request_status error, ```%s```' % unicode(repr(e)) )
             raise Exception( unicode(repr(e)) )
         return
-
-    def fill_from_db_row( self, db_dct ):
-        """ Updates attributes from found record data.
-            Note: db_dct contains more data; just storing what's needed.
-            Will eventually fully take the place of the similar Item.fill_from_db_row() call.
-            Called by run_code() """
-        request_inst.request_number = db_dct['id']
-        patron_inst.firstname = db_dct['firstname'].strip()
-        patron_inst.lastname = db_dct['lastname'].strip()
-        patron_inst.eppn = db_dct['eppn'].strip()  # really just the username part
-        patron_inst.barcode = db_dct['barcode']
-        patron_inst.email = db_dct['email']
-        item_inst.title = db_dct['title']
-        item_inst.isbn = db_dct['isbn']
-        item_inst.oclc_num = db_dct['wc_accession']
-        item_inst.volumes_info = db_dct['volumes']
-        item_inst.knowledgebase_openurl = db_dct['sfxurl']
-        return ( request_inst, patron_inst, item_inst )
 
     # end class Controller
 
