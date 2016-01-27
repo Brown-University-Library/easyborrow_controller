@@ -172,24 +172,6 @@ class Controller( object ):
 
             web_logger.post_message( message='- in controller; request_inst.current_status is: %s' % request_inst.current_status, identifier=self.log_identifier, importance='info' )
 
-            # if request_inst.current_status == 'success':
-            #     self.update_request_status( 'processed', request_inst.request_number )
-            #     web_logger.post_message( message='- in controller; request successful; preparing to send email', identifier=self.log_identifier, importance='info' )
-            #     mail_builder = MailBuilder( request_inst, patron_inst, item_inst )
-            #     mail_builder.prep_email()
-            #     mailer = Mailer( mail_builder.to, mail_builder.reply_to, mail_builder.subject, mail_builder.message, request_inst.request_number  )
-            #     mailer.send_email()
-
-            # elif( request_inst.current_status == 'login_failed_possibly_blocked' ):
-            #     web_logger.post_message( message='- in controller; "blocked" detected; will send user email', identifier=self.log_identifier, importance='info' )
-            #     mail_builder = MailBuilder( request_inst, patron_inst, item_inst )
-            #     mail_builder.prep_email()
-            #     mailer = Mailer( mail_builder.to, mail_builder.reply_to, mail_builder.subject, mail_builder.message, request_inst.request_number  )
-            #     if mailer.send_email() is True:
-            #         web_logger.post_message( message='- in controller; "blocked" detected; sendEmail() was called', identifier=self.log_identifier, importance='info' )
-            #         self.update_history_action( eb_request_number, 'illiad', 'followup', 'blocked_user_emailed', '' )  # request_num, service, action, result, transaction_num
-            #         self.update_request_status( 'illiad_block_user_emailed', request_inst.request_number )
-
             if request_inst.current_status == 'success':
                 self.update_request_status( 'processed', request_inst.request_number )
                 web_logger.post_message( message='- in controller; request successful; preparing to send email', identifier=self.log_identifier, importance='info' )
