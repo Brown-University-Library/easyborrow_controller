@@ -41,36 +41,40 @@ class MailBuilder( object ):
     def build_to( self ):
         """ Preps `to` data.
             Called by prep_email() """
-        if self.request_inst.current_status == 'error':
+        if self.request_inst.current_status == 'success' and self.request_inst.current_service == 'borrowDirect':
+            self.to = [ self.patron_inst.email ]
+        elif self.request_inst.current_status == 'success' and self.request_inst.current_service == 'illiad':
+            self.to = [ self.patron_inst.email ]
+        elif self.request_inst.current_status == 'login_failed_possibly_blocked' and self.request_inst.current_service == 'illiad':
+            self.to = [ self.patron_inst.email ]
+        else:  # assumes error
             self.to = [ settings.ADMIN_EMAIL ]
-        elif self.request_inst.current_service == 'borrowDirect':
-            self.to = [ self.patron_inst.email ]
-        elif self.request_inst.current_service == 'illiad':
-            self.to = [ self.patron_inst.email ]
         return
 
     def build_reply_to( self ):
         """ Preps `reply_to` data.
             Called by prep_email() """
-        if self.request_inst.current_status == 'error':
-            self.reply_to = ''
-        elif self.request_inst.current_service == 'borrowDirect':
+        if self.request_inst.current_status == 'success' and self.request_inst.current_service == 'borrowDirect':
             self.reply_to = 'rock@brown.edu'
-        elif self.request_inst.current_service == 'illiad':
+        elif self.request_inst.current_status == 'success' and self.request_inst.current_service == 'illiad':
             self.reply_to = 'interlibrary_loan@brown.edu'
+        elif self.request_inst.current_status == 'login_failed_possibly_blocked' and self.request_inst.current_service == 'illiad':
+            self.reply_to = 'interlibrary_loan@brown.edu'
+        else:  # assumes error
+            self.reply_to = ''
         return
 
     def build_message( self ):
         """ Preps `message` data.
             Called by prep_email() """
-        if self.request_inst.current_status == 'error':
-            self.message = 'BJD - handle this situation.'
-        elif self.request_inst.current_service == 'borrowDirect':
+        if self.request_inst.current_status == 'success' and self.request_inst.current_service == 'borrowDirect':
             self.message = self.make_borrowdirect_message()
-        elif self.request_inst.current_service == 'illiad' and self.request_inst.current_status == 'success':
+        elif self.request_inst.current_status == 'success' and self.request_inst.current_service == 'illiad':
             self.message = self.make_illiad_success_message()
-        elif self.request_inst.current_service == 'illiad' and self.request_inst.current_status == 'login_failed_possibly_blocked':
+        elif self.request_inst.current_status == 'login_failed_possibly_blocked' and self.request_inst.current_service == 'illiad':
             self.message = self.make_illiad_blocked_message()
+        else:  # assumes error
+            self.message = 'BJD - handle this situation.'
         return
 
     def make_borrowdirect_message( self ):

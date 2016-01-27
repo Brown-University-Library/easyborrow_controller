@@ -186,9 +186,14 @@ class Controller( object ):
                     self.update_request_status( 'illiad_block_user_emailed', request_inst.request_number )
 
             else:
-              web_logger.post_message( message='- in controller; unknown itemInstance.requestSuccessStatus; it is: %s' % itemInstance.requestSuccessStatus, identifier=self.log_identifier, importance='info' )
-              utCdInstance.sendEmail( itemInstance, eb_request_number )
-              self.update_history_action( eb_request_number, 'illiad', 'followup', 'admin_emailed', '' )  # request_num, service, action, result, transaction_num
+
+              # web_logger.post_message( message='- in controller; unknown itemInstance.requestSuccessStatus; it is: %s' % itemInstance.requestSuccessStatus, identifier=self.log_identifier, importance='info' )
+              # utCdInstance.sendEmail( itemInstance, eb_request_number )
+              # self.update_history_action( eb_request_number, 'illiad', 'followup', 'admin_emailed', '' )  # request_num, service, action, result, transaction_num
+
+              web_logger.post_message( message='- in controller; unknown request_inst.current_status; it is: %s' % request_inst.current_status, identifier=self.log_identifier, importance='info' )
+              self.deliver_mail( request_inst, patron_inst, item_inst )
+              self.update_history_action( request_inst.request_number, 'illiad?', 'problem', 'admin_emailed', '' )  # request_num, service, action, result, transaction_num
 
             #######
             # end process
@@ -196,20 +201,15 @@ class Controller( object ):
 
         except SystemExit:
             pass
-        except:
-            try:
-                  err_msg = 'error-type - %s; error-message-a - %s; line-number - %s' % ( sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2].tb_lineno, )
-                  print err_msg
-                  error_message = utility_code.makeErrorString()
-                  logger.error( '%s- exception message, `%s`' % (self.log_identifier, err_msg) )
-                  web_logger.post_message( message='- in controller; EXCEPTION; error: %s' % unicode(repr(error_message)), identifier=self.log_identifier, importance='info' )
-            except Exception, e:
-                  print 'ezb controller exception: %s' % e
-                  err_msg = 'error-type - %s; error-message - %s; line-number - %s' % ( sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2].tb_lineno, )
-                  print err_msg
-                  logger.error( '%s- exception message, `%s`' % (self.log_identifier, err_msg) )
 
-        # end def run_code()
+        except Exception as e:
+            logger.error( 'exception, %s' % unicode(repr(e)) )
+            err_msg = 'error-type - %s; error-message - %s; line-number - %s' % ( sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2].tb_lineno, )
+            logger.error( 'detailed exception, %s' % unicode(repr(error_message)) )
+            web_logger.post_message( message='- in controller; EXCEPTION; error: %s' % unicode(repr(err_msg)), identifier=self.log_identifier, importance='error' )
+            print err_msg
+
+        ## end def run_code()
 
     ## helper functions called by run_code() ##
 
