@@ -81,7 +81,7 @@ class Controller( object ):
             #######
 
             eb_request_number = self.set_identifier( record_search, web_logger )  # also updates self.log_identifier
-            itemInstance.log_identifier = eb_request_number
+            # itemInstance.log_identifier = eb_request_number
             utCdInstance.log_identifier = eb_request_number
 
             #######
@@ -90,10 +90,10 @@ class Controller( object ):
             #######
 
             # setup data
-            itemInstance.fill_from_db_row( record_search )
+            # itemInstance.fill_from_db_row( record_search )
             ( request_inst, patron_inst, item_inst ) = self.fill_from_db_row( record_search )  # will eventuall take the place of the above itemInstance call
-            logger.debug( 'itemInstance.volumesPreference, `%s`' % itemInstance.volumesPreference )
-            logger.debug( 'itemInstance.itemIsbn, `%s`' % itemInstance.itemIsbn )
+            # logger.debug( 'itemInstance.volumesPreference, `%s`' % itemInstance.volumesPreference )
+            # logger.debug( 'itemInstance.itemIsbn, `%s`' % itemInstance.itemIsbn )
             logger.debug( 'item_inst.volumes_info, `%s`' % item_inst.volumes_info )
             logger.debug( 'item_inst.isbn, `%s`' % item_inst.isbn )
 
@@ -124,7 +124,7 @@ class Controller( object ):
 
                     # setup
                     bd_api_runner = BD_ApiRunner( logger, self.log_identifier )
-                    itemInstance.currentlyActiveService = 'borrowDirect'  # TODO, get rid of this once item_inst is doing all the work
+                    # itemInstance.currentlyActiveService = 'borrowDirect'  # TODO, get rid of this once item_inst is doing all the work
                     request_inst.current_service = 'borrowDirect'
                     item_inst = bd_api_runner.setup_api_hit( item_inst, web_logger )
 
@@ -145,9 +145,9 @@ class Controller( object ):
                         # itemInstance = bd_api_runner.handle_success( itemInstance )
                         request_inst = bd_api_runner.handle_success( request_inst )
                         ## deprecated itemInstance code below will be removed when itemInstance is retired
-                        itemInstance.requestSuccessStatus = request_inst.current_status
-                        itemInstance.genericAssignedUserEmail = patron_inst.email
-                        itemInstance.genericAssignedReferenceNumber = request_inst.confirmation_code
+                        # itemInstance.requestSuccessStatus = request_inst.current_status
+                        # itemInstance.genericAssignedUserEmail = patron_inst.email
+                        # itemInstance.genericAssignedReferenceNumber = request_inst.confirmation_code
                         break
 
                 elif(service == "vc"):
@@ -157,10 +157,10 @@ class Controller( object ):
                     web_logger.post_message( message='- in controller; service is now illiad', identifier=self.log_identifier, importance='info' )
                     illiad_api_runner = IlliadApiRunner( request_inst )
                     request_inst.current_service = 'illiad'
-                    itemInstance.currentlyActiveService = 'illiad'  # TODO, retire this
+                    # itemInstance.currentlyActiveService = 'illiad'  # TODO, retire this
                     prep_result_dct = illiad_api_runner.make_parameters( request_inst, patron_inst, item_inst )  # prepare parameters
                     send_result_dct = illiad_api_runner.submit_request( prep_result_dct['parameter_dict'] )  # send request to illiad
-                    eval_result_dict = utility_code.evaluateIlliadSubmissionV2( itemInstance, send_result_dct, self.log_identifier )  # evaluate result (update itemInstance, & history & request tables)
+                    # eval_result_dict = utility_code.evaluateIlliadSubmissionV2( itemInstance, send_result_dct, self.log_identifier )  # evaluate result (update itemInstance, & history & request tables)
                     #
                     request_inst = illiad_api_runner.evaluate_response( request_inst, send_result_dct )  # updates request_inst and history note; updated request_inst not yet used
 
@@ -186,14 +186,9 @@ class Controller( object ):
                     self.update_request_status( 'illiad_block_user_emailed', request_inst.request_number )
 
             else:
-
-              # web_logger.post_message( message='- in controller; unknown itemInstance.requestSuccessStatus; it is: %s' % itemInstance.requestSuccessStatus, identifier=self.log_identifier, importance='info' )
-              # utCdInstance.sendEmail( itemInstance, eb_request_number )
-              # self.update_history_action( eb_request_number, 'illiad', 'followup', 'admin_emailed', '' )  # request_num, service, action, result, transaction_num
-
-              web_logger.post_message( message='- in controller; unknown request_inst.current_status; it is: %s' % request_inst.current_status, identifier=self.log_identifier, importance='info' )
-              self.deliver_mail( request_inst, patron_inst, item_inst )
-              self.update_history_action( request_inst.request_number, 'illiad?', 'problem', 'admin_emailed', '' )  # request_num, service, action, result, transaction_num
+                web_logger.post_message( message='- in controller; unknown request_inst.current_status; it is: %s' % request_inst.current_status, identifier=self.log_identifier, importance='info' )
+                self.deliver_mail( request_inst, patron_inst, item_inst )
+                self.update_history_action( request_inst.request_number, 'illiad?', 'problem', 'admin_emailed', '' )  # request_num, service, action, result, transaction_num
 
             #######
             # end process
