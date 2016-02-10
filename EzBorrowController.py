@@ -68,7 +68,8 @@ class Controller( object ):
             # setup
             #######
 
-            ( itemInstance, utCdInstance, web_logger ) = self.setup()
+            # ( itemInstance, utCdInstance, web_logger ) = self.setup()
+            ( utCdInstance, web_logger ) = self.setup()
 
             #######
             # check for a request-record
@@ -81,7 +82,6 @@ class Controller( object ):
             #######
 
             eb_request_number = self.set_identifier( record_search, web_logger )  # also updates self.log_identifier
-            # itemInstance.log_identifier = eb_request_number
             utCdInstance.log_identifier = eb_request_number
 
             #######
@@ -90,7 +90,7 @@ class Controller( object ):
             #######
 
             # setup data
-            ( request_inst, patron_inst, item_inst ) = self.fill_from_db_row( record_search )  # will eventuall take the place of the above itemInstance call
+            ( request_inst, patron_inst, item_inst ) = self.fill_from_db_row( record_search )
             logger.debug( 'item_inst.volumes_info, `%s`' % item_inst.volumes_info )
             logger.debug( 'item_inst.isbn, `%s`' % item_inst.isbn )
 
@@ -206,6 +206,21 @@ class Controller( object ):
         rslt = mailer.send_email()
         return rslt
 
+    # def setup( self ):
+    #     """ Calls initial weblog entry and returns class instances.
+    #         Called by run_code() """
+    #     try:
+    #         self.db_handler = db_handler.Db_Handler( logger )
+    #     except Exception as e:
+    #         logger.error( 'e, `%s`' % e )
+    #     itemInstance = Item.Item( logger )
+    #     utCdInstance = UtilityCode.UtilityCode( logger )
+    #     web_logger = WebLogger( logger )
+    #     formatted_time = time.strftime( '%a %b %d %H:%M:%S %Z %Y', time.localtime() )  # eg 'Wed Jul 13 13:41:39 EDT 2005'
+    #     web_logger.post_message( message='EZBorrowController session starting at %s' % formatted_time, identifier=self.log_identifier, importance='info' )
+    #     logger.debug( 'setup() complete' )
+    #     return ( itemInstance, utCdInstance, web_logger )
+
     def setup( self ):
         """ Calls initial weblog entry and returns class instances.
             Called by run_code() """
@@ -213,13 +228,12 @@ class Controller( object ):
             self.db_handler = db_handler.Db_Handler( logger )
         except Exception as e:
             logger.error( 'e, `%s`' % e )
-        itemInstance = Item.Item( logger )
         utCdInstance = UtilityCode.UtilityCode( logger )
         web_logger = WebLogger( logger )
         formatted_time = time.strftime( '%a %b %d %H:%M:%S %Z %Y', time.localtime() )  # eg 'Wed Jul 13 13:41:39 EDT 2005'
         web_logger.post_message( message='EZBorrowController session starting at %s' % formatted_time, identifier=self.log_identifier, importance='info' )
         logger.debug( 'setup() complete' )
-        return ( itemInstance, utCdInstance, web_logger )
+        return ( utCdInstance, web_logger )
 
     def run_record_search( self, web_logger ):
         """ Searches for new request.
