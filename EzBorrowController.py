@@ -16,7 +16,8 @@ from __future__ import unicode_literals
 
 import datetime, json, logging, os, pprint, random, string, sys, time
 from easyborrow_controller_code import settings, utility_code
-from easyborrow_controller_code.classes import db_handler, Item, UtilityCode
+# from easyborrow_controller_code.classes import db_handler, Item, UtilityCode
+from easyborrow_controller_code.classes import db_handler, UtilityCode
 from easyborrow_controller_code.classes.basics import Request_Meta as Request_Obj, Patron as Patron_Obj, Item as Item_Obj
 from easyborrow_controller_code.classes.emailer import MailBuilder, Mailer
 from easyborrow_controller_code.classes.tunneler_runners import BD_ApiRunner, IlliadApiRunner
@@ -68,7 +69,6 @@ class Controller( object ):
             # setup
             #######
 
-            # ( itemInstance, utCdInstance, web_logger ) = self.setup()
             ( utCdInstance, web_logger ) = self.setup()
 
             #######
@@ -206,21 +206,6 @@ class Controller( object ):
         rslt = mailer.send_email()
         return rslt
 
-    # def setup( self ):
-    #     """ Calls initial weblog entry and returns class instances.
-    #         Called by run_code() """
-    #     try:
-    #         self.db_handler = db_handler.Db_Handler( logger )
-    #     except Exception as e:
-    #         logger.error( 'e, `%s`' % e )
-    #     itemInstance = Item.Item( logger )
-    #     utCdInstance = UtilityCode.UtilityCode( logger )
-    #     web_logger = WebLogger( logger )
-    #     formatted_time = time.strftime( '%a %b %d %H:%M:%S %Z %Y', time.localtime() )  # eg 'Wed Jul 13 13:41:39 EDT 2005'
-    #     web_logger.post_message( message='EZBorrowController session starting at %s' % formatted_time, identifier=self.log_identifier, importance='info' )
-    #     logger.debug( 'setup() complete' )
-    #     return ( itemInstance, utCdInstance, web_logger )
-
     def setup( self ):
         """ Calls initial weblog entry and returns class instances.
             Called by run_code() """
@@ -259,7 +244,6 @@ class Controller( object ):
     def fill_from_db_row( self, db_dct ):
         """ Updates attributes from found record data.
             Note: db_dct contains more data; just storing what's needed.
-            Will eventually fully take the place of the similar Item.fill_from_db_row() call.
             Called by run_code() """
         request_inst.request_number = db_dct['id']
         patron_inst.firstname = db_dct['firstname'].strip()
