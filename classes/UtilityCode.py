@@ -560,18 +560,18 @@ class UtilityCode( object ):
 
 
 
-  def returnExceptionMessage(self):
-    '''
-    - Only called by UtilityCodeTest.py
-    - Purpose: to check syntax for exceptions for error-logging.
-    '''
+  # def returnExceptionMessage(self):
+  #   '''
+  #   - Only called by UtilityCodeTest.py
+  #   - Purpose: to check syntax for exceptions for error-logging.
+  #   '''
 
-    try:
-      1/0
-    except Exception, e:
-      return 'error-type - %s; error-message - %s; line-number - %s' % ( sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2].tb_lineno, )
+  #   try:
+  #     1/0
+  #   except Exception, e:
+  #     return 'error-type - %s; error-message - %s; line-number - %s' % ( sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2].tb_lineno, )
 
-    # end def returnExceptionMessage()
+  #   # end def returnExceptionMessage()
 
 
 
