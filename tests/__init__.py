@@ -14,12 +14,12 @@ if __name__ == "__main__":
   sys.path.append( path )
 
   ## module imports
-  from easyborrow_controller_code.classes import Item, UtilityCode
+  # from easyborrow_controller_code.classes import Item, UtilityCode
 
   ## test imports
-  from easyborrow_controller_code.tests.ItemTest import *
+  # from easyborrow_controller_code.tests.ItemTest import *
   from easyborrow_controller_code.tests.utility_code_file_tests import *
-  from easyborrow_controller_code.tests.UtilityCodeClassTest import *
+  # from easyborrow_controller_code.tests.UtilityCodeClassTest import *
   from easyborrow_controller_code.tests.tunneler_runner_tests import *
 
   unittest.main()
