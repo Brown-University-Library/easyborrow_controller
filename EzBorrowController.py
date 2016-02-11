@@ -16,7 +16,8 @@ from __future__ import unicode_literals
 
 import datetime, json, logging, os, pprint, random, string, sys, time
 from easyborrow_controller_code import settings, utility_code
-from easyborrow_controller_code.classes import db_handler, UtilityCode
+# from easyborrow_controller_code.classes import db_handler, UtilityCode
+from easyborrow_controller_code.classes import db_handler
 from easyborrow_controller_code.classes.basics import Request_Meta as Request_Obj, Patron as Patron_Obj, Item as Item_Obj
 from easyborrow_controller_code.classes.emailer import MailBuilder, Mailer
 from easyborrow_controller_code.classes.tunneler_runners import BD_ApiRunner, IlliadApiRunner
@@ -68,7 +69,8 @@ class Controller( object ):
             # setup
             #######
 
-            ( utCdInstance, web_logger ) = self.setup()
+            # ( utCdInstance, web_logger ) = self.setup()
+            web_logger = self.setup()
 
             #######
             # check for a request-record
@@ -81,7 +83,7 @@ class Controller( object ):
             #######
 
             eb_request_number = self.set_identifier( record_search, web_logger )  # also updates self.log_identifier
-            utCdInstance.log_identifier = eb_request_number
+            # utCdInstance.log_identifier = eb_request_number
 
             #######
             # gather info on request and update tables
@@ -212,12 +214,13 @@ class Controller( object ):
             self.db_handler = db_handler.Db_Handler( logger )
         except Exception as e:
             logger.error( 'e, `%s`' % e )
-        utCdInstance = UtilityCode.UtilityCode( logger )
+        # utCdInstance = UtilityCode.UtilityCode( logger )
         web_logger = WebLogger( logger )
         formatted_time = time.strftime( '%a %b %d %H:%M:%S %Z %Y', time.localtime() )  # eg 'Wed Jul 13 13:41:39 EDT 2005'
         web_logger.post_message( message='EZBorrowController session starting at %s' % formatted_time, identifier=self.log_identifier, importance='info' )
         logger.debug( 'setup() complete' )
-        return ( utCdInstance, web_logger )
+        # return ( utCdInstance, web_logger )
+        return web_logger
 
     def run_record_search( self, web_logger ):
         """ Searches for new request.
