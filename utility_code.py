@@ -48,39 +48,39 @@ class EB_Request:
 
 
 
-def evaluateIlliadSubmissionV2( itemInstance, send_result_dict, log_identifier ):
-  try:
-    return_dict = { 'status': 'init' }
-    ## new-user check
-    if 'new_user' in send_result_dict:
-      if send_result_dict['new_user'] == True:
-        web_logger.post_message( message='- in utility_code.evaluateIlliadSubmissionV2(); Illiad user created...', identifier=log_identifier, importance='info' )
-        parameterDict = { 'serviceName': 'illiad', 'action': 'create_illiad_user_attempt', 'result': 'success', 'number': '' }
-        # itemInstance.updateHistoryAction( parameterDict['serviceName'], parameterDict['action'], parameterDict['result'], parameterDict['number'] )
-    ## illiad status check
-    if 'status' in send_result_dict:
-      parameterDict = None  # for history update
-      if send_result_dict['status'] == 'submission_successful':
-        itemInstance.illiadAssignedReferenceNumber = send_result_dict['transaction_number']  # it should be there
-        parameterDict = { 'serviceName': 'illiad', 'action': 'attempt', 'result': 'Request_Successful', 'number': itemInstance.illiadAssignedReferenceNumber }
-        itemInstance.requestSuccessStatus = 'success'
-        itemInstance.genericAssignedUserEmail = itemInstance.patronEmail
-        itemInstance.genericAssignedReferenceNumber = itemInstance.illiadAssignedReferenceNumber
-      elif send_result_dict['status'] == 'login_failed_possibly_blocked':
-        itemInstance.requestSuccessStatus = 'login_failed_possibly_blocked'
-        itemInstance.genericAssignedUserEmail = itemInstance.patronEmail
-        # patronInfo = itemInstance.grabPatronApiInfo(itemInstance.patronId)
-        # itemInstance.grabConvertedPatronApiInfo(patronInfo) # grabs converted info and stores it to attributes
-      if parameterDict == None:
-        parameterDict = { 'serviceName': 'illiad', 'action': 'attempt', 'result': send_result_dict['status'], 'number': '' }
-      # itemInstance.updateHistoryAction( parameterDict['serviceName'], parameterDict['action'], parameterDict['result'], parameterDict['number'] )
-      return_dict['status'] = 'evaluation_successful'
-    web_logger.post_message( message='- in utility_code.evaluateIlliadSubmissionV2(); return_dict: %s' % unicode(repr(return_dict)), identifier=log_identifier, importance='info' )
-    return return_dict
-  except:
-    message = '- in utility_code.evaluateIlliadSubmissionV2(); error detail: %s' % makeErrorString()
-    web_logger.post_message( message=message, identifier=log_identifier, importance='info' )
-    return { 'error_message': message }
+# def evaluateIlliadSubmissionV2( itemInstance, send_result_dict, log_identifier ):
+#   try:
+#     return_dict = { 'status': 'init' }
+#     ## new-user check
+#     if 'new_user' in send_result_dict:
+#       if send_result_dict['new_user'] == True:
+#         web_logger.post_message( message='- in utility_code.evaluateIlliadSubmissionV2(); Illiad user created...', identifier=log_identifier, importance='info' )
+#         parameterDict = { 'serviceName': 'illiad', 'action': 'create_illiad_user_attempt', 'result': 'success', 'number': '' }
+#         # itemInstance.updateHistoryAction( parameterDict['serviceName'], parameterDict['action'], parameterDict['result'], parameterDict['number'] )
+#     ## illiad status check
+#     if 'status' in send_result_dict:
+#       parameterDict = None  # for history update
+#       if send_result_dict['status'] == 'submission_successful':
+#         itemInstance.illiadAssignedReferenceNumber = send_result_dict['transaction_number']  # it should be there
+#         parameterDict = { 'serviceName': 'illiad', 'action': 'attempt', 'result': 'Request_Successful', 'number': itemInstance.illiadAssignedReferenceNumber }
+#         itemInstance.requestSuccessStatus = 'success'
+#         itemInstance.genericAssignedUserEmail = itemInstance.patronEmail
+#         itemInstance.genericAssignedReferenceNumber = itemInstance.illiadAssignedReferenceNumber
+#       elif send_result_dict['status'] == 'login_failed_possibly_blocked':
+#         itemInstance.requestSuccessStatus = 'login_failed_possibly_blocked'
+#         itemInstance.genericAssignedUserEmail = itemInstance.patronEmail
+#         # patronInfo = itemInstance.grabPatronApiInfo(itemInstance.patronId)
+#         # itemInstance.grabConvertedPatronApiInfo(patronInfo) # grabs converted info and stores it to attributes
+#       if parameterDict == None:
+#         parameterDict = { 'serviceName': 'illiad', 'action': 'attempt', 'result': send_result_dict['status'], 'number': '' }
+#       # itemInstance.updateHistoryAction( parameterDict['serviceName'], parameterDict['action'], parameterDict['result'], parameterDict['number'] )
+#       return_dict['status'] = 'evaluation_successful'
+#     web_logger.post_message( message='- in utility_code.evaluateIlliadSubmissionV2(); return_dict: %s' % unicode(repr(return_dict)), identifier=log_identifier, importance='info' )
+#     return return_dict
+#   except:
+#     message = '- in utility_code.evaluateIlliadSubmissionV2(); error detail: %s' % makeErrorString()
+#     web_logger.post_message( message=message, identifier=log_identifier, importance='info' )
+#     return { 'error_message': message }
 
 
 
@@ -95,37 +95,37 @@ def jsonify(structure, rq_indent=2):
 
 
 
-def makeEbRequest( itemInstance, log_identifier ):
-  '''
-  - Purpose: temporary transitional hack while new controller architecture is slowly implemented; converts itemInstance to an EB_Request instance.
-  - Called by: controller.runCode()
-  '''
-  try:
-    eb_request = EB_Request()
-    eb_request.patron_firstname = itemInstance.firstname
-    eb_request.patron_lastname = itemInstance.lastname
-    eb_request.patron_email = itemInstance.patronEmail
-    eb_request.patron_phone = itemInstance.patron_api_telephone
-    eb_request.patron_address = itemInstance.patron_api_address
-    eb_request.patron_status = itemInstance.patronStatus
-    eb_request.patron_department = itemInstance.patron_api_dept
-    #
-    eb_request.item_title = itemInstance.itemTitle
-    eb_request.item_oclc_number = itemInstance.oclcNumber
-    #
-    eb_request.request_ezb_reference_number = log_identifier
-    eb_request.request_current_tunneler_service = itemInstance.currentlyActiveService
-    eb_request.request_current_tunneler_status = itemInstance.requestSuccessStatus
-    #
-    logger.debug( 'id, `%s`; eb_request.__dict__ is: %s' % (log_identifier, eb_request.__dict__) )
-    return_dict = { 'status': 'success', 'eb_request': eb_request }
-    logger.debug( 'id, `%s`; return_dict is: %s' % (log_identifier, pprint.pformat(return_dict)) )
-    return return_dict
-  except:
-    message = '- in utility_code.makeEbRequest(); error detail: %s' % makeErrorString()
-    web_logger.post_message( message='- in utility_code.makeEbRequest(); exception, `%s`' % message, identifier=log_identifier, importance='error' )
-    return { 'status': 'failure', 'message': message }
-  # end def makeEbRequest()
+# def makeEbRequest( itemInstance, log_identifier ):
+#   '''
+#   - Purpose: temporary transitional hack while new controller architecture is slowly implemented; converts itemInstance to an EB_Request instance.
+#   - Called by: controller.runCode()
+#   '''
+#   try:
+#     eb_request = EB_Request()
+#     eb_request.patron_firstname = itemInstance.firstname
+#     eb_request.patron_lastname = itemInstance.lastname
+#     eb_request.patron_email = itemInstance.patronEmail
+#     eb_request.patron_phone = itemInstance.patron_api_telephone
+#     eb_request.patron_address = itemInstance.patron_api_address
+#     eb_request.patron_status = itemInstance.patronStatus
+#     eb_request.patron_department = itemInstance.patron_api_dept
+#     #
+#     eb_request.item_title = itemInstance.itemTitle
+#     eb_request.item_oclc_number = itemInstance.oclcNumber
+#     #
+#     eb_request.request_ezb_reference_number = log_identifier
+#     eb_request.request_current_tunneler_service = itemInstance.currentlyActiveService
+#     eb_request.request_current_tunneler_status = itemInstance.requestSuccessStatus
+#     #
+#     logger.debug( 'id, `%s`; eb_request.__dict__ is: %s' % (log_identifier, eb_request.__dict__) )
+#     return_dict = { 'status': 'success', 'eb_request': eb_request }
+#     logger.debug( 'id, `%s`; return_dict is: %s' % (log_identifier, pprint.pformat(return_dict)) )
+#     return return_dict
+#   except:
+#     message = '- in utility_code.makeEbRequest(); error detail: %s' % makeErrorString()
+#     web_logger.post_message( message='- in utility_code.makeEbRequest(); exception, `%s`' % message, identifier=log_identifier, importance='error' )
+#     return { 'status': 'failure', 'message': message }
+#   # end def makeEbRequest()
 
 
 
