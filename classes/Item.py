@@ -1,322 +1,322 @@
-# -*- coding: utf-8 -*-
-
-from __future__ import unicode_literals
-
-import json, logging, os, sys, urllib
-from xml.dom import minidom
-#
-from easyborrow_controller_code import settings
-from easyborrow_controller_code.classes import db_handler, UtilityCode
-from easyborrow_controller_code.classes.web_logger import WebLogger
-from inrhode_tunneler.inrhode_controller import InRhodeController
-
-
-## file and web-loggers
-LOG_PATH = settings.LOG_PATH
-LOG_LEVEL = settings.LOG_LEVEL
-level_dct = { 'DEBUG': logging.DEBUG, 'INFO': logging.INFO }
-logging.basicConfig(
-    filename=LOG_PATH, level=level_dct[LOG_LEVEL],
-    format='[%(asctime)s] %(levelname)s [%(module)s-%(funcName)s()::%(lineno)d] %(message)s', datefmt='%d/%b/%Y %H:%M:%S' )
-logger = logging.getLogger(__name__)
-web_logger = WebLogger( logger )
-
-
-class Item( object ):
-
-
-  def __init__( self, logger ):
-
-    # from settings
-    self.hist_reference_sql = settings.HISTORY_REFERENCENUMBER_SQL
-    self.hist_action_sql = settings.HISTORY_ACTION_SQL
-    self.hist_note_sql = settings.HISTORY_NOTE_SQL
-    self.request_status_sql = settings.REQUEST_UPDATE_SQL
-    self.papi_converter_url = settings.PATRON_API_CONVERTER_URL
+# # -*- coding: utf-8 -*-
+
+# from __future__ import unicode_literals
+
+# import json, logging, os, sys, urllib
+# from xml.dom import minidom
+# #
+# from easyborrow_controller_code import settings
+# from easyborrow_controller_code.classes import db_handler, UtilityCode
+# from easyborrow_controller_code.classes.web_logger import WebLogger
+# from inrhode_tunneler.inrhode_controller import InRhodeController
+
+
+# ## file and web-loggers
+# LOG_PATH = settings.LOG_PATH
+# LOG_LEVEL = settings.LOG_LEVEL
+# level_dct = { 'DEBUG': logging.DEBUG, 'INFO': logging.INFO }
+# logging.basicConfig(
+#     filename=LOG_PATH, level=level_dct[LOG_LEVEL],
+#     format='[%(asctime)s] %(levelname)s [%(module)s-%(funcName)s()::%(lineno)d] %(message)s', datefmt='%d/%b/%Y %H:%M:%S' )
+# logger = logging.getLogger(__name__)
+# web_logger = WebLogger( logger )
+
+
+# class Item( object ):
+
+
+#   def __init__( self, logger ):
+
+#     # from settings
+#     self.hist_reference_sql = settings.HISTORY_REFERENCENUMBER_SQL
+#     self.hist_action_sql = settings.HISTORY_ACTION_SQL
+#     self.hist_note_sql = settings.HISTORY_NOTE_SQL
+#     self.request_status_sql = settings.REQUEST_UPDATE_SQL
+#     self.papi_converter_url = settings.PATRON_API_CONVERTER_URL
 
-    # from db
-    self.itemDbId = ""
-    self.itemTitle = ""
-    self.itemIsbn = ""
-    self.eppn = ""
-    self.patronName = ""
-    self.patronBarcode = ""
-    self.patronEmail = ""
-    self.patronStatus = ""
-    self.patronId = ''
-    self.requestNumber = ""
-    self.sfxurl = ""
-    self.openurl = ""
-    self.firstname = ''
-    self.lastname = ''
-    self.phone = '123-4567' # not yet saved to db
-    self.address = 'address_here' # not yet saved to db
-    self.timePreference = "" # quick or long
-    self.locationPreference = "" # rock or sci
-    self.alternateEditionPreference = "" # y or n
-    self.volumesPreference = "" # varchar(30) field
+#     # from db
+#     self.itemDbId = ""
+#     self.itemTitle = ""
+#     self.itemIsbn = ""
+#     self.eppn = ""
+#     self.patronName = ""
+#     self.patronBarcode = ""
+#     self.patronEmail = ""
+#     self.patronStatus = ""
+#     self.patronId = ''
+#     self.requestNumber = ""
+#     self.sfxurl = ""
+#     self.openurl = ""
+#     self.firstname = ''
+#     self.lastname = ''
+#     self.phone = '123-4567' # not yet saved to db
+#     self.address = 'address_here' # not yet saved to db
+#     self.timePreference = "" # quick or long
+#     self.locationPreference = "" # rock or sci
+#     self.alternateEditionPreference = "" # y or n
+#     self.volumesPreference = "" # varchar(30) field
 
-    # from returned xml
-    self.borrowDirectAssignedUserEmail = ""
-    self.borrowDirectAssignedReferenceNumber = ""
-    self.virtualCatalogAssignedUserEmail = ""
-    self.virtualCatalogAssignedReferenceNumber = ""
-    self.illiadAssignedReferenceNumber = ''
-    self.illiadAssignedSfxUrl = ''
-    self.illiadAssignedAuthId = ''
+#     # from returned xml
+#     self.borrowDirectAssignedUserEmail = ""
+#     self.borrowDirectAssignedReferenceNumber = ""
+#     self.virtualCatalogAssignedUserEmail = ""
+#     self.virtualCatalogAssignedReferenceNumber = ""
+#     self.illiadAssignedReferenceNumber = ''
+#     self.illiadAssignedSfxUrl = ''
+#     self.illiadAssignedAuthId = ''
 
-    # from internal calculations
-    self.illiadTinySfxUrl = ''
-    self.genericAssignedUserEmail = ""
-    self.genericAssignedReferenceNumber = ""
-    self.currentlyActiveService = "" # controller flag property, so when success hits, I know which properties to use for the email.
-    self.requestSuccessStatus = ""
-    self.illiadUrl = ""
-    self.oclcNumber = ''
-    self.patron_api_home_libr = ''
-    self.patron_api_address = ''
-    self.patron_api_telephone = ''
-    self.patron_api_dept = ''
-    self.patron_api_pcode3 = ''
+#     # from internal calculations
+#     self.illiadTinySfxUrl = ''
+#     self.genericAssignedUserEmail = ""
+#     self.genericAssignedReferenceNumber = ""
+#     self.currentlyActiveService = "" # controller flag property, so when success hits, I know which properties to use for the email.
+#     self.requestSuccessStatus = ""
+#     self.illiadUrl = ""
+#     self.oclcNumber = ''
+#     self.patron_api_home_libr = ''
+#     self.patron_api_address = ''
+#     self.patron_api_telephone = ''
+#     self.patron_api_dept = ''
+#     self.patron_api_pcode3 = ''
 
-    # from controller.run_code()
-    self.logger = logger
-    self.log_identifier = ''
-    self.logger.debug( 'item-instance instantiated' )
+#     # from controller.run_code()
+#     self.logger = logger
+#     self.log_identifier = ''
+#     self.logger.debug( 'item-instance instantiated' )
 
 
-  def constructPasswordHolderUrl( self ):
-    '''
-    Seems unnecessary, but I was having problems figuring out why the construction of the url was failing; tests above helped.
-    '''
-    url = '''TODO - delete this function''' % (self.itemDbId, urllib.quote(self.firstname), urllib.quote(self.lastname), urllib.quote(self.patronEmail), urllib.quote(self.patron_api_telephone), urllib.quote(self.patron_api_address), urllib.quote(self.patron_api_pcode3), urllib.quote(self.patron_api_dept) )
-    return url
+#   def constructPasswordHolderUrl( self ):
+#     '''
+#     Seems unnecessary, but I was having problems figuring out why the construction of the url was failing; tests above helped.
+#     '''
+#     url = '''TODO - delete this function''' % (self.itemDbId, urllib.quote(self.firstname), urllib.quote(self.lastname), urllib.quote(self.patronEmail), urllib.quote(self.patron_api_telephone), urllib.quote(self.patron_api_address), urllib.quote(self.patron_api_pcode3), urllib.quote(self.patron_api_dept) )
+#     return url
 
 
-  def filterEmail( self, email_string ):
-    new_string = email_string.replace( ' ', '' )
-    return new_string
+#   def filterEmail( self, email_string ):
+#     new_string = email_string.replace( ' ', '' )
+#     return new_string
 
 
-  def encodeTextForUrl(self, keyText, valueText):
+#   def encodeTextForUrl(self, keyText, valueText):
 
-    dataDict = {}
-    dataDict[keyText] = valueText
+#     dataDict = {}
+#     dataDict[keyText] = valueText
 
-    encodedString = urllib.urlencode(dataDict)
+#     encodedString = urllib.urlencode(dataDict)
 
-    return encodedString
+#     return encodedString
 
 
 
-  def grabConvertedPatronApiInfo( self, patronApiInfo ):
+#   def grabConvertedPatronApiInfo( self, patronApiInfo ):
 
-    utCdInstance = UtilityCode.UtilityCode( self.logger )
+#     utCdInstance = UtilityCode.UtilityCode( self.logger )
 
-    try:
+#     try:
 
-      dataDict = {}
-      dataDict['patron_info'] = '''%s''' % (patronApiInfo,)
-      encodedString = urllib.urlencode(dataDict)
+#       dataDict = {}
+#       dataDict['patron_info'] = '''%s''' % (patronApiInfo,)
+#       encodedString = urllib.urlencode(dataDict)
 
-      url = '%s?%s' % ( self.papi_converter_url, encodedString )
+#       url = '%s?%s' % ( self.papi_converter_url, encodedString )
 
-      data = json.load( urllib.urlopen(url) )
-      web_logger.post_message( message='- in classes.Item.grabConvertedPatronApiInfo(); data is: %s' % unicode(repr(data)), identifier='NA', importance='info' )
+#       data = json.load( urllib.urlopen(url) )
+#       web_logger.post_message( message='- in classes.Item.grabConvertedPatronApiInfo(); data is: %s' % unicode(repr(data)), identifier='NA', importance='info' )
 
-      self.patron_api_address = data['ADDRESS']
-      self.patron_api_telephone = data['TELEPHONE']
-      web_logger.post_message( message='- in classes.Item.grabConvertedPatronApiInfo(); self.patron_api_telephone is: %s' % self.patron_api_telephone, identifier='NA', importance='info' )
+#       self.patron_api_address = data['ADDRESS']
+#       self.patron_api_telephone = data['TELEPHONE']
+#       web_logger.post_message( message='- in classes.Item.grabConvertedPatronApiInfo(); self.patron_api_telephone is: %s' % self.patron_api_telephone, identifier='NA', importance='info' )
 
-      self.patron_api_dept = data['DEPT']
-      self.patron_api_pcode3 = data['pcode3_text']
+#       self.patron_api_dept = data['DEPT']
+#       self.patron_api_pcode3 = data['pcode3_text']
 
-      filtered_patron_email = self.filterEmail( self.patronEmail )
+#       filtered_patron_email = self.filterEmail( self.patronEmail )
 
-      if ( (filtered_patron_email != None) and (filtered_patron_email != '') ): # regular email good; use it
-        self.patronEmail = filtered_patron_email
-      else:                                                                     # regular email bad; use net-id
-        net_id = data['NET-ID']
-        filtered_net_id = self.filterEmail( net_id )
-        if( (filtered_net_id != None) and (filtered_net_id != '') ):            # ...if it's good
-          self.patronEmail = filtered_net_id
-        else:
-          self.patronEmail = 'unknown_email'                                    # otherwise hardcode the unknown status
+#       if ( (filtered_patron_email != None) and (filtered_patron_email != '') ): # regular email good; use it
+#         self.patronEmail = filtered_patron_email
+#       else:                                                                     # regular email bad; use net-id
+#         net_id = data['NET-ID']
+#         filtered_net_id = self.filterEmail( net_id )
+#         if( (filtered_net_id != None) and (filtered_net_id != '') ):            # ...if it's good
+#           self.patronEmail = filtered_net_id
+#         else:
+#           self.patronEmail = 'unknown_email'                                    # otherwise hardcode the unknown status
 
-      if( self.patron_api_pcode3 == None ):
-        self.patron_api_pcode3 = 'unknown'
+#       if( self.patron_api_pcode3 == None ):
+#         self.patron_api_pcode3 = 'unknown'
 
-      return data
+#       return data
 
-    except Exception, e:
+#     except Exception, e:
 
-      web_logger.post_message( message='- in classes.Item.grabConvertedPatronApiInfo(); exception is: %s' % unicode(repr(e)), identifier='NA', importance='error' )
+#       web_logger.post_message( message='- in classes.Item.grabConvertedPatronApiInfo(); exception is: %s' % unicode(repr(e)), identifier='NA', importance='error' )
 
-      return 'Exception: %s' % e
+#       return 'Exception: %s' % e
 
-    # end def grabConvertedPatronApiInfo()
+#     # end def grabConvertedPatronApiInfo()
 
 
-  def grabPatronApiInfo(self, id):
+#   def grabPatronApiInfo(self, id):
 
-    if( id == None ):
-      id = self.patronId # allows for testing
-    url = '%s%s/dump' % ( easyborrow_controller_code.settings.PATRON_API_URL_ROOT, id, )
-    data = urllib.urlopen(url).read()
+#     if( id == None ):
+#       id = self.patronId # allows for testing
+#     url = '%s%s/dump' % ( easyborrow_controller_code.settings.PATRON_API_URL_ROOT, id, )
+#     data = urllib.urlopen(url).read()
 
-    return data
+#     return data
 
 
-  def parsePatronApiInfo(self, patronApiString):
-    return 'blah'
+#   def parsePatronApiInfo(self, patronApiString):
+#     return 'blah'
 
 
-  def convertSfxurlToOpenurlSegment(self, sfxurl):
+#   def convertSfxurlToOpenurlSegment(self, sfxurl):
 
-    segmentWithoutPrefix = sfxurl[36:]
+#     segmentWithoutPrefix = sfxurl[36:]
 
-    dataDict = {}
-    dataDict['openurl'] = '''%s''' % (segmentWithoutPrefix,)
+#     dataDict = {}
+#     dataDict['openurl'] = '''%s''' % (segmentWithoutPrefix,)
 
-    encodedString = urllib.urlencode(dataDict)
+#     encodedString = urllib.urlencode(dataDict)
 
-    return encodedString
+#     return encodedString
 
 
-  def parseIlliadResultData(self, illiadDataString):
+#   def parseIlliadResultData(self, illiadDataString):
 
-    illiadXmlDoc = minidom.parseString(illiadDataString)
+#     illiadXmlDoc = minidom.parseString(illiadDataString)
 
-    statusElements = illiadXmlDoc.getElementsByTagName('status')
-    try:
-      status = statusElements[0].firstChild.data
-    except:
-      messageElements = illiadXmlDoc.getElementsByTagName('message')
-      status = messageElements[0].firstChild.data
+#     statusElements = illiadXmlDoc.getElementsByTagName('status')
+#     try:
+#       status = statusElements[0].firstChild.data
+#     except:
+#       messageElements = illiadXmlDoc.getElementsByTagName('message')
+#       status = messageElements[0].firstChild.data
 
-    self.illiadAssignedUserEmail = self.patronEmail
+#     self.illiadAssignedUserEmail = self.patronEmail
 
-    referenceNumberElements = illiadXmlDoc.getElementsByTagName('transaction_number')
-    if( referenceNumberElements != [] ):
-      self.illiadAssignedReferenceNumber = referenceNumberElements[0].firstChild.data
+#     referenceNumberElements = illiadXmlDoc.getElementsByTagName('transaction_number')
+#     if( referenceNumberElements != [] ):
+#       self.illiadAssignedReferenceNumber = referenceNumberElements[0].firstChild.data
 
-    sfxUrlElements = illiadXmlDoc.getElementsByTagName('sfx_url')
-    if( sfxUrlElements != [] ):
-      initialUrl = sfxUrlElements[0].firstChild.data
-      decodedUrl = urllib.unquote(initialUrl)
-      self.illiadAssignedSfxUrl = decodedUrl
+#     sfxUrlElements = illiadXmlDoc.getElementsByTagName('sfx_url')
+#     if( sfxUrlElements != [] ):
+#       initialUrl = sfxUrlElements[0].firstChild.data
+#       decodedUrl = urllib.unquote(initialUrl)
+#       self.illiadAssignedSfxUrl = decodedUrl
 
-    authIdElements = illiadXmlDoc.getElementsByTagName('authId')
-    if( authIdElements != [] ):
-      self.illiadAssignedAuthId = authIdElements[0].firstChild.data
+#     authIdElements = illiadXmlDoc.getElementsByTagName('authId')
+#     if( authIdElements != [] ):
+#       self.illiadAssignedAuthId = authIdElements[0].firstChild.data
 
-    return status
+#     return status
 
 
-  def parseVirtualCatalogResultData(self, virtualCatalogDataString):
+#   def parseVirtualCatalogResultData(self, virtualCatalogDataString):
 
-    vcXmlDoc = minidom.parseString(virtualCatalogDataString)
+#     vcXmlDoc = minidom.parseString(virtualCatalogDataString)
 
-    statusElements = vcXmlDoc.getElementsByTagName('Status')
-    if( statusElements[0].firstChild != None ):
-      status = statusElements[0].firstChild.data
-    else:
-      status = 'No_Status_Returned'
+#     statusElements = vcXmlDoc.getElementsByTagName('Status')
+#     if( statusElements[0].firstChild != None ):
+#       status = statusElements[0].firstChild.data
+#     else:
+#       status = 'No_Status_Returned'
 
-    emailElements = vcXmlDoc.getElementsByTagName('AssignedUserEmail')
-    if( emailElements != [] ):
-      self.virtualCatalogAssignedUserEmail = emailElements[0].firstChild.data
+#     emailElements = vcXmlDoc.getElementsByTagName('AssignedUserEmail')
+#     if( emailElements != [] ):
+#       self.virtualCatalogAssignedUserEmail = emailElements[0].firstChild.data
 
-    referenceNumberElements = vcXmlDoc.getElementsByTagName('AssignedRequestId')
-    if( referenceNumberElements != [] ):
-      self.virtualCatalogAssignedReferenceNumber = referenceNumberElements[0].firstChild.data
+#     referenceNumberElements = vcXmlDoc.getElementsByTagName('AssignedRequestId')
+#     if( referenceNumberElements != [] ):
+#       self.virtualCatalogAssignedReferenceNumber = referenceNumberElements[0].firstChild.data
 
-    return status
+#     return status
 
 
-  def checkVirtualCatalog(self):
+#   def checkVirtualCatalog(self):
 
-    virtualCatalogUrl = "TODO - delete this old function" % (self.patronBarcode, self.itemIsbn,)
-    virtualCatalogResultData = urllib.urlopen(virtualCatalogUrl).read()
+#     virtualCatalogUrl = "TODO - delete this old function" % (self.patronBarcode, self.itemIsbn,)
+#     virtualCatalogResultData = urllib.urlopen(virtualCatalogUrl).read()
 
-    return virtualCatalogResultData
+#     return virtualCatalogResultData
 
 
-  def updateHistoryAction(self, serviceName, action, result, number):
-    """ Updates history-action.
-        Called by, for now, utility_code.py evaluateIlliadSubmissionV2() """
-    db_hndlr = db_handler.Db_Handler( self.logger )
-    sql = self.hist_action_sql % ( self.itemDbId, serviceName, action, result, number )
-    self.logger.debug( 'history-action-sql, `%s`' % sql )
-    db_hndlr.run_sql( sql )
-    return
+#   def updateHistoryAction(self, serviceName, action, result, number):
+#     """ Updates history-action.
+#         Called by, for now, utility_code.py evaluateIlliadSubmissionV2() """
+#     db_hndlr = db_handler.Db_Handler( self.logger )
+#     sql = self.hist_action_sql % ( self.itemDbId, serviceName, action, result, number )
+#     self.logger.debug( 'history-action-sql, `%s`' % sql )
+#     db_hndlr.run_sql( sql )
+#     return
 
 
-  def checkInRhode(self, eb_request_number):
+#   def checkInRhode(self, eb_request_number):
 
-    try:
-      utCdInstance = UtilityCode.UtilityCode( self.logger )
-      ir_controller = InRhodeController()
-      inRhodeResultData = 'init'
-      inRhodeResultData = ir_controller.runCode( self.itemIsbn, self.lastname, self.patronBarcode )
-      return inRhodeResultData
+#     try:
+#       utCdInstance = UtilityCode.UtilityCode( self.logger )
+#       ir_controller = InRhodeController()
+#       inRhodeResultData = 'init'
+#       inRhodeResultData = ir_controller.runCode( self.itemIsbn, self.lastname, self.patronBarcode )
+#       return inRhodeResultData
 
-    except Exception, e:
-      web_logger.post_message( message='- in classes.Item.checkInRhode(); exception is: %s' % unicode(repr(e)), identifier=eb_request_number, importance='error' )
+#     except Exception, e:
+#       web_logger.post_message( message='- in classes.Item.checkInRhode(); exception is: %s' % unicode(repr(e)), identifier=eb_request_number, importance='error' )
 
 
-  def fill_from_db_row( self, db_dct ):
-    """ Updates attributes from found record data.
-        Called by controller.run_code() """
-    self.itemDbId = db_dct['id']
-    self.requestNumber = db_dct['id']
-    self.itemTitle = db_dct['title']
-    self.itemIsbn = db_dct['isbn']
-    self.timePreference = db_dct['pref']
-    self.locationPreference = db_dct['loc']
-    self.alternateEditionPreference = db_dct['alt_edition']
-    self.volumesPreference = db_dct['volumes']
-    self.sfxurl = db_dct['sfxurl']
-    self.patronName = db_dct['name']
-    self.patronBarcode = db_dct['barcode']
-    self.patronEmail = db_dct['email']
-    self.patronId = db_dct['patronId']
-    tempFirstname = db_dct['firstname']
-    self.firstname = tempFirstname.strip()
-    tempLastname = db_dct['lastname']
-    self.lastname = tempLastname.strip()
-    self.patronStatus = db_dct['group'] # for temp ILL staff manual new-user registration
-    self.oclcNumber = db_dct['wc_accession'] # for temp ILL staff manual new-user registration
-    self.eppn = db_dct['eppn']  # new as of 2012-05
-    return
+#   def fill_from_db_row( self, db_dct ):
+#     """ Updates attributes from found record data.
+#         Called by controller.run_code() """
+#     self.itemDbId = db_dct['id']
+#     self.requestNumber = db_dct['id']
+#     self.itemTitle = db_dct['title']
+#     self.itemIsbn = db_dct['isbn']
+#     self.timePreference = db_dct['pref']
+#     self.locationPreference = db_dct['loc']
+#     self.alternateEditionPreference = db_dct['alt_edition']
+#     self.volumesPreference = db_dct['volumes']
+#     self.sfxurl = db_dct['sfxurl']
+#     self.patronName = db_dct['name']
+#     self.patronBarcode = db_dct['barcode']
+#     self.patronEmail = db_dct['email']
+#     self.patronId = db_dct['patronId']
+#     tempFirstname = db_dct['firstname']
+#     self.firstname = tempFirstname.strip()
+#     tempLastname = db_dct['lastname']
+#     self.lastname = tempLastname.strip()
+#     self.patronStatus = db_dct['group'] # for temp ILL staff manual new-user registration
+#     self.oclcNumber = db_dct['wc_accession'] # for temp ILL staff manual new-user registration
+#     self.eppn = db_dct['eppn']  # new as of 2012-05
+#     return
 
 
-  def fillFromDbRow(self, resultInfo):
+#   def fillFromDbRow(self, resultInfo):
 
-    fieldNameList = resultInfo[0]
-    allRowsTuple = resultInfo[1]
-    rowTuple = allRowsTuple[0] # first row
+#     fieldNameList = resultInfo[0]
+#     allRowsTuple = resultInfo[1]
+#     rowTuple = allRowsTuple[0] # first row
 
-    self.itemDbId = rowTuple[ fieldNameList.index('id') ]
-    self.requestNumber = rowTuple[ fieldNameList.index('id') ]
-    self.itemTitle = rowTuple[ fieldNameList.index('title') ]
-    self.itemIsbn = rowTuple[ fieldNameList.index('isbn') ]
-    self.timePreference = rowTuple[ fieldNameList.index('pref') ]
-    self.locationPreference = rowTuple[ fieldNameList.index('loc') ]
-    self.alternateEditionPreference = rowTuple[ fieldNameList.index('alt_edition') ]
-    self.volumesPreference = rowTuple[ fieldNameList.index('volumes') ]
-    self.sfxurl = rowTuple[ fieldNameList.index('sfxurl') ]
-    self.patronName = rowTuple[ fieldNameList.index('name') ]
-    self.patronBarcode = rowTuple[ fieldNameList.index('barcode') ]
-    self.patronEmail = rowTuple[ fieldNameList.index('email') ]
-    self.patronId = rowTuple[ fieldNameList.index('patronId') ]
-    tempFirstname = rowTuple[ fieldNameList.index('firstname') ]
-    self.firstname = tempFirstname.strip()
-    tempLastname = rowTuple[ fieldNameList.index('lastname') ]
-    self.lastname = tempLastname.strip()
-    self.patronStatus = rowTuple[ fieldNameList.index('group') ] # for temp ILL staff manual new-user registration
-    self.oclcNumber = rowTuple[ fieldNameList.index('wc_accession') ] # for temp ILL staff manual new-user registration
-    self.eppn = rowTuple[ fieldNameList.index('eppn') ]  # new as of 2012-05
+#     self.itemDbId = rowTuple[ fieldNameList.index('id') ]
+#     self.requestNumber = rowTuple[ fieldNameList.index('id') ]
+#     self.itemTitle = rowTuple[ fieldNameList.index('title') ]
+#     self.itemIsbn = rowTuple[ fieldNameList.index('isbn') ]
+#     self.timePreference = rowTuple[ fieldNameList.index('pref') ]
+#     self.locationPreference = rowTuple[ fieldNameList.index('loc') ]
+#     self.alternateEditionPreference = rowTuple[ fieldNameList.index('alt_edition') ]
+#     self.volumesPreference = rowTuple[ fieldNameList.index('volumes') ]
+#     self.sfxurl = rowTuple[ fieldNameList.index('sfxurl') ]
+#     self.patronName = rowTuple[ fieldNameList.index('name') ]
+#     self.patronBarcode = rowTuple[ fieldNameList.index('barcode') ]
+#     self.patronEmail = rowTuple[ fieldNameList.index('email') ]
+#     self.patronId = rowTuple[ fieldNameList.index('patronId') ]
+#     tempFirstname = rowTuple[ fieldNameList.index('firstname') ]
+#     self.firstname = tempFirstname.strip()
+#     tempLastname = rowTuple[ fieldNameList.index('lastname') ]
+#     self.lastname = tempLastname.strip()
+#     self.patronStatus = rowTuple[ fieldNameList.index('group') ] # for temp ILL staff manual new-user registration
+#     self.oclcNumber = rowTuple[ fieldNameList.index('wc_accession') ] # for temp ILL staff manual new-user registration
+#     self.eppn = rowTuple[ fieldNameList.index('eppn') ]  # new as of 2012-05
 
 
-  # end class Item
+#   # end class Item
