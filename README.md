@@ -1,6 +1,7 @@
 #### on this page... ####
 
 - info/overview
+- related code
 - license
 
 
@@ -22,7 +23,22 @@ Each book-borrowing service has its own code-base; this code manages the calls t
 code contact: birkin_diana@brown.edu
 
 
-#### License ####
+#### related code ####
+
+- [borrowdirect.py](https://github.com/Brown-University-Library/borrowdirect.py)
+    - a python module for working with the BorrowDirect API
+
+- [bdpyweb_code](https://github.com/Brown-University-Library/bdpyweb_code)
+    - a lightweight [Flask](http://flask.pocoo.org) webservice using the borrowdirect.py module -- this easyborrow code calls the webservice
+
+- [illiad-client](https://github.com/Brown-University-Library/illiad-client)
+    - a python module that allows automated submissions, and new-user registration to ILLiad
+
+- [illiad_webservice](https://github.com/Brown-University-Library/illiad_webservice)
+    - a [django](https://www.djangoproject.com) webservice using the illiad-client module -- this easyborrow code calls the webservice
+s
+
+#### license ####
 
 The MIT License (MIT)
 
