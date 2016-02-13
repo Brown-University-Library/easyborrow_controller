@@ -1,7 +1,6 @@
 #### on this page... ####
 
 - info/overview
-- qualifier
 - license
 
 
@@ -23,22 +22,11 @@ Each book-borrowing service has its own code-base; this code manages the calls t
 code contact: birkin_diana@brown.edu
 
 
-#### qualifier ####
-
-This code is in production, _but_...
-- some is ancient (before json was a part of the standard python library!)
-- it was one of the programmer's first python projects (originally written in java)
-- lots of code is unused either because it's old and some upgraded code has _mostly_ replaced it, or because some is upgraded code not yet used
-- it uses a bunch of different settings and module architectures because of the fits and starts of improvements over ten years
-
-In short, it needs work. It hasn't been upgraded much over the years partly due to stability, and because complete rewrites have been started a few times but never prioritized. This move to github should make improvements easier.
-
-
 #### License ####
 
 The MIT License (MIT)
 
-Copyright (c) 2015 Brown University Library
+Copyright (c) 2016 Brown University Library
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
