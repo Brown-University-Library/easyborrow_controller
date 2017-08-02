@@ -15,7 +15,7 @@ from __future__ import unicode_literals
 """
 
 import datetime, json, logging, os, pprint, random, string, sys, time
-from easyborrow_controller_code import settings, utility_code
+from easyborrow_controller_code import settings
 from easyborrow_controller_code.classes import db_handler
 from easyborrow_controller_code.classes.basics import Request_Meta as Request_Obj, Patron as Patron_Obj, Item as Item_Obj
 from easyborrow_controller_code.classes.emailer import MailBuilder, Mailer
