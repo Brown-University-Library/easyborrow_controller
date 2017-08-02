@@ -203,7 +203,16 @@ class BDRunnerTest(unittest.TestCase):
 
 
 
-if __name__ == "__main__":
-  from easyborrow_controller_code.classes import UtilityCode
-  # from easyborrow_controller_code.classes.tunneler_runners import BD_Runner
-  unittest.main()
+# if __name__ == "__main__":
+#   from easyborrow_controller_code.classes import UtilityCode
+#   # from easyborrow_controller_code.classes.tunneler_runners import BD_Runner
+#   unittest.main()
+
+
+def suite():
+    suite = unittest.makeSuite( BDRunnerTest, 'test' )
+    return suite
+
+
+if __name__ == '__main__':
+    unittest.main()
