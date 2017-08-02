@@ -7,22 +7,25 @@ To test all...
 $ python ./test.py
 
 To run specific test...
-$ python ./tests/tunneler_runner_tests.py BDRunnerTest.test_determineSearchType
+$ python ./tests/tunneler_runner_tests.py IlliadApiRunnerTest.test_make_openurl_segment
 """
 
-import logging, unittest
-from tests import emailer_tests
-from tests import tunneler_runner_tests
+import logging, os, sys, unittest
+
+## add project parent-directory to sys.path
+parent_working_dir = os.path.abspath( os.path.join(os.getcwd(), os.pardir) )
+sys.path.append( parent_working_dir )
+
+from easyborrow_controller_code.tests import emailer_tests
+from easyborrow_controller_code.tests import tunneler_runner_tests
 
 
-logger = logging.getLogger()
-logger.setLevel(logging.DEBUG)
-formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-
-hndlr = logging.StreamHandler()
-hndlr.setLevel( logging.DEBUG )
-hndlr.setFormatter( formatter )
-logger.addHandler( hndlr )
+logging.basicConfig(
+    filename='',
+    level=logging.DEBUG,
+    format='[%(asctime)s] %(levelname)s [%(module)s-%(funcName)s()::%(lineno)d] %(message)s',
+    datefmt='%d/%b/%Y %H:%M:%S' )
+logger = logging.getLogger(__name__)
 
 
 def suite():
