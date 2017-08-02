@@ -237,9 +237,17 @@ class IlliadApiRunnerTest(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def test_make_openurl_segment(self):
-        initial_url = 'http://rl3tp7zf5x.search.serialssolutions.com/?sid=FirstSearch:WorldCat&genre=book&isbn=9780439339117&title=Zen+shorts&date=2005&aulast=Muth&aufirst=Jon&auinitm=J&id=doi:&pid=53084041&url_ver=Z39.88-2004&rfr_id=info:sid/firstsearch.oclc.org:WorldCat&rft_val_fmt=info:ofi/fmt:kev:mtx:book&rft.genre=book&rfe_dat=%3Caccessionnumber%3E53084041%3C/accessionnumber%3E&rft_id=info:oclcnum/53084041&rft_id=urn:ISBN:9780439339117&rft.aulast=Muth&rft.aufirst=Jon&rft.auinitm=J&rft.btitle=Zen+shorts&rft.date=2005&rft.isbn=9780439339117&rft.place=New+York&rft.pub=Scholastic+Press&rft.edition=1st+ed.'
-        self.assertEqual( 'bar', self.illiad_runner._make_openurl_segment(initial_url) )
+    def test_make_openurl_segment__simple_case(self):
+        initial_url = 'http://rl3tp7zf5x.search.serialssolutions.com/?sid=test&genre=book&isbn=9780439339117'
+        self.assertEqual( 'sid=test&genre=book&isbn=9780439339117', self.illiad_runner._make_openurl_segment(initial_url) )
+
+    def test_make_openurl_segment__unknown_genre(self):
+        initial_url = 'http://rl3tp7zf5x.search.serialssolutions.com/?sid=test&genre=unknown&isbn=9780439339117'
+        self.assertEqual( 'sid=test&genre=book&isbn=9780439339117', self.illiad_runner._make_openurl_segment(initial_url) )
+
+    def test_make_openurl_segment__volume_note(self):
+        initial_url = 'http://rl3tp7zf5x.search.serialssolutions.com/?sid=test&genre=unknown&isbn=9780439339117'
+        self.assertEqual( 'foo', self.illiad_runner._make_openurl_segment(initial_url) )
 
     ## end class IlliadApiRunnerTest()
 
