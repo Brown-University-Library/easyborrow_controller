@@ -239,7 +239,6 @@ def suite():
     suite = unittest.TestSuite()
     suite.addTest( unittest.makeSuite(BDRunnerTest) )
     suite.addTest( unittest.makeSuite(IlliadApiRunnerTest) )
-    # suite = unittest.makeSuite( IlliadApiRunnerTest, 'test' )
     return suite
 
 
