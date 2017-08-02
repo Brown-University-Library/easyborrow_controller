@@ -11,7 +11,8 @@ $ python ./tests/tunneler_runner_tests.py BDRunnerTest.test_determineSearchType
 """
 
 import logging, unittest
-from tests import tunneler_runner_tests
+from tests import emailer_tests
+# from tests import tunneler_runner_tests
 
 
 logger = logging.getLogger()
@@ -26,7 +27,8 @@ logger.addHandler( hndlr )
 
 def suite():
     test_suite = unittest.TestSuite()
-    test_suite.addTest( tunneler_runner_tests.suite() )
+    test_suite.addTest( emailer_tests.suite() )
+    # test_suite.addTest( tunneler_runner_tests.suite() )
     return test_suite
 
 
