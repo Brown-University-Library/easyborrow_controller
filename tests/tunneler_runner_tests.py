@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 
 import datetime, json, unittest
 from easyborrow_controller_code.classes.tunneler_runners import BD_ApiRunner, IlliadApiRunner
+from easyborrow_controller_code.classes.basics import Request_Meta
 
 
 # class BDRunnerTest(unittest.TestCase):
@@ -202,34 +203,42 @@ from easyborrow_controller_code.classes.tunneler_runners import BD_ApiRunner, Il
 #     assert d['response']['search_result'] == 'FAILURE', d['response']['search_result']
 
 
-class BDRunnerTest(unittest.TestCase):
+# class BDRunnerTest(unittest.TestCase):
 
-    def setUp(self):
-        self.bd_runner = BD_ApiRunner()
-        pass
+#     def setUp(self):
+#         self.bd_runner = BD_ApiRunner()
+#         pass
 
-    def tearDown(self):
-        pass
+#     def tearDown(self):
+#         pass
 
-    def test_prepare_params(self):
-        patron_inst = 'x'
-        item_inst = 'y'
-        self.assertEqual( 'bar', self.bd_runner.prepare_params(patron_inst, item_inst) )
+#     def test_prepare_params(self):
+#         patron_inst = 'x'
+#         item_inst = 'y'
+#         self.assertEqual( 'bar', self.bd_runner.prepare_params(patron_inst, item_inst) )
 
-    ## end class BDRunnerTest()
+#     ## end class BDRunnerTest()
 
 
 class IlliadApiRunnerTest(unittest.TestCase):
 
     def setUp(self):
-        self.illiad_runner = IlliadApiRunner()
+        self.illiad_runner = self.instantiate_illiad_runner()
         pass
+
+    def instantiate_illiad_runner(self):
+        """ Sets up IlliadApiRunner instance.
+            Called by setUp() """
+        request_instance = Request_Meta()
+        request_instance.request_number = 42
+        illiad_runner = IlliadApiRunner( request_instance )
+        return illiad_runner
 
     def tearDown(self):
         pass
 
     def test_make_openurl_segment(self):
-        initial_url = 'foo'
+        initial_url = 'http://rl3tp7zf5x.search.serialssolutions.com/?sid=FirstSearch:WorldCat&genre=book&isbn=9780439339117&title=Zen+shorts&date=2005&aulast=Muth&aufirst=Jon&auinitm=J&id=doi:&pid=53084041&url_ver=Z39.88-2004&rfr_id=info:sid/firstsearch.oclc.org:WorldCat&rft_val_fmt=info:ofi/fmt:kev:mtx:book&rft.genre=book&rfe_dat=%3Caccessionnumber%3E53084041%3C/accessionnumber%3E&rft_id=info:oclcnum/53084041&rft_id=urn:ISBN:9780439339117&rft.aulast=Muth&rft.aufirst=Jon&rft.auinitm=J&rft.btitle=Zen+shorts&rft.date=2005&rft.isbn=9780439339117&rft.place=New+York&rft.pub=Scholastic+Press&rft.edition=1st+ed.'
         self.assertEqual( 'bar', self.illiad_runner._make_openurl_segment(initial_url) )
 
     ## end class IlliadApiRunnerTest()
@@ -237,7 +246,7 @@ class IlliadApiRunnerTest(unittest.TestCase):
 
 def suite():
     suite = unittest.TestSuite()
-    suite.addTest( unittest.makeSuite(BDRunnerTest) )
+    # suite.addTest( unittest.makeSuite(BDRunnerTest) )
     suite.addTest( unittest.makeSuite(IlliadApiRunnerTest) )
     return suite
 
