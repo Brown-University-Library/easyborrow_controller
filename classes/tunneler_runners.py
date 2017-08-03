@@ -2,7 +2,7 @@
 
 from __future__ import unicode_literals
 
-import datetime, imp, json, logging, os, pprint, sys, time
+import datetime, imp, json, logging, os, pprint, sys, time, urllib
 import requests
 from easyborrow_controller_code import settings
 from easyborrow_controller_code.classes.db_handler import Db_Handler
@@ -46,29 +46,32 @@ class IlliadApiRunner( object ):
             'address': '',  # was used for new_user registration
             'email': patron_inst.email,  # was used for new_user registration
             'oclc_number': item_inst.oclc_num,
-            'openurl': self._make_openurl_segment( item_inst.knowledgebase_openurl ),
+            'openurl': self._make_openurl_segment( item_inst.knowledgebase_openurl, item_inst.volumes_info ),
             'patron_barcode': patron_inst.barcode,
             'patron_department': '',  # was used for new_user registration
             'patron_status': '',  # was used for new_user registration
             'phone': '',  # was used for new_user registration
-            'volumes': '',  # perceived but not handled by dj_ill_submission -- 2016-01-17 TODO, I think this should be added to the `notes`
+            'volumes': '',  # perceived but not handled by dj_ill_submission -- notes are appended to the openurl
             }
         return_dct = { 'parameter_dict': parameter_dict }
         logger.debug( 'return_dct, ```%s```' % pprint.pformat(return_dct) )
         return return_dct
 
-    def _make_openurl_segment( self, initial_url ):
+    def _make_openurl_segment( self, initial_url, volumes_info ):
         """ Prepares the openurl segment.
             Called by make_parameters() """
         try:
             logger.debug( 'id, `%s`; initial_url is: %s' % (self.log_identifier, initial_url) )
             openurl = initial_url[ initial_url.find( 'serialssolutions.com/?' ) + 22 : ]  # TODO: change this to use the urlparse library
             openurl = openurl.replace( 'genre=unknown', 'genre=book' )
+            if volumes_info:
+                encoded_volumes_info = urllib.quote_plus( volumes_info.encode('utf-8') ).decode( 'utf-8' )
+                openurl = '%s&notes=%s' % ( openurl, encoded_volumes_info )
             logger.debug( 'id, `%s`; openurl is: %s' % (self.log_identifier, openurl) )
             return openurl
         except Exception as e:
             message = '- in tunneler_runners.IlliadApiRunner._make_openurl_segment(); exception, `%s`' % unicode( repr(e) )
-            web_logger.post_message( message=message, identifier=log_identifier, importance='error' )
+            web_logger.post_message( message=message, identifier=self.log_identifier, importance='error' )
             raise Exception( message )
             return
 
