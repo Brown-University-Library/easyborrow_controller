@@ -252,6 +252,11 @@ class IlliadApiRunnerTest(unittest.TestCase):
         initial_url = 'http://rl3tp7zf5x.search.serialssolutions.com/?sid=test&genre=unknown&isbn=9780439339117'
         self.assertEqual( 'sid=test&genre=book&isbn=9780439339117&notes=test+note', self.illiad_runner._make_openurl_segment(initial_url, volumes_info) )
 
+    def test_make_openurl_segment__unicode_volume_note(self):
+        volumes_info = 'tést note'
+        initial_url = 'http://rl3tp7zf5x.search.serialssolutions.com/?sid=test&genre=unknown&isbn=9780439339117'
+        self.assertEqual( 'sid=test&genre=book&isbn=9780439339117&notes=t%C3%A9st+note', self.illiad_runner._make_openurl_segment(initial_url, volumes_info) )
+
     ## end class IlliadApiRunnerTest()
 
 
