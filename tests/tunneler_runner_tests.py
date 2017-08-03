@@ -238,16 +238,19 @@ class IlliadApiRunnerTest(unittest.TestCase):
         pass
 
     def test_make_openurl_segment__simple_case(self):
+        volumes_info = ''
         initial_url = 'http://rl3tp7zf5x.search.serialssolutions.com/?sid=test&genre=book&isbn=9780439339117'
-        self.assertEqual( 'sid=test&genre=book&isbn=9780439339117', self.illiad_runner._make_openurl_segment(initial_url) )
+        self.assertEqual( 'sid=test&genre=book&isbn=9780439339117', self.illiad_runner._make_openurl_segment(initial_url, volumes_info) )
 
     def test_make_openurl_segment__unknown_genre(self):
+        volumes_info = ''
         initial_url = 'http://rl3tp7zf5x.search.serialssolutions.com/?sid=test&genre=unknown&isbn=9780439339117'
-        self.assertEqual( 'sid=test&genre=book&isbn=9780439339117', self.illiad_runner._make_openurl_segment(initial_url) )
+        self.assertEqual( 'sid=test&genre=book&isbn=9780439339117', self.illiad_runner._make_openurl_segment(initial_url, volumes_info) )
 
     def test_make_openurl_segment__volume_note(self):
+        volumes_info = 'test note'
         initial_url = 'http://rl3tp7zf5x.search.serialssolutions.com/?sid=test&genre=unknown&isbn=9780439339117'
-        self.assertEqual( 'foo', self.illiad_runner._make_openurl_segment(initial_url) )
+        self.assertEqual( 'sid=test&genre=book&isbn=9780439339117&notes=test+note', self.illiad_runner._make_openurl_segment(initial_url, volumes_info) )
 
     ## end class IlliadApiRunnerTest()
 
