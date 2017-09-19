@@ -28,7 +28,6 @@ CIRC_ADMIN_EMAIL = unicode( os.environ[u'ezbCTL__CIRC_ADMIN_EMAIL'] )  # listed 
 
 
 ## general settings
-PATRON_API_URL_ROOT = unicode( os.environ['ezbCTL__PATRON_API_URL_ROOT'] )
 PATRON_API_CONVERTER_URL = unicode( os.environ['ezbCTL__PATRON_API_CONVERTER_URL'] )  # used by classes.Item.Item() -- TODO, see if this url is really active and used
 
 
