@@ -25,9 +25,16 @@ class IlliadApiRunnerTest(unittest.TestCase):
         pass
 
     def test_make_openurl_segment__simple_case(self):
+        """ Checks for encoded version of ->p.barcode, `12345678901234`; volumes, `N/A`<- """
         volumes_info = ''
+        barcode = '12345678901234'
         initial_url = 'http://rl3tp7zf5x.search.serialssolutions.com/?sid=test&genre=book&isbn=9780439339117'
-        self.assertEqual( 'sid=test&genre=book&isbn=9780439339117', self.illiad_runner._make_openurl_segment(initial_url, volumes_info) )
+        self.assertEqual( 'sid=test&genre=book&isbn=9780439339117&notes=p.barcode%2C%20%6012345678901234%60%3B%20volumes%2C%20%60N%2FA%60', self.illiad_runner._make_openurl_segment(initial_url, volumes_info) )
+
+    # def test_make_openurl_segment__simple_case(self):
+    #     volumes_info = ''
+    #     initial_url = 'http://rl3tp7zf5x.search.serialssolutions.com/?sid=test&genre=book&isbn=9780439339117'
+    #     self.assertEqual( 'sid=test&genre=book&isbn=9780439339117', self.illiad_runner._make_openurl_segment(initial_url, volumes_info) )
 
     def test_make_openurl_segment__unknown_genre(self):
         volumes_info = ''

@@ -7,7 +7,7 @@ To test all...
 $ python ./test.py
 
 To run specific test...
-$ python ./tests/tunneler_runner_tests.py IlliadApiRunnerTest.test_make_openurl_segment
+$ python ./tests/illiad_caller_tests.py IlliadApiRunnerTest.test_make_openurl_segment__simple_case
 """
 
 import logging, os, sys, unittest
