@@ -54,8 +54,6 @@ class IlliadApiRunner( object ):
         logger.debug( 'return_dct, ```%s```' % pprint.pformat(return_dct) )
         return return_dct
 
-
-
     def make_openurl_segment( self, initial_url, volumes_info, patron_barcode ):
         """ Prepares the openurl segment.
             Called by make_parameters() """
@@ -77,7 +75,6 @@ class IlliadApiRunner( object ):
             web_logger.post_message( message=message, identifier=self.log_identifier, importance='error' )
             raise Exception( message )
             return
-
 
     def prep_volumes_segment( self, volumes_info ):
         """ Prepares volumes segment for openurl.
@@ -142,111 +139,6 @@ class IlliadApiRunner( object ):
         return sql
 
     ## end class IlliadApiRunner
-
-
-# class IlliadApiRunner( object ):
-#     """ Handles calls to the illiad api. """
-
-#     def __init__( self, request_inst ):
-#         self.log_identifier = request_inst.request_number
-#         self.HISTORY_SQL_PATTERN = settings.HISTORY_ACTION_SQL
-#         self.db_handler = Db_Handler( logger )
-#         self.web_logger = WebLogger( logger )
-
-#     def make_parameters( self, request_inst, patron_inst, item_inst ):
-#         """ Builds parameter_dict for the api hit.
-#             Note that this tunneler api-hit _used to_ handle new-user registration; that is all now handled at the landing page.
-#             Called by controller.run_code() """
-#         parameter_dict = {
-#             'auth_key': settings.ILLIAD_API_KEY,
-#             'request_id': self.log_identifier,
-#             'first_name': patron_inst.firstname,  # was used for new_user registration
-#             'last_name': patron_inst.lastname,  # wasused for new_user registration
-#             'username': patron_inst.eppn,  # was for login _and_ new_user registration
-#             'address': '',  # was used for new_user registration
-#             'email': patron_inst.email,  # was used for new_user registration
-#             'oclc_number': item_inst.oclc_num,
-#             'openurl': self._make_openurl_segment( item_inst.knowledgebase_openurl, item_inst.volumes_info ),
-#             'patron_barcode': patron_inst.barcode,
-#             'patron_department': '',  # was used for new_user registration
-#             'patron_status': '',  # was used for new_user registration
-#             'phone': '',  # was used for new_user registration
-#             'volumes': '',  # perceived but not handled by dj_ill_submission -- notes are appended to the openurl
-#             }
-#         return_dct = { 'parameter_dict': parameter_dict }
-#         logger.debug( 'return_dct, ```%s```' % pprint.pformat(return_dct) )
-#         return return_dct
-
-#     def _make_openurl_segment( self, initial_url, volumes_info ):
-#         """ Prepares the openurl segment.
-#             Called by make_parameters() """
-#         try:
-#             logger.debug( 'id, `%s`; initial_url is: %s' % (self.log_identifier, initial_url) )
-#             openurl = initial_url[ initial_url.find( 'serialssolutions.com/?' ) + 22 : ]  # TODO: change this to use the urlparse library
-#             openurl = openurl.replace( 'genre=unknown', 'genre=book' )
-#             if volumes_info:
-#                 encoded_volumes_info = urllib.quote_plus( volumes_info.encode('utf-8') ).decode( 'utf-8' )
-#                 openurl = '%s&notes=%s' % ( openurl, encoded_volumes_info )
-#             logger.debug( 'id, `%s`; openurl is: %s' % (self.log_identifier, openurl) )
-#             return openurl
-#         except Exception as e:
-#             message = '- in tunneler_runners.IlliadApiRunner._make_openurl_segment(); exception, `%s`' % unicode( repr(e) )
-#             web_logger.post_message( message=message, identifier=self.log_identifier, importance='error' )
-#             raise Exception( message )
-#             return
-
-#     def submit_request( self, parameter_dict ):
-#         """ Submits the illiad request.
-#             Called by controller.run_code() """
-#         try:
-#             url = settings.ILLIAD_API_URL
-#             headers = { 'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8' }
-#             r = requests.post( url, data=parameter_dict, headers=headers, timeout=60, verify=False )
-#             logger.debug( 'id, `%s`; ws response text, ```%s```' % (self.log_identifier, r.text) )  # TODO, log used encoding and set it explicitly
-#             return_dict = json.loads( r.text )
-#             web_logger.post_message( message='- in IlliadApiRunner.submit_request(); return_dict: %s' % pprint.pformat(return_dict), identifier=self.log_identifier, importance='info' )
-#             return return_dict
-#         except Exception as e:
-#             message = '- in IlliadApiRunner.submit_request(); exception: %s' % unicode( repr(e) )
-#             web_logger.post_message( message=message, identifier=self.log_identifier, importance='error' )
-#             return { 'error_message': message }
-
-#     def evaluate_response( self, request_inst, send_result_dct ):
-#         """ Updates request_inst and updates history note.
-#             Called by controller.run_code() """
-#         if send_result_dct.get('status') == 'submission_successful':
-#             request_inst.current_status = 'success'
-#         else:
-#             request_inst.current_status = send_result_dct.get('status', 'in_process' )
-#         request_inst.confirmation_code = send_result_dct.get( 'transaction_number', '' )
-#         self.update_history_table( request_inst )
-#         return request_inst
-
-#     def update_history_table( self, request_inst ):
-#         """ Populates history table based on request result.
-#             Called by evaluate_response() """
-#         sql = self.prep_history_sql( request_inst )
-#         self.db_handler.run_sql( sql )
-#         self.web_logger.post_message( message='- in tunneler_runners.IlliadApiRunner.update_history_table(); history table updated for ezb#: %s' % request_inst.request_number, identifier=self.log_identifier, importance='info' )
-#         logger.debug( 'update_history_table complete' )
-#         return
-
-#     def prep_history_sql( self, request_inst ):
-#         """ Prepares history table update sql.
-#             Called by update_history_table() """
-#         attempt_result = request_inst.current_status
-#         if request_inst.current_status == 'success':  # legacy logic
-#             attempt_result = 'Request_Successful'
-#         sql = self.HISTORY_SQL_PATTERN % (
-#           request_inst.request_number,
-#           'illiad',
-#           'attempt',
-#           attempt_result,
-#           request_inst.confirmation_code )  # if attempt not successful, confirmation code will be ''
-#         logger.debug( '%s- history_sql, `%s`' % (self.log_identifier, sql) )
-#         return sql
-
-#     # end class IlliadApiRunner
 
 
 class BD_ApiRunner( object ):
