@@ -2,12 +2,11 @@
 
 from __future__ import unicode_literals
 
-import datetime, imp, json, logging, os, pprint, sys, time, urllib, urlparse
+import json, logging, pprint, urllib, urlparse
 import requests
 from easyborrow_controller_code import settings
 from easyborrow_controller_code.classes.db_handler import Db_Handler
 from easyborrow_controller_code.classes.web_logger import WebLogger
-from types import InstanceType, ModuleType, NoneType
 
 
 ## file and web-loggers
@@ -49,7 +48,7 @@ class IlliadApiRunner( object ):
             'patron_status': '',  # was used for new_user registration
             'phone': '',  # was used for new_user registration
             'volumes': '',  # perceived but not handled by dj_ill_submission -- notes are appended to the openurl
-            }
+        }
         return_dct = { 'parameter_dict': parameter_dict }
         logger.debug( 'return_dct, ```%s```' % pprint.pformat(return_dct) )
         return return_dct
@@ -84,8 +83,6 @@ class IlliadApiRunner( object ):
         else:
             segment = 'volumes, `N/A`'
         return segment
-
-
 
     def submit_request( self, parameter_dict ):
         """ Submits the illiad request.
@@ -130,11 +127,11 @@ class IlliadApiRunner( object ):
         if request_inst.current_status == 'success':  # legacy logic
             attempt_result = 'Request_Successful'
         sql = self.HISTORY_SQL_PATTERN % (
-          request_inst.request_number,
-          'illiad',
-          'attempt',
-          attempt_result,
-          request_inst.confirmation_code )  # if attempt not successful, confirmation code will be ''
+            request_inst.request_number,
+            'illiad',
+            'attempt',
+            attempt_result,
+            request_inst.confirmation_code )  # if attempt not successful, confirmation code will be ''
         logger.debug( '%s- history_sql, `%s`' % (self.log_identifier, sql) )
         return sql
 
@@ -157,7 +154,7 @@ class BD_ApiRunner( object ):
             'url': settings.BDPYWEB_URL,
             'api_authorization_code': settings.BDPYWEB_AUTHORIZATION_CODE,
             'api_identity': settings.BDPYWEB_IDENTITY
-            }
+        }
         self.api_result = None  # will be dct
         self.api_confirmation_code = None  # will be str
         self.api_found = None  # will be boolean
@@ -184,7 +181,7 @@ class BD_ApiRunner( object ):
         self.logger.debug( '- identifier, %s; setup_api_hit() complete' % self.log_identifier )
         return item_inst
 
-    def prepare_params( self,  patron_inst, item_inst ):
+    def prepare_params( self, patron_inst, item_inst ):
         """ Preps bd-api parameters.
             Called by controller.run_code() """
         bd_data = { 'isbn': item_inst.isbn, 'user_barcode': patron_inst.barcode }
@@ -218,7 +215,7 @@ class BD_ApiRunner( object ):
         """ Examines response dict & populates class attributes.
             Called by controller.run_code() """
         if self.api_result and ( type(self.api_result) == dict ) and ( 'requestable' in self.api_result.keys() ):
-            if self.api_result['requestable'] == True:
+            if self.api_result['requestable'] is True:
                 self.api_confirmation_code = self.api_result['bd_confirmation_code']
                 self.api_found = True
                 self.api_requestable = True
@@ -238,7 +235,7 @@ class BD_ApiRunner( object ):
     def prep_code_message( self ):
         """ Sets api_confirmation_code and history_table_message vars.
             Called by update_history_table() """
-        if self.api_requestable == True:
+        if self.api_requestable is True:
             api_confirmation_code = self.api_confirmation_code
             history_table_message = 'Request_Successful'
         else:
@@ -252,12 +249,12 @@ class BD_ApiRunner( object ):
             Called by update_history_table()
             TODO: when db class exists, remove utf8 encoding. """
         sql = self.HISTORY_SQL_PATTERN % (
-          self.log_identifier,
-          'borrowdirect',
-          'attempt',
-          history_table_message,
-          api_confirmation_code
-          )
+            self.log_identifier,
+            'borrowdirect',
+            'attempt',
+            history_table_message,
+            api_confirmation_code
+        )
         utf8_sql = sql.encode( 'utf-8' )  # old code expects utf-8 string
         self.logger.debug( '%s- prep_history_sql complete; utf8_sql, `%s`' % (self.log_identifier, sql.decode('utf-8')) )
         return utf8_sql
@@ -274,11 +271,11 @@ class BD_ApiRunner( object ):
             Called by Controller.run_code() """
         try:
             comparison_dct = {
-              'old_api_found': old_runner_instance.api_found,
-              'old_api_requestable': old_runner_instance.api_requestable,
-              'new_api_found': self.api_result['found'],
-              'new_api_requestable': self.api_result['requestable']
-              }
+                'old_api_found': old_runner_instance.api_found,
+                'old_api_requestable': old_runner_instance.api_requestable,
+                'new_api_found': self.api_result['found'],
+                'new_api_requestable': self.api_result['requestable']
+            }
             self.logger.debug( '%s- bd-runner comparison, `%s`' % (self.log_identifier, pprint.pformat(comparison_dct)) )
         except Exception as e:  # handles case where bdpyweb response fails
             self.logger.debug( '%s- exception on bdpyweb compare write, `%s`' % (self.log_identifier, pprint.pformat(unicode(repr(e)))) )
