@@ -86,7 +86,7 @@ class Db_Handler(object):
             result_list = []
             for row_dict in dict_list:
                 new_row_dict = {}
-                for key,value in row_dict.items():
+                for key, value in row_dict.items():
                     new_row_dict[ unicode(key) ] = self._unicodify_value( value )
                 result_list.append( new_row_dict )
             return result_list
@@ -114,4 +114,4 @@ class Db_Handler(object):
         except Exception as e:
             self.logger.error( 'error: %s' % unicode(repr(e).decode('utf8', 'replace')) )
 
-  # end class DB_Handler()
+    ## end class DB_Handler()
