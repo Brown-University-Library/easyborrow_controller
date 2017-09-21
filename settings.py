@@ -16,7 +16,7 @@ LOG_LEVEL = unicode( os.environ['ezbCTL__LOG_LEVEL'] )
 WEBLOG_URL = unicode( os.environ['ezbCTL__WEBLOG_URL'] )  # url used to web-log various parts of easyBorrow apps
 WEBLOG_KEY = unicode( os.environ['ezbCTL__WEBLOG_KEY'] )
 # WEBLOG_LEVEL = unicode( os.environ['ezbCTL__WEBLOGENTRY_MINIMUM_IMPORTANCE_LEVEL'] ) # 'debug', etc.
-WEBLOG_LEVEL = unicode( os.environ['ezbCTL__WEBLOG_LEVEL'] ) # 'debug', etc.
+WEBLOG_LEVEL = unicode( os.environ['ezbCTL__WEBLOG_LEVEL'] )  # 'debug', etc.
 
 
 ## email
