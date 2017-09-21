@@ -2,7 +2,7 @@
 
 from __future__ import unicode_literals
 
-import os, datetime, pprint
+import datetime, pprint
 import MySQLdb
 from easyborrow_controller_code import settings
 
