@@ -5,11 +5,11 @@
 
 from __future__ import unicode_literals
 
-import json, logging, os, pprint, smtplib
+import logging, smtplib
 from email.Header import Header
 from email.mime.text import MIMEText
 from easyborrow_controller_code import settings
-from easyborrow_controller_code.classes.web_logger import WebLogger
+# from easyborrow_controller_code.classes.web_logger import WebLogger
 
 
 log = logging.getLogger(__name__)
@@ -95,14 +95,14 @@ Some useful information for your records:
 
 If you have any questions, contact the Library's Rockefeller Gateway staff at rock@brown.edu or call 401-863-2165.
 
-    ''' % (
-        self.patron_inst.firstname,
-        self.patron_inst.lastname,
-        self.item_inst.title,
-        self.item_inst.title,
-        self.request_inst.request_number,
-        self.request_inst.confirmation_code,
-        self.patron_inst.email )
+        ''' % (
+            self.patron_inst.firstname,
+            self.patron_inst.lastname,
+            self.item_inst.title,
+            self.item_inst.title,
+            self.request_inst.request_number,
+            self.request_inst.confirmation_code,
+            self.patron_inst.email )
         log.debug( 'borrowdirect message built' )
         return message
         ####### end make_borrowdirect_message() #######
@@ -128,14 +128,14 @@ You can check your Illiad account at the link:
 
 If you have any questions, contact the Library's Interlibrary Loan office at interlibrary_loan@brown.edu or call 863-2169.
 
-  ''' % (
-        self.patron_inst.firstname,
-        self.patron_inst.lastname,
-        self.item_inst.title,
-        self.item_inst.title,
-        self.request_inst.request_number,
-        self.request_inst.confirmation_code,
-        self.patron_inst.email )
+      ''' % (
+            self.patron_inst.firstname,
+            self.patron_inst.lastname,
+            self.item_inst.title,
+            self.item_inst.title,
+            self.request_inst.request_number,
+            self.request_inst.confirmation_code,
+            self.patron_inst.email )
         log.debug( 'illiad success message built' )
         return message
         ###### end make_illiad_success_message() ######
@@ -156,12 +156,12 @@ Once your account issue is cleared up, click on this link to re-request the item
 ( easyBorrow request reference number: '%s' )
 
 [end]
-    ''' % (
-        self.patron_inst.firstname,
-        self.patron_inst.lastname,
-        self.item_inst.title,
-        'http://worldcat.org/oclc/%s' % self.item_inst.oclc_num,
-        self.request_inst.request_number )
+        ''' % (
+            self.patron_inst.firstname,
+            self.patron_inst.lastname,
+            self.item_inst.title,
+            'http://worldcat.org/oclc/%s' % self.item_inst.oclc_num,
+            self.request_inst.request_number )
         log.debug( 'illiad blocked message built' )
         return message
         ####### end make_illiad_blocked_message() #######
