@@ -14,7 +14,7 @@ from __future__ import unicode_literals
   - env/bin/activate file sources settings
 """
 
-import datetime, json, logging, os, pprint, random, string, sys, time
+import datetime, logging, pprint, random, string, sys, time
 from easyborrow_controller_code import settings
 from easyborrow_controller_code.classes import db_handler
 from easyborrow_controller_code.classes.basics import Request_Meta as Request_Obj, Patron as Patron_Obj, Item as Item_Obj
@@ -55,7 +55,7 @@ class Controller( object ):
         self.HISTORY_NOTE_SQL = settings.HISTORY_NOTE_SQL
         self.HISTORY_ACTION_SQL = settings.HISTORY_ACTION_SQL
         self.REQUEST_UPDATE_SQL = settings.REQUEST_UPDATE_SQL
-        self.log_identifier = 'temp--%s--%s' % ( datetime.datetime.now().strftime('%Y-%m-%d-%H:%M:%S'), random.randint(1000,9999) )    # will be ezb-request-number: helps track which log-entries go with which request
+        self.log_identifier = 'temp--%s--%s' % ( datetime.datetime.now().strftime('%Y-%m-%d-%H:%M:%S'), random.randint(1000, 9999) )    # will be ezb-request-number: helps track which log-entries go with which request
         self.db_handler = None
 
     def run_code( self ):
@@ -135,7 +135,7 @@ class Controller( object ):
                     bd_api_runner.update_history_table()
 
                     # handle success (processing just continues if request not successful)
-                    if bd_api_runner.api_requestable == True:
+                    if bd_api_runner.api_requestable is True:
                         request_inst = bd_api_runner.handle_success( request_inst )
                         break
 
@@ -301,8 +301,6 @@ class Controller( object ):
         return
 
     # end class Controller
-
-
 
 
 if __name__ == '__main__':
