@@ -2,8 +2,8 @@
 
 from __future__ import unicode_literals
 
-import datetime, json, unittest
-from easyborrow_controller_code.classes.emailer import MailBuilder, Mailer
+import unittest
+from easyborrow_controller_code.classes.emailer import Mailer
 
 
 # class MailBuilderTest(unittest.TestCase):
