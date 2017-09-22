@@ -2,7 +2,7 @@
 
 from __future__ import unicode_literals
 
-import pprint, os
+import pprint
 import requests
 from easyborrow_controller_code import settings
 
@@ -17,15 +17,6 @@ class WebLogger( object ):
         self.WEBLOG_KEY = settings.WEBLOG_KEY
         self.WEBLOG_LEVEL = settings.WEBLOG_LEVEL
         self.logger = logger
-
-    # def post_message( self, message, identifier, importance ):
-    #     """ Sends weblog message based on importance. """
-    #     self.logger.debug( 'identifier, `%s`; message, `%s`; importance, `%s`' % (identifier, message, importance) )
-    #     status_code = None
-    #     important_enough = self.evaluate_importance( importance )
-    #     if important_enough:
-    #         status_code = self.run_post( message, identifier )
-    #     return status_code
 
     def post_message( self, message, identifier, importance ):
         """ Sends weblog message based on importance. """
