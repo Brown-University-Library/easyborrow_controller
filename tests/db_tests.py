@@ -2,7 +2,7 @@
 
 from __future__ import unicode_literals
 
-import datetime, json, logging, unittest
+import logging, unittest
 from easyborrow_controller_code.classes import db_handler
 
 
@@ -22,8 +22,6 @@ class Db_HandlerTest(unittest.TestCase):
         """ Checks that all returned values from db call are unicode strings. """
         dict_list = [ {'title'.encode('utf-8'): 'réd'.encode('utf-8'), 'wc'.encode('utf-8'): long( 123 ) } ]
         self.assertEqual( [ {'title': 'réd', 'wc': '123' } ], dbh._unicodify_resultset(dict_list) )
-
-
 
 
 if __name__ == "__main__":
