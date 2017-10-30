@@ -18,6 +18,7 @@ import datetime, logging, pprint, random, string, sys, time
 from easyborrow_controller_code import settings
 from easyborrow_controller_code.classes import db_handler
 from easyborrow_controller_code.classes.basics import Request_Meta as Request_Obj, Patron as Patron_Obj, Item as Item_Obj
+from easyborrow_controller_code.classes.bd_caller_exact import BD_CallerExact
 from easyborrow_controller_code.classes.emailer import MailBuilder, Mailer
 from easyborrow_controller_code.classes.tunneler_runners import BD_ApiRunner, IlliadApiRunner
 from easyborrow_controller_code.classes.web_logger import WebLogger
@@ -138,6 +139,34 @@ class Controller( object ):
                     if bd_api_runner.api_requestable is True:
                         request_inst = bd_api_runner.handle_success( request_inst )
                         break
+
+                # elif(service == "bd"):
+
+                #     ##
+                #     ## send a request to BorrowDirect
+                #     ##
+
+                #     # setup
+                #     bd_api_runner = BD_ApiRunner( logger, self.log_identifier )
+                #     request_inst.current_service = 'borrowDirect'
+                #     item_inst = bd_api_runner.setup_api_hit( item_inst, web_logger )
+
+                #     # prepare data
+                #     bd_data = bd_api_runner.prepare_params( patron_inst, item_inst )
+
+                #     # hit api
+                #     bd_api_runner.hit_bd_api( bd_data['isbn'], bd_data['user_barcode'] )  # response in bd_api_runner.bdpyweb_response_dct
+
+                #     # normalize response
+                #     bd_api_runner.process_response()  # populates class attributes api_confirmation_code, api_found, & api_requestable
+
+                #     # update history table
+                #     bd_api_runner.update_history_table()
+
+                #     # handle success (processing just continues if request not successful)
+                #     if bd_api_runner.api_requestable is True:
+                #         request_inst = bd_api_runner.handle_success( request_inst )
+                #         break
 
                 elif(service == "vc"):
                     pass
