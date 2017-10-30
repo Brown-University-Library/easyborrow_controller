@@ -277,6 +277,16 @@ class Controller( object ):
         logger.debug( 'determine_flow() result, `%s`' % flow )
         return flow
 
+    # def determine_flow( self, item_inst ):
+    #     """ Determines services to try, and order.
+    #         Once again allows for BorrowDirect string requesting since API now permits it.
+    #         Called by run_code() """
+    #     flow = [ 'bd', 'illiad' ]
+    #     if len( item_inst.volumes_info ) > 0:
+    #         flow = [ 'bd', 'illiad' ]
+    #     logger.debug( 'determine_flow() result, `%s`' % flow )
+    #     return flow
+
     def update_history_action( self, request_id, service_name, action, result, number ):
         """ Updates history table's service name-action-result info.
             Called by run_code() """
