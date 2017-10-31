@@ -15,13 +15,13 @@ level_dct = { 'DEBUG': logging.DEBUG, 'INFO': logging.INFO }
 logging.basicConfig(
     filename=LOG_PATH, level=level_dct[LOG_LEVEL],
     format='[%(asctime)s] %(levelname)s [%(module)s-%(funcName)s()::%(lineno)d] %(message)s', datefmt='%d/%b/%Y %H:%M:%S' )
-logger = logging.getLogger(__name__)
+log = logging.getLogger(__name__)
 
 
 class BD_CallerExact( object ):
     """ Handles bdpy3_web `exact` calls. """
 
-    def __init__( self, logger, log_identifier ):
+    def __init__( self ):
         """ Loads env vars.
             Called by EzBorrowController.py """
         self.logger = logger
@@ -38,11 +38,12 @@ class BD_CallerExact( object ):
         self.api_found = None  # will be boolean
         self.api_requestable = None  # will be boolean
         self.HISTORY_SQL_PATTERN = settings.HISTORY_ACTION_SQL
+        log.debug( 'BD_CallerExact initialized' )
 
     def _prep_db_handler( self ):
         """ Initializes db_handler.
             Called by __init__() """
-        self.db_handler = Db_Handler( self.logger )
+        self.db_handler = Db_Handler( log )
         return
 
     def setup_api_hit( self, item_inst, web_logger ):
