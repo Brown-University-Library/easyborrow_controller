@@ -115,19 +115,22 @@ class Controller( object ):
 
                 elif(service == "bd"):
 
-                    bd_caller_exact.log_identifier = self.log_identifier
-                    logger.debug( 'here' )
-
-                    1/0
-
                     ##
                     ## send a request to BorrowDirect
                     ##
 
-                    # setup
-                    bd_api_runner = BD_ApiRunner( logger, self.log_identifier )
+                    ## setup
+                    # bd_api_runner = BD_ApiRunner( logger, self.log_identifier )
+                    bd_caller_exact.log_identifier = self.log_identifier
+
                     request_inst.current_service = 'borrowDirect'
-                    item_inst = bd_api_runner.setup_api_hit( item_inst, web_logger )
+                    # item_inst = bd_api_runner.setup_api_hit( item_inst, web_logger )
+                    item_inst = bd_caller_exact.setup_api_hit( item_inst )
+
+
+                    logger.debug( 'here' )
+                    1/0
+
 
                     # prepare data
                     bd_data = bd_api_runner.prepare_params( patron_inst, item_inst )
