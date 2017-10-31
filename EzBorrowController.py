@@ -127,11 +127,6 @@ class Controller( object ):
                     # item_inst = bd_api_runner.setup_api_hit( item_inst, web_logger )
                     item_inst = bd_caller_exact.setup_api_hit( item_inst )
 
-
-                    # logger.debug( 'here' )
-                    # 1/0
-
-
                     ## prepare data
                     # bd_data = bd_api_runner.prepare_params( patron_inst, item_inst )
                     bd_data = bd_caller_exact.prepare_params( patron_inst, item_inst )
@@ -155,6 +150,9 @@ class Controller( object ):
                     if bd_caller_exact.api_requestable is True:
                         request_inst = bd_caller_exact.handle_success( request_inst )
                         break
+
+                    ## if we get here, isbn-check failed; try author/title/date
+                    log.debug( 'will try author/title/date request' )
 
                 # elif(service == "bd"):
 
