@@ -18,7 +18,7 @@ import datetime, logging, pprint, random, string, sys, time
 from easyborrow_controller_code import settings
 from easyborrow_controller_code.classes import db_handler
 from easyborrow_controller_code.classes.basics import Request_Meta as Request_Obj, Patron as Patron_Obj, Item as Item_Obj
-from easyborrow_controller_code.classes.bd_caller_exact import BD_CallerExact
+from easyborrow_controller_code.classes.bd_api_caller import BD_CallerExact
 from easyborrow_controller_code.classes.emailer import MailBuilder, Mailer
 from easyborrow_controller_code.classes.tunneler_runners import BD_ApiRunner, IlliadApiRunner
 from easyborrow_controller_code.classes.web_logger import WebLogger
@@ -128,25 +128,32 @@ class Controller( object ):
                     item_inst = bd_caller_exact.setup_api_hit( item_inst )
 
 
-                    logger.debug( 'here' )
-                    1/0
+                    # logger.debug( 'here' )
+                    # 1/0
 
 
-                    # prepare data
-                    bd_data = bd_api_runner.prepare_params( patron_inst, item_inst )
+                    ## prepare data
+                    # bd_data = bd_api_runner.prepare_params( patron_inst, item_inst )
+                    bd_data = bd_caller_exact.prepare_params( patron_inst, item_inst )
 
-                    # hit api
-                    bd_api_runner.hit_bd_api( bd_data['isbn'], bd_data['user_barcode'] )  # response in bd_api_runner.bdpyweb_response_dct
+                    ## hit api
+                    # bd_api_runner.hit_bd_api( bd_data['isbn'], bd_data['user_barcode'] )  # response in bd_api_runner.bdpyweb_response_dct
+                    bd_caller_exact.hit_bd_api( bd_data['isbn'], bd_data['user_barcode'] )  # response in bd_api_runner.bdpyweb_response_dct
 
-                    # normalize response
-                    bd_api_runner.process_response()  # populates class attributes api_confirmation_code, api_found, & api_requestable
+                    ## normalize response
+                    # bd_api_runner.process_response()  # populates class attributes api_confirmation_code, api_found, & api_requestable
+                    bd_caller_exact.process_response()  # populates class attributes api_confirmation_code, api_found, & api_requestable
 
-                    # update history table
-                    bd_api_runner.update_history_table()
+                    ## update history table
+                    # bd_api_runner.update_history_table()
+                    bd_caller_exact.update_history_table()
 
-                    # handle success (processing just continues if request not successful)
-                    if bd_api_runner.api_requestable is True:
-                        request_inst = bd_api_runner.handle_success( request_inst )
+                    ## handle success (processing just continues if request not successful)
+                    # if bd_api_runner.api_requestable is True:
+                    #     request_inst = bd_api_runner.handle_success( request_inst )
+                    #     break
+                    if bd_caller_exact.api_requestable is True:
+                        request_inst = bd_caller_exact.handle_success( request_inst )
                         break
 
                 # elif(service == "bd"):
