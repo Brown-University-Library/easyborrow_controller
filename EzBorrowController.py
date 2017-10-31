@@ -44,6 +44,7 @@ logging.getLogger("urllib3").setLevel(logging.WARNING)
 request_inst = Request_Obj()
 patron_inst = Patron_Obj()
 item_inst = Item_Obj()
+bd_caller_exact = BD_CallerExact()
 
 
 ## get to work
@@ -113,6 +114,10 @@ class Controller( object ):
                     pass
 
                 elif(service == "bd"):
+
+                    bd_caller_exact.log_identifier = self.log_identifier
+                    logger.debug( 'here' )
+
                     1/0
 
                     ##

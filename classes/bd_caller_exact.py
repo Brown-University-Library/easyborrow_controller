@@ -27,7 +27,7 @@ class BD_CallerExact( object ):
         self.logger = logger
         self.db_handler = None
         self._prep_db_handler()
-        self.log_identifier = log_identifier
+        self.log_identifier = 'init'
         self.bdpyweb_defaults = {
             'url': settings.BDPYWEB_URL,
             'api_authorization_code': settings.BDPYWEB_AUTHORIZATION_CODE,
