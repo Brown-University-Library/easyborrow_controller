@@ -113,6 +113,7 @@ class Controller( object ):
                     pass
 
                 elif(service == "bd"):
+                    1/0
 
                     ##
                     ## send a request to BorrowDirect
