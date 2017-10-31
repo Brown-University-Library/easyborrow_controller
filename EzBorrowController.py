@@ -18,7 +18,7 @@ import datetime, logging, pprint, random, string, sys, time
 from easyborrow_controller_code import settings
 from easyborrow_controller_code.classes import db_handler
 from easyborrow_controller_code.classes.basics import Request_Meta as Request_Obj, Patron as Patron_Obj, Item as Item_Obj
-from easyborrow_controller_code.classes.bd_api_caller import BD_CallerExact
+from easyborrow_controller_code.classes.bd_api_caller import BD_CallerExact, BD_CallerBib
 from easyborrow_controller_code.classes.emailer import MailBuilder, Mailer
 from easyborrow_controller_code.classes.tunneler_runners import BD_ApiRunner, IlliadApiRunner
 from easyborrow_controller_code.classes.web_logger import WebLogger
@@ -45,6 +45,7 @@ request_inst = Request_Obj()
 patron_inst = Patron_Obj()
 item_inst = Item_Obj()
 bd_caller_exact = BD_CallerExact()
+bd_caller_bib = BD_CallerBib()
 
 
 ## get to work
@@ -119,68 +120,45 @@ class Controller( object ):
                     ## send a request to BorrowDirect
                     ##
 
-                    ## setup
-                    # bd_api_runner = BD_ApiRunner( logger, self.log_identifier )
-                    bd_caller_exact.log_identifier = self.log_identifier
+                    ## do isbn search?
+                    if len( item_inst.isbn ) > 0:
 
-                    request_inst.current_service = 'borrowDirect'
-                    # item_inst = bd_api_runner.setup_api_hit( item_inst, web_logger )
-                    item_inst = bd_caller_exact.setup_api_hit( item_inst )
+                        ## setup
+                        bd_caller_exact.log_identifier = self.log_identifier
+                        request_inst.current_service = 'borrowDirect'
+                        item_inst = bd_caller_exact.setup_api_hit( item_inst )
 
-                    ## prepare data
-                    # bd_data = bd_api_runner.prepare_params( patron_inst, item_inst )
-                    bd_data = bd_caller_exact.prepare_params( patron_inst, item_inst )
+                        ## prepare data
+                        bd_data = bd_caller_exact.prepare_params( patron_inst, item_inst )
 
-                    ## hit api
-                    # bd_api_runner.hit_bd_api( bd_data['isbn'], bd_data['user_barcode'] )  # response in bd_api_runner.bdpyweb_response_dct
-                    bd_caller_exact.hit_bd_api( bd_data['isbn'], bd_data['user_barcode'] )  # response in bd_api_runner.bdpyweb_response_dct
+                        ## hit api
+                        bd_caller_exact.hit_bd_api( bd_data['isbn'], bd_data['user_barcode'] )  # response in bd_api_runner.bdpyweb_response_dct
 
-                    ## normalize response
-                    # bd_api_runner.process_response()  # populates class attributes api_confirmation_code, api_found, & api_requestable
-                    bd_caller_exact.process_response()  # populates class attributes api_confirmation_code, api_found, & api_requestable
+                        ## normalize response
+                        bd_caller_exact.process_response()  # populates class attributes api_confirmation_code, api_found, & api_requestable
 
-                    ## update history table
-                    # bd_api_runner.update_history_table()
-                    bd_caller_exact.update_history_table()
+                        ## update history table
+                        bd_caller_exact.update_history_table()
 
-                    ## handle success (processing just continues if request not successful)
-                    # if bd_api_runner.api_requestable is True:
-                    #     request_inst = bd_api_runner.handle_success( request_inst )
-                    #     break
-                    if bd_caller_exact.api_requestable is True:
-                        request_inst = bd_caller_exact.handle_success( request_inst )
-                        break
+                        ## handle success (processing just continues if request not successful)
+                        if bd_caller_exact.api_requestable is True:
+                            request_inst = bd_caller_exact.handle_success( request_inst )
+                            break
 
-                    ## if we get here, isbn-check failed; try author/title/date
+                    ## if we get here, either there was no isbn-check, or the check failed -- so try author/title/date
                     log.debug( 'will try author/title/date request' )
 
-                # elif(service == "bd"):
+                    ## setup
 
-                #     ##
-                #     ## send a request to BorrowDirect
-                #     ##
+                    ## prepare data
 
-                #     # setup
-                #     bd_api_runner = BD_ApiRunner( logger, self.log_identifier )
-                #     request_inst.current_service = 'borrowDirect'
-                #     item_inst = bd_api_runner.setup_api_hit( item_inst, web_logger )
+                    ## hit api
 
-                #     # prepare data
-                #     bd_data = bd_api_runner.prepare_params( patron_inst, item_inst )
+                    ## normalize response
 
-                #     # hit api
-                #     bd_api_runner.hit_bd_api( bd_data['isbn'], bd_data['user_barcode'] )  # response in bd_api_runner.bdpyweb_response_dct
+                    ## update history table
 
-                #     # normalize response
-                #     bd_api_runner.process_response()  # populates class attributes api_confirmation_code, api_found, & api_requestable
-
-                #     # update history table
-                #     bd_api_runner.update_history_table()
-
-                #     # handle success (processing just continues if request not successful)
-                #     if bd_api_runner.api_requestable is True:
-                #         request_inst = bd_api_runner.handle_success( request_inst )
-                #         break
+                    ## handle success (processing just continues if request not successful)
 
                 elif(service == "vc"):
                     pass
@@ -359,3 +337,36 @@ class Controller( object ):
 if __name__ == '__main__':
     controller_instance = Controller()
     controller_instance.run_code()
+
+
+## old production bd flow code... (delete after November 30, 2017)
+
+                # elif(service == "bd"):
+
+                #     ##
+                #     ## send a request to BorrowDirect
+                #     ##
+
+                #     # setup
+                #     bd_api_runner = BD_ApiRunner( logger, self.log_identifier )
+                #     request_inst.current_service = 'borrowDirect'
+                #     item_inst = bd_api_runner.setup_api_hit( item_inst, web_logger )
+
+                #     # prepare data
+                #     bd_data = bd_api_runner.prepare_params( patron_inst, item_inst )
+
+                #     # hit api
+                #     bd_api_runner.hit_bd_api( bd_data['isbn'], bd_data['user_barcode'] )  # response in bd_api_runner.bdpyweb_response_dct
+
+                #     # normalize response
+                #     bd_api_runner.process_response()  # populates class attributes api_confirmation_code, api_found, & api_requestable
+
+                #     # update history table
+                #     bd_api_runner.update_history_table()
+
+                #     # handle success (processing just continues if request not successful)
+                #     if bd_api_runner.api_requestable is True:
+                #         request_inst = bd_api_runner.handle_success( request_inst )
+                #         break
+
+## (end of `old production bd flow code...`)
