@@ -64,11 +64,11 @@ class BD_CallerBib( object ):
         log.debug( 'year, `%s`' % year )
         return year
 
-    def hit_bd_api( self, isbn, user_barcode ):
+    def hit_bd_api( self, title, author, year, user_barcode ):
         """ Executes bdpy3_web bib call.
             Called by Controller.run_code() """
         log.info( '%s- starting try_request()' % self.log_identifier )
-        parameter_dict = self.prepare_bd_api( isbn, user_barcode )
+        parameter_dict = self.prepare_bd_api_hit( title, author, year, user_barcode )
         try:
             r = requests.post( self.bdpyweb_defaults['url'], data=parameter_dict, timeout=300, verify=False )
             log.debug( '%s- bdpyweb response content, `%s`' % (self.log_identifier, r.content.decode('utf-8')) )
@@ -76,6 +76,19 @@ class BD_CallerBib( object ):
         except Exception, e:
             log.debug( '%s- exception on bdpyweb post, `%s`' % (self.log_identifier, pprint.pformat(unicode(repr(e)))) )
         return
+
+    def prepare_bd_api_hit( self, title, author, year, user_barcode ):
+        """ Prepares bd-api dct for bib post.
+            Called by: hit_bd_api() """
+        parameter_dict = {
+            'api_authorization_code': self.bdpyweb_defaults['api_authorization_code'],
+            'api_identity': self.bdpyweb_defaults['api_identity'],
+            'title': title,
+            'author': author,
+            'year': year,
+            'user_barcode': user_barcode }
+        log.debug( '%s- parameter_dict to post, ```%s```' % (self.log_identifier, pprint.pformat(parameter_dict)) )
+        return parameter_dict
 
     ## end class BD_CallerBib()
 
@@ -126,7 +139,7 @@ class BD_CallerExact( object ):
         """ Executes bdpy3_web exact call.
             Called by Controller.run_code() """
         log.info( '%s- starting try_request()' % self.log_identifier )
-        parameter_dict = self.prepare_bd_api( isbn, user_barcode )
+        parameter_dict = self.prepare_bd_api_hit( isbn, user_barcode )
         try:
             r = requests.post( self.bdpyweb_defaults['url'], data=parameter_dict, timeout=300, verify=False )
             log.debug( '%s- bdpyweb response content, `%s`' % (self.log_identifier, r.content.decode('utf-8')) )
@@ -135,8 +148,8 @@ class BD_CallerExact( object ):
             log.debug( '%s- exception on bdpyweb post, `%s`' % (self.log_identifier, pprint.pformat(unicode(repr(e)))) )
         return
 
-    def prepare_bd_api( self, isbn, user_barcode ):
-        """ Prepares bd-api dct for post.
+    def prepare_bd_api_hit( self, isbn, user_barcode ):
+        """ Prepares bd-api dct for isbn post.
             Called by: hit_bd_api() """
         parameter_dict = {
             'api_authorization_code': self.bdpyweb_defaults['api_authorization_code'],
