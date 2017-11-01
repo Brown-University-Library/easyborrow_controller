@@ -152,7 +152,7 @@ class Controller( object ):
                         break
 
                     ## if we get here, isbn-check failed; try author/title/date
-                    log.debug( 'will try author/title/date request' )
+                    logger.debug( 'would try author/title/date request' )
 
                 # elif(service == "bd"):
 
