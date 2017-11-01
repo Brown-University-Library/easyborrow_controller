@@ -18,6 +18,68 @@ logging.basicConfig(
 log = logging.getLogger(__name__)
 
 
+class BD_CallerBib( object ):
+    """ Handles bdpy3_web `bib` calls. """
+
+    def __init__( self ):
+        """ Loads env vars.
+            Called by EzBorrowController.py """
+        self.db_handler = None
+        self._prep_db_handler()
+        self.log_identifier = 'init'
+        self.bdpyweb_defaults = {
+            'url': settings.BDPYWEB_URL,
+            'api_authorization_code': settings.BDPYWEB_AUTHORIZATION_CODE,
+            'api_identity': settings.BDPYWEB_IDENTITY
+        }
+        self.api_result = None  # will be dct
+        self.api_confirmation_code = None  # will be str
+        self.api_found = None  # will be boolean
+        self.api_requestable = None  # will be boolean
+        self.HISTORY_SQL_PATTERN = settings.HISTORY_ACTION_SQL
+        log.debug( 'BD_CallerBib initialized' )
+
+    def prepare_params( self, patron_inst, item_inst ):
+        """ Preps parameters for bib call.
+            Called by controller.run_code() """
+        bd_data = {
+            'title': item_inst.title,
+            'author': self.extract_author( item_inst.knowledgebase_openurl ),
+            'year': self.extract_year( item_inst.knowledgebase_openurl ),
+            'user_barcode': patron_inst.barcode }
+        log.debug( 'bib bd_data, ```%s```' % pprint.pformat(bd_data) )
+        return bd_data
+
+    def extract_author( self, openurl ):
+        """ Extracts author from openurl.
+            Called by prepare_params() """
+        author = ''
+        log.debug( 'author, `%s`' % author )
+        return author
+
+    def extract_year( self, openurl ):
+        """ Extracts year from openurl.
+            Called by prepare_params() """
+        year = ''
+        log.debug( 'year, `%s`' % year )
+        return year
+
+    def hit_bd_api( self, isbn, user_barcode ):
+        """ Executes bdpy3_web bib call.
+            Called by Controller.run_code() """
+        log.info( '%s- starting try_request()' % self.log_identifier )
+        parameter_dict = self.prepare_bd_api( isbn, user_barcode )
+        try:
+            r = requests.post( self.bdpyweb_defaults['url'], data=parameter_dict, timeout=300, verify=False )
+            log.debug( '%s- bdpyweb response content, `%s`' % (self.log_identifier, r.content.decode('utf-8')) )
+            self.api_result = json.loads( r.content )
+        except Exception, e:
+            log.debug( '%s- exception on bdpyweb post, `%s`' % (self.log_identifier, pprint.pformat(unicode(repr(e)))) )
+        return
+
+    ## end class BD_CallerBib()
+
+
 class BD_CallerExact( object ):
     """ Handles bdpy3_web `exact` calls. """
 
@@ -55,13 +117,13 @@ class BD_CallerExact( object ):
         return item_inst
 
     def prepare_params( self, patron_inst, item_inst ):
-        """ Preps bd-api parameters.
+        """ Preps parameters for isbn call.
             Called by controller.run_code() """
         bd_data = { 'isbn': item_inst.isbn, 'user_barcode': patron_inst.barcode }
         return bd_data
 
     def hit_bd_api( self, isbn, user_barcode ):
-        """ Handles bdpyweb call.
+        """ Executes bdpy3_web exact call.
             Called by Controller.run_code() """
         log.info( '%s- starting try_request()' % self.log_identifier )
         parameter_dict = self.prepare_bd_api( isbn, user_barcode )
@@ -124,7 +186,7 @@ class BD_CallerExact( object ):
         sql = self.HISTORY_SQL_PATTERN % (
             self.log_identifier,
             'borrowdirect',
-            'attempt',
+            'attempt_bd-isbn',
             history_table_message,
             api_confirmation_code
         )

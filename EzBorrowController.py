@@ -132,7 +132,7 @@ class Controller( object ):
                         bd_data = bd_caller_exact.prepare_params( patron_inst, item_inst )
 
                         ## hit api
-                        bd_caller_exact.hit_bd_api( bd_data['isbn'], bd_data['user_barcode'] )  # response in bd_api_runner.bdpyweb_response_dct
+                        bd_caller_exact.hit_bd_api( bd_data['isbn'], bd_data['user_barcode'] )  # response in bd_caller_exact.bdpyweb_response_dct
 
                         ## normalize response
                         bd_caller_exact.process_response()  # populates class attributes api_confirmation_code, api_found, & api_requestable
@@ -149,16 +149,31 @@ class Controller( object ):
                     log.debug( 'will try author/title/date request' )
 
                     ## setup
+                    bd_caller_bib.log_identifier = self.log_identifier
+                    request_inst.current_service = 'borrowDirect'
+                    item_inst.current_service = 'borrowDirect'
 
                     ## prepare data
+                    bd_data = bd_caller_bib.prepare_params( patron_inst, item_inst )
 
                     ## hit api
+                    if not ( bd_data['title'] and bd_data['author'] and bd_data['year'] ):
+                        log.info( 'not calling bdpy3_web for bib lookup because missing essential info' )
+                        break
+                    else:
+                        bd_caller_bib.hit_bd_api(
+                            bd_data['title'], bd_data['author'], bd_data['year'] )  # response in bd_caller_bib.bdpyweb_response_dct
 
                     ## normalize response
+                    bd_caller_bib.process_response()  # populates class attributes api_confirmation_code, api_found, & api_requestable
 
                     ## update history table
+                    bd_caller_bib.update_history_table()
 
                     ## handle success (processing just continues if request not successful)
+                    if bd_caller_bib.api_requestable is True:
+                        request_inst = bd_caller_bib.handle_success( request_inst )
+                        break
 
                 elif(service == "vc"):
                     pass
