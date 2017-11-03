@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 
 import logging, unittest
-from easyborrow_controller_code.classes.tunneler_runners import BD_ApiRunner
+from easyborrow_controller_code.classes.bd_api_caller import BD_CallerBib
 
 
 logging.basicConfig(
@@ -12,6 +12,34 @@ logging.basicConfig(
     format='[%(asctime)s] %(levelname)s [%(module)s-%(funcName)s()::%(lineno)d] %(message)s',
     datefmt='%d/%b/%Y %H:%M:%S' )
 logger = logging.getLogger(__name__)
+
+
+class BD_CallerBibTest(unittest.TestCase):
+
+    def setUp(self):
+        self.caller = BD_CallerBib()
+        self.expectations = [
+            {
+            'o_url': '''http://landing_page/?sid=FirstSearch%3AWorldCat&genre=book&isbn=9780688002305&title=Zen+and+the+art+of+motorcycle+maintenance%3A+an+inquiry+into+values%2C&date=1974&aulast=Pirsig&aufirst=Robert&auinitm=M&id=doi%3A&pid=%3Caccession+number%3E673595%3C%2Faccession+number%3E%3Cfssessid%3E0%3C%2Ffssessid%3E&url_ver=Z39.88-2004&rfr_id=info%3Asid%2Ffirstsearch.oclc.org%3AWorldCat&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&req_dat=%3Csessionid%3E0%3C%2Fsessionid%3E&rfe_dat=%3Caccessionnumber%3E673595%3C%2Faccessionnumber%3E&rft_id=info%3Aoclcnum%2F673595&rft_id=urn%3AISBN%3A9780688002305&rft.aulast=Pirsig&rft.aufirst=Robert&rft.auinitm=M&rft.btitle=Zen+and+the+art+of+motorcycle+maintenance%3A+an+inquiry+into+values%2C&rft.date=1974&rft.isbn=9780688002305&rft.place=New+York&rft.pub=Morrow&rft.genre=book&checksum=808d331299c7cb13bc0e9179eb80ced5''',
+            'expected_title': 'zZen and the art of motorcycle maintenance: an inquiry into values',
+            'expected_author': 'zPirsig Robert M',
+            'expected_year': '1974' },
+
+        ]
+
+
+
+    def test_extract_title(self):
+        for entry in self.expectations:
+            self.assertEqual( entry['expected_title'], self.caller.extract_author(entry['o_url']) )
+
+    def test_extract_author(self):
+        for entry in self.expectations:
+            self.assertEqual( entry['expected_author'], self.caller.extract_author(entry['o_url']) )
+
+    def test_extract_year(self):
+        for entry in self.expectations:
+            self.assertEqual( entry['expected_year'], self.caller.extract_year(entry['o_url']) )
 
 
 # class BDRunnerTest(unittest.TestCase):
@@ -213,7 +241,7 @@ logger = logging.getLogger(__name__)
 class BDRunnerTest(unittest.TestCase):
 
     def setUp(self):
-        self.bd_runner = BD_ApiRunner( logger=logger, log_identifier='foo' )
+        self.bd_runner = BD_CallerBibTest( logger=logger, log_identifier='foo' )
         pass
 
     def tearDown(self):
@@ -232,7 +260,7 @@ class BDRunnerTest(unittest.TestCase):
 
 def suite():
     suite = unittest.TestSuite()
-    suite.addTest( unittest.makeSuite(BDRunnerTest) )
+    suite.addTest( unittest.makeSuite(BD_CallerBibTest) )
     return suite
 
 

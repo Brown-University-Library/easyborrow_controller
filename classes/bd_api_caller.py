@@ -39,6 +39,12 @@ class BD_CallerBib( object ):
         self.HISTORY_SQL_PATTERN = settings.HISTORY_ACTION_SQL
         log.debug( 'BD_CallerBib initialized' )
 
+    def _prep_db_handler( self ):
+        """ Initializes db_handler.
+            Called by __init__() """
+        self.db_handler = Db_Handler( log )
+        return
+
     def prepare_params( self, patron_inst, item_inst ):
         """ Preps parameters for bib call.
             Called by controller.run_code() """
@@ -89,6 +95,60 @@ class BD_CallerBib( object ):
             'user_barcode': user_barcode }
         log.debug( '%s- parameter_dict to post, ```%s```' % (self.log_identifier, pprint.pformat(parameter_dict)) )
         return parameter_dict
+
+    def process_response( self ):
+        """ Examines response & populates instance attributes.
+            Called by controller.run_code() """
+        if self.api_result == 'test' :
+            self.api_confirmation_code = 'the bd transaction number'
+            self.api_found = True
+            self.api_requestable = True
+        log.debug( '%s- process_response complete; code, `%s`; found, `%s`; requestable, `%s`' % (self.log_identifier, self.api_confirmation_code, self.api_found, self.api_requestable) )
+        return
+
+    def update_history_table( self ):
+        """ Populates history table based on request result.
+            Called by controller.run_code() """
+        ( api_confirmation_code, history_table_message ) = self.prep_code_message()
+        utf8_sql = self.prep_history_sql( api_confirmation_code, history_table_message )
+        self.db_handler.run_sql( utf8_sql )
+        # self.web_logger.post_message( message='- in tunneler_runners.BD_ApiRunner.update_history_table(); history table updated for ezb#: %s' % self.log_identifier, identifier=self.log_identifier, importance='info' )
+        log.debug( 'update_history_table complete' )
+        return
+
+    def prep_code_message( self ):
+        """ Sets api_confirmation_code and history_table_message vars.
+            Called by update_history_table() """
+        if self.api_requestable is True:
+            api_confirmation_code = self.api_confirmation_code
+            history_table_message = 'Request_Successful'
+        else:
+            api_confirmation_code = ''
+            history_table_message = 'not_requestable'
+        log.debug( '%s- prep_code_message complete; local api_confirmation_code, `%s`; history_table_message, `%s`' % (self.log_identifier, api_confirmation_code, history_table_message) )
+        return ( api_confirmation_code, history_table_message )
+
+    def prep_history_sql( self, api_confirmation_code, history_table_message ):
+        """ Prepares history table update sql.
+            Called by update_history_table()
+            TODO: when db class exists, remove utf8 encoding. """
+        sql = self.HISTORY_SQL_PATTERN % (
+            self.log_identifier,
+            'borrowdirect',
+            'attempt_bd-bib',
+            history_table_message,
+            api_confirmation_code
+        )
+        utf8_sql = sql.encode( 'utf-8' )  # old code expects utf-8 string
+        log.debug( '%s- prep_history_sql complete; utf8_sql, `%s`' % (self.log_identifier, sql.decode('utf-8')) )
+        return utf8_sql
+
+    def handle_success( self, request_inst ):
+        """ Updates request_inst attributes on success.
+            Called by controller.run_code() """
+        request_inst.current_status = 'success'
+        request_inst.confirmation_code = self.api_confirmation_code
+        return request_inst
 
     ## end class BD_CallerBib()
 
