@@ -48,27 +48,23 @@ class BD_CallerBib( object ):
     def prepare_params( self, patron_inst, item_inst ):
         """ Preps parameters for bib call.
             Called by controller.run_code() """
+        bib_dct = self.extract_bib( item_inst.knowledgebase_openurl )
         bd_data = {
             'title': item_inst.title,
-            'author': self.extract_author( item_inst.knowledgebase_openurl ),
-            'year': self.extract_year( item_inst.knowledgebase_openurl ),
+            'author': bib_dct['author'],
+            'year': bib_dct['year'],
             'user_barcode': patron_inst.barcode }
         log.debug( 'bib bd_data, ```%s```' % pprint.pformat(bd_data) )
         return bd_data
 
-    def extract_author( self, openurl ):
-        """ Extracts author from openurl.
+    def extract_bib( self, ourl ):
+        """ Parses openurl to return bjson-dct.
             Called by prepare_params() """
-        author = ''
-        log.debug( 'author, `%s`' % author )
-        return author
-
-    def extract_year( self, openurl ):
-        """ Extracts year from openurl.
-            Called by prepare_params() """
-        year = ''
-        log.debug( 'year, `%s`' % year )
-        return year
+        param_dct = { 'ourl': ourl }
+        r = requests.get( 'https://library.brown.edu/bib_ourl_api/v1/ourl_to_bib/', params=param_dct )
+        bib_dct = r.json()
+        log.debug( 'bib_dct, ```%s```' % pprint.pformat(bib_dct) )
+        return bib_dct
 
     def hit_bd_api( self, title, author, year, user_barcode ):
         """ Executes bdpy3_web bib call.
