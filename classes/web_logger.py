@@ -21,11 +21,13 @@ class WebLogger( object ):
     def post_message( self, message, identifier, importance ):
         """ Sends weblog message based on importance. """
         self.logger.debug( 'identifier, `%s`; message, ```%s```; importance, `%s`' % (identifier, pprint.pformat(message), importance) )
-        status_code = None
-        important_enough = self.evaluate_importance( importance )
-        if important_enough:
-            status_code = self.run_post( message, identifier )
-        return status_code
+        return
+        # self.logger.debug( 'identifier, `%s`; message, ```%s```; importance, `%s`' % (identifier, pprint.pformat(message), importance) )
+        # status_code = None
+        # important_enough = self.evaluate_importance( importance )
+        # if important_enough:
+        #     status_code = self.run_post( message, identifier )
+        # return status_code
 
     def evaluate_importance( self, stated_importance ):
         """ Determines whether to send message based on stated message performance vs env filter setting.
