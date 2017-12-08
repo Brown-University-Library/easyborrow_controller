@@ -155,10 +155,11 @@ class Controller( object ):
 
                     ## prepare data
                     bd_data = bd_caller_bib.prepare_params( patron_inst, item_inst )
+                    logger.debug( 'bd_data, ```%s```' % bd_data )
 
                     ## hit api
                     if not ( bd_data['title'] and bd_data['author'] and bd_data['year'] ):
-                        log.info( 'not calling bdpy3_web for bib lookup because missing essential info' )
+                        logger.info( 'not calling bdpy3_web for bib lookup because missing essential info' )
                         break
                     else:
                         bd_caller_bib.hit_bd_api(
