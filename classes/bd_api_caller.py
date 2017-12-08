@@ -48,6 +48,7 @@ class BD_CallerBib( object ):
     def prepare_params( self, patron_inst, item_inst ):
         """ Preps parameters for bib call.
             Called by controller.run_code() """
+        log.debug( 'about to get `bib_dct`' )
         bib_dct = self.extract_bib( item_inst.knowledgebase_openurl )
         bd_data = {
             'title': item_inst.title,
@@ -60,6 +61,7 @@ class BD_CallerBib( object ):
     def extract_bib( self, ourl ):
         """ Parses openurl to return bjson-dct.
             Called by prepare_params() """
+        log.debug( 'about to start `param_dct`' )
         param_dct = { 'ourl': ourl }
         r = requests.get( 'https://library.brown.edu/bib_ourl_api/v1/ourl_to_bib/', params=param_dct )
         bib_dct = r.json()
