@@ -154,6 +154,7 @@ class Controller( object ):
                     item_inst.current_service = 'borrowDirect'
 
                     ## prepare data
+                    logger.debug( 'about to get bd_data' )
                     bd_data = bd_caller_bib.prepare_params( patron_inst, item_inst )
                     logger.debug( 'bd_data, ```%s```' % bd_data )
 
