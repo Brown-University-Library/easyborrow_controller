@@ -52,8 +52,10 @@ class BD_CallerBib( object ):
         bib_dct = self.extract_bib( item_inst.knowledgebase_openurl )
         bd_data = {
             'title': item_inst.title,
-            'author': bib_dct['author'],
-            'year': bib_dct['year'],
+            # 'author': bib_dct['author'],
+            'author': bib_dct['response']['bib']['author'][0]['name'],
+            # 'year': bib_dct['year'],
+            'year': bib_dct['response']['bib']['year'],
             'user_barcode': patron_inst.barcode }
         log.debug( 'bib bd_data, ```%s```' % pprint.pformat(bd_data) )
         return bd_data
