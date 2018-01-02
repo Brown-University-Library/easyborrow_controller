@@ -354,36 +354,3 @@ class Controller( object ):
 if __name__ == '__main__':
     controller_instance = Controller()
     controller_instance.run_code()
-
-
-## old production bd flow code... (delete after November 30, 2017)
-
-                # elif(service == "bd"):
-
-                #     ##
-                #     ## send a request to BorrowDirect
-                #     ##
-
-                #     # setup
-                #     bd_api_runner = BD_ApiRunner( logger, self.log_identifier )
-                #     request_inst.current_service = 'borrowDirect'
-                #     item_inst = bd_api_runner.setup_api_hit( item_inst, web_logger )
-
-                #     # prepare data
-                #     bd_data = bd_api_runner.prepare_params( patron_inst, item_inst )
-
-                #     # hit api
-                #     bd_api_runner.hit_bd_api( bd_data['isbn'], bd_data['user_barcode'] )  # response in bd_api_runner.bdpyweb_response_dct
-
-                #     # normalize response
-                #     bd_api_runner.process_response()  # populates class attributes api_confirmation_code, api_found, & api_requestable
-
-                #     # update history table
-                #     bd_api_runner.update_history_table()
-
-                #     # handle success (processing just continues if request not successful)
-                #     if bd_api_runner.api_requestable is True:
-                #         request_inst = bd_api_runner.handle_success( request_inst )
-                #         break
-
-## (end of `old production bd flow code...`)

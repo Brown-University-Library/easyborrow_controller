@@ -62,8 +62,14 @@ class BD_CallerBib( object ):
         """ Parses openurl to return bjson-dct.
             Called by prepare_params() """
         log.debug( 'about to start `param_dct`' )
+        log.debug( 'ourl, ```%s```' % ourl )
         param_dct = { 'ourl': ourl }
-        r = requests.get( 'https://library.brown.edu/bib_ourl_api/v1/ourl_to_bib/', params=param_dct )
+        try:
+            r = requests.get( 'https://library.brown.edu/bib_ourl_api/v1/ourl_to_bib/', params=param_dct )
+        except Exception as e:
+            msg = unicode(repr(e))
+            log.error( 'exception, ```%s```' % msg )
+            raise Exception( msg )
         bib_dct = r.json()
         log.debug( 'bib_dct, ```%s```' % pprint.pformat(bib_dct) )
         return bib_dct
