@@ -70,7 +70,8 @@ class BD_CallerBib( object ):
             msg = unicode(repr(e))
             log.error( 'exception, ```%s```' % msg )
             raise Exception( msg )
-        bib_dct = r.json()
+        # bib_dct = r.json()
+        bib_dct = json.loads( r.content.decode('utf-8') )
         log.debug( 'bib_dct, ```%s```' % pprint.pformat(bib_dct) )
         return bib_dct
 

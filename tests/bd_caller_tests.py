@@ -244,7 +244,8 @@ class BD_CallerBibTest(unittest.TestCase):
 class BDRunnerTest(unittest.TestCase):
 
     def setUp(self):
-        self.bd_runner = BD_CallerBibTest( logger=logger, log_identifier='foo' )
+        # self.bd_runner = BD_CallerBibTest( logger=logger, log_identifier='foo' )
+        self.bd_runner = BD_CallerBib()
         pass
 
     def tearDown(self):
