@@ -160,8 +160,7 @@ class Controller( object ):
 
                     ## hit api
                     if not ( bd_data['title'] and bd_data['author'] and bd_data['year'] ):
-                        logger.info( 'not calling bdpy3_web for bib lookup because missing essential info' )
-                        break
+                        logger.info( 'not calling bdpy3_web for bib lookup because missing essential info' )  # flow through `flow_list` will continue
                     else:
                         bd_caller_bib.hit_bd_api(
                             bd_data['title'], bd_data['author'], bd_data['year'], bd_data['user_barcode'] )  # response in bd_caller_bib.bdpyweb_response_dct
@@ -181,6 +180,7 @@ class Controller( object ):
                     pass
 
                 elif service == 'illiad':
+                    logger.debug( 'starting illiad handling' )
                     web_logger.post_message( message='- in controller; service is now illiad', identifier=self.log_identifier, importance='info' )
                     illiad_api_runner = IlliadApiRunner( request_inst )
                     request_inst.current_service = 'illiad'
