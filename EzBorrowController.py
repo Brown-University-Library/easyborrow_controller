@@ -146,7 +146,7 @@ class Controller( object ):
                             break
 
                     ## if we get here, either there was no isbn-check, or the check failed -- so try author/title/date
-                    logger.debug( 'would try author/title/date request' )
+                    logger.debug( 'will try author/title/date request' )
 
                     ## setup
                     bd_caller_bib.log_identifier = self.log_identifier

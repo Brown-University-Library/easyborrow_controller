@@ -52,10 +52,10 @@ class BD_CallerBib( object ):
         bib_dct = self.extract_bib( item_inst.knowledgebase_openurl )
         bd_data = {
             'title': item_inst.title,
-            # 'author': bib_dct['author'],
-            'author': bib_dct['response']['bib']['author'][0]['name'],
-            # 'year': bib_dct['year'],
-            'year': bib_dct['response']['bib']['year'],
+            # 'author': bib_dct['response']['bib']['author'][0]['name'],
+            'author': self.get_author( bib_dct ),
+            # 'year': bib_dct['response']['bib']['year'],
+            'year': self.get_year( bib_dct ),
             'user_barcode': patron_inst.barcode }  # TODO: normalize `user_barcode` and `patron_barcode` usage in this module, and in bdpyweb3-webapp
         log.debug( 'bib bd_data, ```%s```' % pprint.pformat(bd_data) )
         return bd_data
@@ -72,10 +72,27 @@ class BD_CallerBib( object ):
             msg = unicode(repr(e))
             log.error( 'exception, ```%s```' % msg )
             raise Exception( msg )
-        # bib_dct = r.json()
         bib_dct = json.loads( r.content.decode('utf-8') )
         log.debug( 'bib_dct, ```%s```' % pprint.pformat(bib_dct) )
         return bib_dct
+
+    def get_author( self, bib_dct ):
+        author = None
+        try:
+            author = bib_dct['response']['bib']['author'][0]['name']
+        except:
+            log.debug( 'id, %s; author not found' % self.log_identifier )
+            pass
+        return author
+
+    def get_year( self, bib_dct ):
+        year = None
+        try:
+            year = bib_dct['response']['bib']['year']
+        except:
+            log.debug( 'id, %s; year not found' % self.log_identifier )
+            pass
+        return year
 
     def hit_bd_api( self, title, author, year, user_barcode ):
         """ Executes bdpy3_web bib call.
