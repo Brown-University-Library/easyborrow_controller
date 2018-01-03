@@ -56,7 +56,7 @@ class BD_CallerBib( object ):
             'author': bib_dct['response']['bib']['author'][0]['name'],
             # 'year': bib_dct['year'],
             'year': bib_dct['response']['bib']['year'],
-            'user_barcode': patron_inst.barcode }
+            'patron_barcode': patron_inst.barcode }  # TODO: normalize `user_barcode` and `patron_barcode` usage in this module, and in bdpyweb3-webapp
         log.debug( 'bib bd_data, ```%s```' % pprint.pformat(bd_data) )
         return bd_data
 
