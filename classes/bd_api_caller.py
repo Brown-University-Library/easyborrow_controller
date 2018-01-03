@@ -28,7 +28,7 @@ class BD_CallerBib( object ):
         self._prep_db_handler()
         self.log_identifier = 'init'
         self.bdpyweb_defaults = {
-            'url': settings.BDPYWEB_URL,
+            'url': settings.BDPYWEB_BIB_URL,  # note: different from other bdpyweb-url setting
             'api_authorization_code': settings.BDPYWEB_AUTHORIZATION_CODE,
             'api_identity': settings.BDPYWEB_IDENTITY
         }
@@ -171,7 +171,7 @@ class BD_CallerExact( object ):
         self._prep_db_handler()
         self.log_identifier = 'init'
         self.bdpyweb_defaults = {
-            'url': settings.BDPYWEB_URL,
+            'url': settings.BDPYWEB_URL,  # note: different from other bdpyweb-url setting
             'api_authorization_code': settings.BDPYWEB_AUTHORIZATION_CODE,
             'api_identity': settings.BDPYWEB_IDENTITY
         }

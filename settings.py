@@ -50,6 +50,7 @@ REQUEST_UPDATE_SQL = unicode( os.environ[u'ezbCTL__UPDATE_REQUEST_STATUS_SQL_PAT
 ## borrowdirect web-service settings
 ## most bd-api settings have been replaced by env var settings accessed by classes.tunneler_runners.BD_ApiRunner() -- TODO, eventually move those here
 BDPYWEB_URL = unicode( os.environ['ezbCTL__BDPYWEB_URL'] )
+BDPYWEB_BIB_URL = unicode( os.environ['ezbCTL__BDPYWEB_BIB_URL'] )
 BDPYWEB_AUTHORIZATION_CODE = unicode( os.environ['ezbCTL__BDPYWEB_AUTHORIZATION_CODE'] )
 BDPYWEB_IDENTITY = unicode( os.environ['ezbCTL__BDPYWEB_IDENTITY'] )
 OPENURL_PARSER_URL = unicode( os.environ['ezbCTL__OPENURL_PARSER_URL'] )
