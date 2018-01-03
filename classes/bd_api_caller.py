@@ -100,17 +100,20 @@ class BD_CallerBib( object ):
             'author': author,
             'year': year,
             'patron_barcode': user_barcode }
-        log.debug( '%s- parameter_dict to post, ```%s```' % (self.log_identifier, pprint.pformat(parameter_dict)) )
+        log.debug( 'id, %s; parameter_dict to post, ```%s```' % (self.log_identifier, pprint.pformat(parameter_dict)) )
         return parameter_dict
 
     def process_response( self ):
-        """ Examines response & populates instance attributes.
+        """ Examines _bib_ bdpyweb3 api-response & populates instance attributes.
             Called by controller.run_code() """
-        if self.api_result == 'test' :
-            self.api_confirmation_code = 'the bd transaction number'
-            self.api_found = True
-            self.api_requestable = True
-        log.debug( '%s- process_response complete; code, `%s`; found, `%s`; requestable, `%s`' % (self.log_identifier, self.api_confirmation_code, self.api_found, self.api_requestable) )
+        if self.api_result:
+            if 'response' in self.api_result.keys():
+                if 'interpreted_response' in self.api_result['response'].keys():
+                    if 'bd_confirmation_code' in self.api_result['response']['interpreted_response'].keys():
+                        self.api_confirmation_code = self.api_result['response']['interpreted_response']['bd_confirmation_code']
+                        self.api_found = True
+                        self.api_requestable = True
+        log.debug( 'id, %s; process_response complete; code, `%s`; found, `%s`; requestable, `%s`' % (self.log_identifier, self.api_confirmation_code, self.api_found, self.api_requestable) )
         return
 
     def update_history_table( self ):
