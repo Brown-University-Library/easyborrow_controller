@@ -164,7 +164,7 @@ class Controller( object ):
                         break
                     else:
                         bd_caller_bib.hit_bd_api(
-                            bd_data['title'], bd_data['author'], bd_data['year'] )  # response in bd_caller_bib.bdpyweb_response_dct
+                            bd_data['title'], bd_data['author'], bd_data['year'], bd_data['user_barcode'] )  # response in bd_caller_bib.bdpyweb_response_dct
 
                     ## normalize response
                     bd_caller_bib.process_response()  # populates bd_caller_bib instance attributes api_confirmation_code, api_found, & api_requestable
