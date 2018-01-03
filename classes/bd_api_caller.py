@@ -111,9 +111,9 @@ class BD_CallerBib( object ):
                 if 'interpreted_response' in self.api_result['response'].keys():
                     if 'result' in self.api_result['response']['interpreted_response'].keys():
                         if self.api_result['response']['interpreted_response']['result'] == 'requested':
-                        self.api_confirmation_code = self.api_result['response']['interpreted_response']['bd_confirmation_code']
-                        self.api_found = True
-                        self.api_requestable = True
+                            self.api_confirmation_code = self.api_result['response']['interpreted_response']['bd_confirmation_code']
+                            self.api_found = True
+                            self.api_requestable = True
         log.debug( 'id, %s; process_response complete; code, `%s`; found, `%s`; requestable, `%s`' % (self.log_identifier, self.api_confirmation_code, self.api_found, self.api_requestable) )
         return
 
