@@ -319,7 +319,8 @@ class Controller( object ):
         """ Determines services to try, and order.
             Once again allows for BorrowDirect string requesting since API now permits it.
             Called by run_code() """
-        flow = [ 'bd', 'illiad' ]
+        # flow = [ 'bd', 'illiad' ]
+        flow = [ 'illiad' ]  # dued to 2020-March-16 shutdown
         if len( item_inst.volumes_info ) > 0:
             flow = [ 'illiad' ]
         logger.debug( 'determine_flow() result, `%s`' % flow )
