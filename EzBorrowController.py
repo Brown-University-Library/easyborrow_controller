@@ -304,23 +304,12 @@ class Controller( object ):
             logger.error( 'update_history_note error, ```%s```' % unicode(repr(e)) )
         return
 
-    # def determine_flow( self, item_inst ):
-    #     """ Determines services to try, and order.
-    #         No longer allows for BorrowDirect string requesting since new API doesn't permit it.
-    #         Called by run_code() """
-    #     flow = [ 'illiad' ]
-    #     if len( item_inst.volumes_info ) == 0:
-    #         if len( item_inst.isbn ) > 0:
-    #             flow = [ 'bd', 'illiad' ]
-    #     logger.debug( 'determine_flow() result, `%s`' % flow )
-    #     return flow
-
     def determine_flow( self, item_inst ):
         """ Determines services to try, and order.
             Once again allows for BorrowDirect string requesting since API now permits it.
             Called by run_code() """
-        # flow = [ 'bd', 'illiad' ]
-        flow = [ 'illiad' ]  # dued to 2020-March-16 shutdown
+        flow = [ 'bd', 'illiad' ]  # due to 2020-November-01 reopen of BorrowDirect
+        # flow = [ 'illiad' ]  # due to 2020-March-16 COVID shutdown
         if len( item_inst.volumes_info ) > 0:
             flow = [ 'illiad' ]
         logger.debug( 'determine_flow() result, `%s`' % flow )
