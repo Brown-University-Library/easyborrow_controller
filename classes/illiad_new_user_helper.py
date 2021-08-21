@@ -17,7 +17,7 @@ logging.basicConfig(
 log = logging.getLogger(__name__)
 
 
-class IlliadHelper( object ):
+class IlliadUserManager( object ):
     """ Contains helpers for delivery.views.process_request()
         TODO, move article-requet checks to here, too. """
 
@@ -33,7 +33,8 @@ class IlliadHelper( object ):
             Called by delivery.views.process_request()...
               # ...which, on any failure, will store the returned crafted error message to the session,
               # ...and redirect to an error page. """
-        log.debug( '(common_classes) - usr_dct, ```%s```' % pprint.pformat(usr_dct) )
+        # log.debug( '(common_classes) - usr_dct, ```%s```' % pprint.pformat(usr_dct) )
+        log.debug( 'usr_dct, ``%s``' % pprint.pformat(usr_dct) )
         illiad_status_dct = self.check_illiad_status( usr_dct['eppn'].split('@')[0] )
         if illiad_status_dct['response']['status_data']['blocked'] is True or illiad_status_dct['response']['status_data']['disavowed'] is True:
             # return_dct = self.make_illiad_problem_message( usr_dct, title )

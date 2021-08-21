@@ -20,6 +20,7 @@ from easyborrow_controller_code.classes import db_handler
 from easyborrow_controller_code.classes.basics import Request_Meta as Request_Obj, Patron as Patron_Obj, Item as Item_Obj
 from easyborrow_controller_code.classes.bd_api_caller import BD_CallerExact, BD_CallerBib
 from easyborrow_controller_code.classes.emailer import MailBuilder, Mailer
+from easyborrow_controller_code.classes.illiad_new_user_helper import IlliadUserManager
 from easyborrow_controller_code.classes.tunneler_runners import BD_ApiRunner, IlliadApiRunner
 from easyborrow_controller_code.classes.web_logger import WebLogger
 
@@ -181,12 +182,31 @@ class Controller( object ):
 
                 elif service == 'illiad':
                     logger.debug( 'starting illiad handling' )
-                    web_logger.post_message( message='- in controller; service is now illiad', identifier=self.log_identifier, importance='info' )
                     illiad_api_runner = IlliadApiRunner( request_inst )
+                    illiad_user_manager = IlliadUserManager()
                     request_inst.current_service = 'illiad'
+                    user_dct = {
+                        'eppn': '%s@brown.edu' % patron_inst.eppn,
+                        'first_name': patron_inst.firstname,
+                        'last_name': patron_inst.lastname,
+                        'email': patron_inst.email,
+                        'status': 'unknown',
+                        'phone': 'unknown',
+                        'department': 'unknown'
+                    }
+                    illiad_user_manager.manage_illiad_user_check( user_dct )
                     prep_result_dct = illiad_api_runner.make_parameters( request_inst, patron_inst, item_inst )  # prepare parameters
                     send_result_dct = illiad_api_runner.submit_request( prep_result_dct['parameter_dict'] )  # send request to illiad
                     request_inst = illiad_api_runner.evaluate_response( request_inst, send_result_dct )  # updates request_inst and history note
+
+                # elif service == 'illiad':
+                #     logger.debug( 'starting illiad handling' )
+                #     web_logger.post_message( message='- in controller; service is now illiad', identifier=self.log_identifier, importance='info' )
+                #     illiad_api_runner = IlliadApiRunner( request_inst )
+                #     request_inst.current_service = 'illiad'
+                #     prep_result_dct = illiad_api_runner.make_parameters( request_inst, patron_inst, item_inst )  # prepare parameters
+                #     send_result_dct = illiad_api_runner.submit_request( prep_result_dct['parameter_dict'] )  # send request to illiad
+                #     request_inst = illiad_api_runner.evaluate_response( request_inst, send_result_dct )  # updates request_inst and history note
 
             # end of '''for service in flow_list:'''
 
