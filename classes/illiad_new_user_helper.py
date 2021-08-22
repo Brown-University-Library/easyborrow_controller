@@ -54,7 +54,7 @@ class IlliadUserManager( object ):
         url = '%s%s' % ( settings.ILLIAD_USER_API_URL_ROOT, 'check_user/' )
         params = { 'user': auth_id }
         try:
-            r = requests.get( url, params=params, auth=(settings.ILLIAD_API_BASIC_AUTH_USER, settings.ILLIAD_API_BASIC_AUTH_PASSWORD), verify=True, timeout=10 )
+            r = requests.get( url, params=params, auth=(settings.ILLIAD_USER_API_BASIC_AUTH_USER, settings.ILLIAD_USER_API_BASIC_AUTH_PASSWORD), verify=True, timeout=10 )
             rspns_dct = r.json()
             log.debug( 'status_code, `%s`; content-dct, ```%s```' % (r.status_code, pprint.pformat(rspns_dct)) )
         except Exception as e:
