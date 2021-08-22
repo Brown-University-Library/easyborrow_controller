@@ -57,7 +57,8 @@ class IlliadUserManager( object ):
         try:
             header_dct = { 'user-agent': settings.ILLIAD_API_USER_AGENT }
             r = requests.get( url, params=params, auth=(settings.ILLIAD_USER_API_BASIC_AUTH_USER, settings.ILLIAD_USER_API_BASIC_AUTH_PASSWORD), headers=header_dct, verify=True, timeout=10 )
-            rspns_dct = r.json()
+            # rspns_dct = r.json()
+            rspns_dct = json.loads( r.content )
             log.debug( 'status_code, `%s`; content-dct, ```%s```' % (r.status_code, pprint.pformat(rspns_dct)) )
         except Exception as e:
             log.exception( 'problem with user-check; traceback follows; processing continues' )
