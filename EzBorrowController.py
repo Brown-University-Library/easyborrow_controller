@@ -190,7 +190,7 @@ class Controller( object ):
                         'name_first': patron_inst.firstname,
                         'name_last': patron_inst.lastname,
                         'email': patron_inst.email,
-                        'status': 'unknown',
+                        'brown_type': 'unknown',
                         'phone': 'unknown',
                         'department': 'unknown'
                     }
