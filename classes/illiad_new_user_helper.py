@@ -38,7 +38,7 @@ class IlliadUserManager( object ):
         illiad_status_dct = self.check_illiad_status( usr_dct['eppn'].split('@')[0] )
         if illiad_status_dct['response']['status_data']['blocked'] is True or illiad_status_dct['response']['status_data']['disavowed'] is True:
             # return_dct = self.make_illiad_problem_message( usr_dct, title )
-            log.warning( '(common_classes) - blocked or disavowed status detected' )
+            log.warning( 'blocked or disavowed status detected' )
         elif illiad_status_dct['response']['status_data']['interpreted_new_user'] is True:
             return_dct = self.manage_new_user( usr_dct )
         else:
