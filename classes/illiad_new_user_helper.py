@@ -60,6 +60,7 @@ class IlliadUserManager( object ):
             rspns_dct = r.json()
             log.debug( 'status_code, `%s`; content-dct, ```%s```' % (r.status_code, pprint.pformat(rspns_dct)) )
         except Exception as e:
+            log.exception( 'problem with user-check; traceback follows; processing continues' )
             log.error( 'error on status check, ```%s```' % repr(e) )
         return rspns_dct
 
