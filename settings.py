@@ -60,6 +60,8 @@ OPENURL_PARSER_URL = unicode( os.environ['ezbCTL__OPENURL_PARSER_URL'] )
 ILLIAD_API_URL = unicode( os.environ['ezbCTL__ILLIAD_API_URL'] )
 ILLIAD_API_KEY = unicode( os.environ['ezbCTL__ILLIAD_API_KEY'] )
 
+ILLIAD_API_USER_AGENT = unicode( os.environ['ezbCTL__ILLIAD_API_USER_AGENT'] )
+
 ILLIAD_USER_API_URL_ROOT = unicode( os.environ['ezbCTL__ILLIAD_USER_API_URL_ROOT'] )
 ILLIAD_USER_API_BASIC_AUTH_USER = unicode( os.environ['ezbCTL__ILLIAD_USER_API_BASIC_AUTH_USER'] )
 ILLIAD_USER_API_BASIC_AUTH_PASSWORD = unicode( os.environ['ezbCTL__ILLIAD_USER_API_BASIC_AUTH_PASSWORD'] )
