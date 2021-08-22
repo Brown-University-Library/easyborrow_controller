@@ -36,6 +36,7 @@ class IlliadUserManager( object ):
         # log.debug( '(common_classes) - usr_dct, ```%s```' % pprint.pformat(usr_dct) )
         log.debug( 'usr_dct, ``%s``' % pprint.pformat(usr_dct) )
         illiad_status_dct = self.check_illiad_status( usr_dct['eppn'].split('@')[0] )
+        log.debug( 'illiad_status_dct, ``%s``' % illiad_status_dct )
         if illiad_status_dct['response']['status_data']['blocked'] is True or illiad_status_dct['response']['status_data']['disavowed'] is True:
             # return_dct = self.make_illiad_problem_message( usr_dct, title )
             log.warning( 'blocked or disavowed status detected' )
