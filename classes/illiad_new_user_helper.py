@@ -84,7 +84,9 @@ class IlliadUserManager( object ):
         try:
             r = requests.post( url, data=params, verify=True, timeout=10 )
             log.debug( 'status_code, `%s`; content, ```%s```' % (r.status_code, r.content.decode('utf-8', 'replace')) )
-            result = r.json()['response']['status_data']['status'].lower()
+            # result = r.json()['response']['status_data']['status'].lower()
+            result_dct = json.loads( r.content )
+            result = result_dct['response']['status_data']['status'].lower()
             if result == 'registered':
                 success_check = True
         except Exception as e:
