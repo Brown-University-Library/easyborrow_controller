@@ -242,11 +242,19 @@ class Controller( object ):
             pass
 
         except Exception as e:
+            logger.exception( 'exception; traceback follows; processing continues' )
             logger.error( 'exception, %s' % unicode(repr(e)) )
             err_msg = 'error-type - %s; error-message - %s; line-number - %s' % ( sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2].tb_lineno, )
             logger.error( 'detailed exception, %s' % unicode(repr(err_msg)) )
-            web_logger.post_message( message='- in controller; EXCEPTION; error: %s' % unicode(repr(err_msg)), identifier=self.log_identifier, importance='error' )
+            # web_logger.post_message( message='- in controller; EXCEPTION; error: %s' % unicode(repr(err_msg)), identifier=self.log_identifier, importance='error' )
             print err_msg
+
+        # except Exception as e:
+        #     logger.error( 'exception, %s' % unicode(repr(e)) )
+        #     err_msg = 'error-type - %s; error-message - %s; line-number - %s' % ( sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2].tb_lineno, )
+        #     logger.error( 'detailed exception, %s' % unicode(repr(err_msg)) )
+        #     web_logger.post_message( message='- in controller; EXCEPTION; error: %s' % unicode(repr(err_msg)), identifier=self.log_identifier, importance='error' )
+        #     print err_msg
 
         ## end def run_code()
 
