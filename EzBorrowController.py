@@ -187,8 +187,8 @@ class Controller( object ):
                     request_inst.current_service = 'illiad'
                     user_dct = {
                         'eppn': '%s@brown.edu' % patron_inst.eppn,
-                        'first_name': patron_inst.firstname,
-                        'last_name': patron_inst.lastname,
+                        'name_first': patron_inst.firstname,
+                        'name_last': patron_inst.lastname,
                         'email': patron_inst.email,
                         'status': 'unknown',
                         'phone': 'unknown',
