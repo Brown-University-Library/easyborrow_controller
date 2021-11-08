@@ -2,7 +2,9 @@
 
 from __future__ import unicode_literals
 
-import json, logging, pprint, urllib, urlparse
+# import json, logging, pprint, urllib, urlparse
+import json, logging, pprint, urllib
+
 import requests
 from easyborrow_controller_code import settings
 from easyborrow_controller_code.classes.db_handler import Db_Handler
@@ -58,7 +60,8 @@ class IlliadApiRunner( object ):
             Called by make_parameters() """
         try:
             logger.debug( 'id, `%s`; initial_url is: %s' % (self.log_identifier, initial_url) )
-            parsed_obj = urlparse.urlparse( initial_url )
+            # parsed_obj = urlparse.urlparse( initial_url )
+            parsed_obj = urllib.urlparse( initial_url )
             openurl = parsed_obj.query
             assert type(openurl) == unicode, type(openurl)
             openurl = openurl.replace( 'genre=unknown', 'genre=book' )
@@ -196,7 +199,7 @@ class BD_ApiRunner( object ):
             r = requests.post( self.bdpyweb_defaults['url'], data=parameter_dict, timeout=300, verify=False )
             self.logger.debug( '%s- bdpyweb response content, `%s`' % (self.log_identifier, r.content.decode('utf-8')) )
             self.api_result = json.loads( r.content )
-        except Exception, e:
+        except Exception as e:
             self.logger.debug( '%s- exception on bdpyweb post, `%s`' % (self.log_identifier, pprint.pformat(unicode(repr(e)))) )
         return
 
