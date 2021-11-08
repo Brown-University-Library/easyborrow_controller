@@ -38,7 +38,7 @@ logging.basicConfig(
     filename=LOG_PATH, level=level_dct[LOG_LEVEL],
     format='[%(asctime)s] %(levelname)s [%(module)s-%(funcName)s()::%(lineno)d] %(message)s', datefmt='%d/%b/%Y %H:%M:%S' )
 logger = logging.getLogger(__name__)
-logger.info( 'controller log started' )
+logger.info( '\n\n-- starting controller --------------------------' )
 
 
 ## prevent modules from unnecessary logging

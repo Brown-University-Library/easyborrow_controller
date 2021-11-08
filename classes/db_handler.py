@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-
-from __future__ import unicode_literals
-
 import datetime, pprint
 import MySQLdb
 from easyborrow_controller_code import settings
@@ -36,22 +32,24 @@ class Db_Handler(object):
                 dict_list = self._unicodify_resultset( dict_list )
             return dict_list
         except Exception as e:
-            self.logger.error( 'error: %s' % unicode(repr(e).decode('utf8', 'replace')) )
-            raise Exception( unicode(repr(e)) )
+            err = repr( e )
+            self.logger.error( 'error: %s' % err )
+            raise Exception( err )
         finally:
             self._close_db_connection()
 
     def run_sql( self, sql ):
         """ Executes sql; returns nothing.
             Called by, initially, tunneler_runners.BD_ApiRunner.update_history_table() """
-        if type( sql ) == unicode:
+        if type( sql ) == str:
             sql = sql.encode( 'utf-8' )
         try:
             self._setup_db_connection()
             self.cursor_object.execute( sql )
         except Exception as e:
-            self.logger.error( 'error: %s' % unicode(repr(e)) )
-            raise Exception( unicode(repr(e)) )
+            err = repr( e )
+            self.logger.error( 'error: %s' % err )
+            raise Exception( err )
         finally:
             self._close_db_connection()
         return
@@ -67,8 +65,9 @@ class Db_Handler(object):
             self.cursor_object = self.connection_object.cursor( MySQLdb.cursors.DictCursor )
             return
         except Exception as e:
-            self.logger.error( 'error: %s' % unicode(repr(e).decode('utf8', 'replace')) )
-            raise Exception( unicode(repr(e)) )
+            err = repr( e )
+            self.logger.error( 'error: %s' % err )
+            raise Exception( err )
 
     def _run_execute( self, sql ):
         """ Executes select; returns tuple of row-dicts.
@@ -87,21 +86,34 @@ class Db_Handler(object):
             for row_dict in dict_list:
                 new_row_dict = {}
                 for key, value in row_dict.items():
-                    new_row_dict[ unicode(key) ] = self._unicodify_value( value )
+                    new_row_dict[ str(key) ] = self._unicodify_value( value )
                 result_list.append( new_row_dict )
             return result_list
         except Exception as e:
-            self.logger.error( 'error: %s' % unicode(repr(e).decode('utf8', 'replace')) )
-            raise Exception( unicode(repr(e)) )
+            err = repr( e )
+            self.logger.error( 'error: %s' % err )
+            raise Exception( err)
+
 
     def _unicodify_value( self, value ):
-        """ Ensures value is unicode.
+        """ Ensures value is a unicode string.
             Called by _unicodify_value() """
-        if type(value) in [ datetime.datetime, int, long ]:
-            value = unicode(value)
+        if type(value) == str:
+            pass
+        elif type(value) in [ datetime.datetime, int, long ]:
+            value = str(value)
         else:
-            value = value.decode( 'utf-8', 'replace' )
+            log.warning( f'unhandled type of, ``{type(value)}``' )
         return value
+
+    # def _unicodify_value( self, value ):
+    #     """ Ensures value is unicode.
+    #         Called by _unicodify_value() """
+    #     if type(value) in [ datetime.datetime, int, long ]:
+    #         value = unicode(value)
+    #     else:
+    #         value = value.decode( 'utf-8', 'replace' )
+    #     return value
 
     def _close_db_connection( self ):
         """ Closes db connection.
@@ -112,6 +124,7 @@ class Db_Handler(object):
             self.logger.debug( 'db connection closed' )
             return
         except Exception as e:
-            self.logger.error( 'error: %s' % unicode(repr(e).decode('utf8', 'replace')) )
+            err = repr( e )
+            self.logger.error( 'error: %s' % err )
 
     ## end class DB_Handler()
