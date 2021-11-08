@@ -16,10 +16,7 @@ import sys
 if (sys.version_info < (3, 0)):
     raise Exception( 'python3 or bust' )
 
-1/0
-
 import datetime, logging, pprint, random, string, sys, time
-
 
 from easyborrow_controller_code import settings
 from easyborrow_controller_code.classes import db_handler
@@ -29,6 +26,8 @@ from easyborrow_controller_code.classes.emailer import MailBuilder, Mailer
 from easyborrow_controller_code.classes.illiad_new_user_helper import IlliadUserManager
 from easyborrow_controller_code.classes.tunneler_runners import BD_ApiRunner, IlliadApiRunner
 from easyborrow_controller_code.classes.web_logger import WebLogger
+
+1/0
 
 
 ## set up file logger
