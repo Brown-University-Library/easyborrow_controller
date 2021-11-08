@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from __future__ import unicode_literals
-
 """
 - Purpose:
   - directs calls to the tunnelers
@@ -14,7 +12,15 @@ from __future__ import unicode_literals
   - env/bin/activate file sources settings
 """
 
+import sys
+if (sys.version_info < (3, 0)):
+    raise Exception( 'python3 or bust' )
+
+1/0
+
 import datetime, logging, pprint, random, string, sys, time
+
+
 from easyborrow_controller_code import settings
 from easyborrow_controller_code.classes import db_handler
 from easyborrow_controller_code.classes.basics import Request_Meta as Request_Obj, Patron as Patron_Obj, Item as Item_Obj
@@ -247,7 +253,7 @@ class Controller( object ):
             err_msg = 'error-type - %s; error-message - %s; line-number - %s' % ( sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2].tb_lineno, )
             logger.error( 'detailed exception, %s' % unicode(repr(err_msg)) )
             # web_logger.post_message( message='- in controller; EXCEPTION; error: %s' % unicode(repr(err_msg)), identifier=self.log_identifier, importance='error' )
-            print err_msg
+            print( err_msg )
 
         # except Exception as e:
         #     logger.error( 'exception, %s' % unicode(repr(e)) )
