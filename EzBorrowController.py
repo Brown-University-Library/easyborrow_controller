@@ -30,9 +30,6 @@ from easyborrow_controller_code.classes.illiad_new_user_helper import IlliadUser
 from easyborrow_controller_code.classes.tunneler_runners import BD_ApiRunner, IlliadApiRunner
 from easyborrow_controller_code.classes.web_logger import WebLogger
 
-1/0
-
-
 ## set up file logger
 LOG_PATH = settings.LOG_PATH
 LOG_LEVEL = settings.LOG_LEVEL
@@ -132,6 +129,8 @@ class Controller( object ):
                     ## do isbn search?
                     if len( item_inst.isbn ) > 0:
 
+                        1/0
+
                         ## setup
                         bd_caller_exact.log_identifier = self.log_identifier
                         request_inst.current_service = 'borrowDirect'
@@ -189,6 +188,9 @@ class Controller( object ):
                     pass
 
                 elif service == 'illiad':
+
+                    1/0
+
                     logger.debug( 'starting illiad handling' )
                     illiad_api_runner = IlliadApiRunner( request_inst )
                     illiad_user_manager = IlliadUserManager()
@@ -251,9 +253,9 @@ class Controller( object ):
 
         except Exception as e:
             logger.exception( 'exception; traceback follows; processing continues' )
-            logger.error( 'exception, %s' % unicode(repr(e)) )
+            logger.error( 'exception, %s' % repr(e) )
             err_msg = 'error-type - %s; error-message - %s; line-number - %s' % ( sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2].tb_lineno, )
-            logger.error( 'detailed exception, %s' % unicode(repr(err_msg)) )
+            logger.error( 'detailed exception, %s' % repr(err_msg) )
             # web_logger.post_message( message='- in controller; EXCEPTION; error: %s' % unicode(repr(err_msg)), identifier=self.log_identifier, importance='error' )
             print( err_msg )
 
@@ -337,7 +339,7 @@ class Controller( object ):
             logger.debug( 'update_history_note sql, `%s`' % sql )
             self.db_handler.run_sql( sql )
         except Exception as e:
-            logger.error( 'update_history_note error, ```%s```' % unicode(repr(e)) )
+            logger.error( 'update_history_note error, ```%s```' % repr(e) )
         return
 
     def determine_flow( self, item_inst ):
@@ -359,7 +361,7 @@ class Controller( object ):
             logger.debug( 'update_history_action sql, `%s`' % sql )
             self.db_handler.run_sql( sql )
         except Exception as e:
-            logger.error( 'update_history_action error, ```%s```' % unicode(repr(e)) )
+            logger.error( 'update_history_action error, ```%s```' % repr(e) )
         return
 
     def update_request_status( self, new_status, request_id ):
@@ -370,8 +372,8 @@ class Controller( object ):
             logger.debug( 'update_request_status sql, `%s`' % sql )
             self.db_handler.run_sql( sql )
         except Exception as e:
-            logger.error( 'update_request_status error, ```%s```' % unicode(repr(e)) )
-            raise Exception( unicode(repr(e)) )
+            logger.error( 'update_request_status error, ```%s```' % repr(e) )
+            raise Exception( repr(e) )
         return
 
     # end class Controller
