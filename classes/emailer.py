@@ -6,7 +6,8 @@
 from __future__ import unicode_literals
 
 import logging, smtplib
-from email.Header import Header
+# from email.Header import Header
+from email.header import Header
 from email.mime.text import MIMEText
 from easyborrow_controller_code import settings
 # from easyborrow_controller_code.classes.web_logger import WebLogger
