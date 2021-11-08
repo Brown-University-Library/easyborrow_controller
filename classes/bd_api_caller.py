@@ -2,7 +2,9 @@
 
 from __future__ import unicode_literals
 
-import json, logging, pprint, urllib, urlparse
+# import json, logging, pprint, urllib, urlparse
+import json, logging, pprint, urllib
+
 import requests
 from easyborrow_controller_code import settings
 from easyborrow_controller_code.classes.db_handler import Db_Handler
