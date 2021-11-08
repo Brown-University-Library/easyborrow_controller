@@ -16,6 +16,9 @@ import sys
 if (sys.version_info < (3, 0)):
     raise Exception( 'python3 or bust' )
 
+import os
+sys.path.append( os.environ['ezbCTL__ENCLOSING_PROJECT_PATH'] )
+
 import datetime, logging, pprint, random, string, sys, time
 
 from easyborrow_controller_code import settings
