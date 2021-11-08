@@ -103,7 +103,7 @@ class BD_CallerBib( object ):
             r = requests.post( self.bdpyweb_defaults['url'], data=parameter_dict, timeout=300, verify=False )
             log.debug( '%s- bdpyweb response content, `%s`' % (self.log_identifier, r.content.decode('utf-8')) )
             self.api_result = json.loads( r.content )
-        except Exception, e:
+        except Exception as e:
             log.debug( '%s- exception on bdpyweb post, `%s`' % (self.log_identifier, pprint.pformat(unicode(repr(e)))) )
         return
 
@@ -232,7 +232,7 @@ class BD_CallerExact( object ):
             r = requests.post( self.bdpyweb_defaults['url'], data=parameter_dict, timeout=300, verify=False )
             log.debug( '%s- bdpyweb response content, `%s`' % (self.log_identifier, r.content.decode('utf-8')) )
             self.api_result = json.loads( r.content )
-        except Exception, e:
+        except Exception as e:
             log.debug( '%s- exception on bdpyweb post, `%s`' % (self.log_identifier, pprint.pformat(unicode(repr(e)))) )
         return
 
