@@ -112,7 +112,8 @@ class Controller( object ):
             flow_list = self.determine_flow( item_inst )
             web_logger.post_message( message='- in controller; flow_list is: %s' % flow_list, identifier=self.log_identifier, importance='info' )
 
-            flow_string = string.join( flow_list, ', ' )
+            # flow_string = string.join( flow_list, ', ' )
+            flow_string = ','.join( flow_string )
             self.update_history_note( eb_request_number, 'Flow: %s' % flow_string )
 
             for service in flow_list:
