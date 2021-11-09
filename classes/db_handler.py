@@ -100,7 +100,7 @@ class Db_Handler(object):
             Called by _unicodify_value() """
         if type(value) == str:
             pass
-        elif type(value) in [ datetime.datetime, int, long ]:
+        elif type(value) in [ datetime.datetime, int ]:
             value = str(value)
         else:
             log.warning( f'unhandled type of, ``{type(value)}``' )
