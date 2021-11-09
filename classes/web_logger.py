@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-
-from __future__ import unicode_literals
-
 import pprint
 import requests
 from easyborrow_controller_code import settings
@@ -49,5 +45,5 @@ class WebLogger( object ):
             r = requests.post( self.WEBLOG_URL, data=params )
             status_code = r.status_code
         except Exception as e:
-            self.logger.error( 'failure on weblog post; exception, `%s`' % unicode(repr(e)) )
+            self.logger.error( 'failure on weblog post; exception, `%s`' % repr(e) )
         return status_code

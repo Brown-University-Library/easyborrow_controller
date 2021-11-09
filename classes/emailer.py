@@ -3,8 +3,6 @@
 """ Unicode-friendly emailer.
     Called by EzBorrowController.py """
 
-from __future__ import unicode_literals
-
 import logging, smtplib
 # from email.Header import Header
 from email.header import Header
@@ -199,7 +197,7 @@ class Mailer( object ):
             log.debug( 'mail sent' )
             return True
         except Exception as e:
-            log.error( 'problem sending mail, exception, `%s`' % unicode(repr(e)) )
+            log.error( 'problem sending mail, exception, `%s`' % repr(e) )
             return False
 
     def _build_mail_to( self ):

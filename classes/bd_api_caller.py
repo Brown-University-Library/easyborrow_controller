@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-
-from __future__ import unicode_literals
-
 # import json, logging, pprint, urllib, urlparse
 import json, logging, pprint, urllib
 
@@ -71,7 +67,7 @@ class BD_CallerBib( object ):
         try:
             r = requests.get( 'https://library.brown.edu/bib_ourl_api/v1/ourl_to_bib/', params=param_dct )
         except Exception as e:
-            msg = unicode(repr(e))
+            msg = repr(e)
             log.error( 'exception, ```%s```' % msg )
             raise Exception( msg )
         bib_dct = json.loads( r.content.decode('utf-8') )
@@ -106,7 +102,7 @@ class BD_CallerBib( object ):
             log.debug( '%s- bdpyweb response content, `%s`' % (self.log_identifier, r.content.decode('utf-8')) )
             self.api_result = json.loads( r.content )
         except Exception as e:
-            log.debug( '%s- exception on bdpyweb post, `%s`' % (self.log_identifier, pprint.pformat(unicode(repr(e)))) )
+            log.debug( '%s- exception on bdpyweb post, `%s`' % (self.log_identifier, pprint.pformat(repr(e))) )
         return
 
     def prepare_bd_api_hit( self, title, author, year, user_barcode ):
@@ -235,7 +231,7 @@ class BD_CallerExact( object ):
             log.debug( '%s- bdpyweb response content, `%s`' % (self.log_identifier, r.content.decode('utf-8')) )
             self.api_result = json.loads( r.content )
         except Exception as e:
-            log.debug( '%s- exception on bdpyweb post, `%s`' % (self.log_identifier, pprint.pformat(unicode(repr(e)))) )
+            log.debug( '%s- exception on bdpyweb post, `%s`' % (self.log_identifier, pprint.pformat(repr(e))) )
         return
 
     def prepare_bd_api_hit( self, isbn, user_barcode ):

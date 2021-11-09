@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-from __future__ import unicode_literals
 import logging
 from easyborrow_controller_code import settings
 from easyborrow_controller_code.classes.web_logger import WebLogger

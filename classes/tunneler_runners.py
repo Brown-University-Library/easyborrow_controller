@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-
-from __future__ import unicode_literals
-
 # import json, logging, pprint, urllib, urlparse
 import json, logging, pprint, urllib
 
@@ -63,7 +59,7 @@ class IlliadApiRunner( object ):
             # parsed_obj = urlparse.urlparse( initial_url )
             parsed_obj = urllib.urlparse( initial_url )
             openurl = parsed_obj.query
-            assert type(openurl) == unicode, type(openurl)
+            assert type(openurl) == str, type(openurl)
             openurl = openurl.replace( 'genre=unknown', 'genre=book' )
             barcode_segment = 'p.barcode, `%s`' % patron_barcode
             volumes_segment = self.prep_volumes_segment( volumes_info )
@@ -73,7 +69,7 @@ class IlliadApiRunner( object ):
             logger.debug( 'id, `%s`; openurl is: %s' % (self.log_identifier, openurl) )
             return openurl
         except Exception as e:
-            message = '- in tunneler_runners.IlliadApiRunner._make_openurl_segment(); exception, `%s`' % unicode( repr(e) )
+            message = '- in tunneler_runners.IlliadApiRunner._make_openurl_segment(); exception, `%s`' % repr(e)
             web_logger.post_message( message=message, identifier=self.log_identifier, importance='error' )
             raise Exception( message )
             return
@@ -99,7 +95,7 @@ class IlliadApiRunner( object ):
             web_logger.post_message( message='- in IlliadApiRunner.submit_request(); return_dict: %s' % pprint.pformat(return_dict), identifier=self.log_identifier, importance='info' )
             return return_dict
         except Exception as e:
-            message = '- in IlliadApiRunner.submit_request(); exception: %s' % unicode( repr(e) )
+            message = '- in IlliadApiRunner.submit_request(); exception: %s' % repr(e)
             web_logger.post_message( message=message, identifier=self.log_identifier, importance='error' )
             return { 'error_message': message }
 
@@ -200,7 +196,7 @@ class BD_ApiRunner( object ):
             self.logger.debug( '%s- bdpyweb response content, `%s`' % (self.log_identifier, r.content.decode('utf-8')) )
             self.api_result = json.loads( r.content )
         except Exception as e:
-            self.logger.debug( '%s- exception on bdpyweb post, `%s`' % (self.log_identifier, pprint.pformat(unicode(repr(e)))) )
+            self.logger.debug( '%s- exception on bdpyweb post, `%s`' % (self.log_identifier, pprint.pformat(repr(e))) )
         return
 
     def prepare_bd_api( self, isbn, user_barcode ):
@@ -281,7 +277,7 @@ class BD_ApiRunner( object ):
             }
             self.logger.debug( '%s- bd-runner comparison, `%s`' % (self.log_identifier, pprint.pformat(comparison_dct)) )
         except Exception as e:  # handles case where bdpyweb response fails
-            self.logger.debug( '%s- exception on bdpyweb compare write, `%s`' % (self.log_identifier, pprint.pformat(unicode(repr(e)))) )
+            self.logger.debug( '%s- exception on bdpyweb compare write, `%s`' % (self.log_identifier, pprint.pformat(repr(e))) )
         return
 
     # end class BD_ApiRunner

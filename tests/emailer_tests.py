@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-
-from __future__ import unicode_literals
-
 import unittest
 from easyborrow_controller_code.classes.emailer import Mailer
 

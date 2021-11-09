@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-
-from __future__ import unicode_literals
-
 import datetime, json, logging, unittest
 from easyborrow_controller_code.classes.web_logger import WebLogger
 

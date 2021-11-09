@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-
-from __future__ import unicode_literals
-
 import logging, unittest
 from easyborrow_controller_code.classes import db_handler
 

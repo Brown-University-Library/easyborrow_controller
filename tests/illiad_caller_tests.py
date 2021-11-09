@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-
-from __future__ import unicode_literals
-
 import datetime, json, unittest
 from easyborrow_controller_code.classes.tunneler_runners import IlliadApiRunner
 from easyborrow_controller_code.classes.basics import Request_Meta
