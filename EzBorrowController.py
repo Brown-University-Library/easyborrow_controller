@@ -190,8 +190,6 @@ class Controller( object ):
 
                 elif service == 'illiad':
 
-                    1/0
-
                     logger.debug( 'starting illiad handling' )
                     illiad_api_runner = IlliadApiRunner( request_inst )
                     illiad_user_manager = IlliadUserManager()
