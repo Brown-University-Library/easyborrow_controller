@@ -24,6 +24,7 @@ class Db_Handler(object):
     def run_select( self, sql ):
         """ Executes sql, returns key-value dict.
             Called by controller.run_record_search() """
+        logger.debug( f'sql, ``{sql}``' )
         try:
             dict_list = None
             self._setup_db_connection()

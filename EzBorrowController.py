@@ -295,6 +295,7 @@ class Controller( object ):
     def run_record_search( self, web_logger ):
         """ Searches for new request.
             Called by run_code() """
+        logger.debug( 'starting run_record_search()' )
         result_dcts = self.db_handler.run_select( self.SELECT_SQL )  # [ {row01field01_key: row01field01_value}, fieldname02], ( (row01field01_value, row01field02_value), (row02field01_value, row02field02_value) ) ]
         logger.debug( '(new) record_search, `%s`' % result_dcts )
         if not result_dcts:
