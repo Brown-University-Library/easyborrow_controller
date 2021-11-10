@@ -1,3 +1,10 @@
+import sys
+if (sys.version_info < (3, 0)):
+    raise Exception( 'python3 or bust' )
+
+import os
+sys.path.append( os.environ['ezbCTL__ENCLOSING_PROJECT_PATH'] )
+
 import datetime, json, unittest
 from easyborrow_controller_code.classes.tunneler_runners import IlliadApiRunner
 from easyborrow_controller_code.classes.basics import Request_Meta
