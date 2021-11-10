@@ -6,6 +6,8 @@ from easyborrow_controller_code import settings
 from easyborrow_controller_code.classes.db_handler import Db_Handler
 from easyborrow_controller_code.classes.web_logger import WebLogger
 
+# from urllib.parse import parse
+
 
 ## file and web-loggers
 LOG_PATH = settings.LOG_PATH
@@ -56,15 +58,16 @@ class IlliadApiRunner( object ):
             Called by make_parameters() """
         try:
             logger.debug( 'id, `%s`; initial_url is: %s' % (self.log_identifier, initial_url) )
-            # parsed_obj = urlparse.urlparse( initial_url )
-            parsed_obj = urllib.urlparse( initial_url )
+            parsed_obj = urllib.parse.urlparse( initial_url )
             openurl = parsed_obj.query
             assert type(openurl) == str, type(openurl)
             openurl = openurl.replace( 'genre=unknown', 'genre=book' )
             barcode_segment = 'p.barcode, `%s`' % patron_barcode
             volumes_segment = self.prep_volumes_segment( volumes_info )
             notes_segment = '%s -- %s' % ( barcode_segment, volumes_segment )
-            encoded_notes_segment = urllib.quote_plus( notes_segment.encode('utf-8') ).decode( 'utf-8' )
+            assert type(notes_segment) == str, type(notes_segment)
+            encoded_notes_segment = urllib.parse.quote_plus( notes_segment )
+            assert type(encoded_notes_segment) == str, type(encoded_notes_segment)
             openurl = '%s&notes=%s' % ( openurl, encoded_notes_segment )
             logger.debug( 'id, `%s`; openurl is: %s' % (self.log_identifier, openurl) )
             return openurl
