@@ -18,3 +18,11 @@
 #   from easyborrow_controller_code.tests.tunneler_runner_tests import *
 
 #   unittest.main()
+
+
+# import sys
+# if (sys.version_info < (3, 0)):
+#     raise Exception( 'python3 or bust' )
+
+# import os
+# sys.path.append( os.environ['ezbCTL__ENCLOSING_PROJECT_PATH'] )

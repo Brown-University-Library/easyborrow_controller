@@ -6,6 +6,13 @@ To run specific test...
 $ python ./tests/illiad_caller_tests.py IlliadApiRunnerTest.test_make_openurl_segment__simple_case
 """
 
+# import sys
+# if (sys.version_info < (3, 0)):
+#     raise Exception( 'python3 or bust' )
+
+# import os
+# sys.path.append( os.environ['ezbCTL__ENCLOSING_PROJECT_PATH'] )
+
 import logging, os, sys, unittest
 
 ## add project parent-directory to sys.path

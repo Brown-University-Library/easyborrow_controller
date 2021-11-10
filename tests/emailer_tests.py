@@ -1,25 +1,12 @@
+import sys
+if (sys.version_info < (3, 0)):
+    raise Exception( 'python3 or bust' )
+
+import os
+sys.path.append( os.environ['ezbCTL__ENCLOSING_PROJECT_PATH'] )
+
 import unittest
 from easyborrow_controller_code.classes.emailer import Mailer
-
-
-# class MailBuilderTest(unittest.TestCase):
-
-#     def setUp(self):
-#         self.builder = self.instantiate_mail_builder()
-#         pass
-
-#     def instantiate_mail_builder(self):
-#         ( request_inst, patron_inst, item_inst ) = ( 'x', 'y', 'z' )
-#         builder = MailBuilder( request_inst, patron_inst, item_inst )
-#         return builder
-
-#     def tearDown(self):
-#         pass
-
-#     def test_build_to(self):
-#         self.assertEqual( 'foo1', self.builder.build_to() )
-
-#     ## end class MailBuilderTest()
 
 
 class MailerTest(unittest.TestCase):
@@ -43,7 +30,7 @@ class MailerTest(unittest.TestCase):
         pass
 
     def test_build_mail_to(self):
-        self.assertEqual( ['aa', 'bb'], self.mailer._build_mail_to() )
+        self.assertEqual( [b'aa', b'bb'], self.mailer._build_mail_to() )
 
     ## end class MailerTest()
 
