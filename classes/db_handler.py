@@ -56,6 +56,9 @@ class Db_Handler(object):
         try:
             self._setup_db_connection()
             self.cursor_object.execute( sql )
+
+            self.connection_object.commit()  ## needed for innodb tables!!
+
         except Exception as e:
             err = repr( e )
             self.logger.error( 'error: %s' % err )
