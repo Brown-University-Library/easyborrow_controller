@@ -40,6 +40,8 @@ class MailBuilder( object ):
     def build_to( self ):
         """ Preps `to` data.
             Called by prep_email() """
+        assert type(self.patron_inst.email) == str, type(self.patron_inst.email)
+        assert type(settings.ADMIN_EMAIL) == str, type(settings.ADMIN_EMAIL)
         if self.request_inst.current_status == 'success' and self.request_inst.current_service == 'borrowDirect':
             self.to = [ self.patron_inst.email ]
         elif self.request_inst.current_status == 'success' and self.request_inst.current_service == 'illiad':
@@ -49,6 +51,19 @@ class MailBuilder( object ):
         else:  # assumes error
             self.to = [ settings.ADMIN_EMAIL ]
         return
+
+    # def build_to( self ):
+    #     """ Preps `to` data.
+    #         Called by prep_email() """
+    #     if self.request_inst.current_status == 'success' and self.request_inst.current_service == 'borrowDirect':
+    #         self.to = [ self.patron_inst.email ]
+    #     elif self.request_inst.current_status == 'success' and self.request_inst.current_service == 'illiad':
+    #         self.to = [ self.patron_inst.email ]
+    #     elif self.request_inst.current_status == 'login_failed_possibly_blocked' and self.request_inst.current_service == 'illiad':
+    #         self.to = [ self.patron_inst.email ]
+    #     else:  # assumes error
+    #         self.to = [ settings.ADMIN_EMAIL ]
+    #     return
 
     def build_reply_to( self ):
         """ Preps `reply_to` data.
@@ -74,7 +89,21 @@ class MailBuilder( object ):
             self.message = self.make_illiad_blocked_message()
         else:  # assumes error
             self.message = 'BJD - handle this situation.'
+        assert type(self.message) == str, type(self.message)
         return
+
+    # def build_message( self ):
+    #     """ Preps `message` data.
+    #         Called by prep_email() """
+    #     if self.request_inst.current_status == 'success' and self.request_inst.current_service == 'borrowDirect':
+    #         self.message = self.make_borrowdirect_message()
+    #     elif self.request_inst.current_status == 'success' and self.request_inst.current_service == 'illiad':
+    #         self.message = self.make_illiad_success_message()
+    #     elif self.request_inst.current_status == 'login_failed_possibly_blocked' and self.request_inst.current_service == 'illiad':
+    #         self.message = self.make_illiad_blocked_message()
+    #     else:  # assumes error
+    #         self.message = 'BJD - handle this situation.'
+    #     return
 
     def make_borrowdirect_message( self ):
         """ Preps borrowdirect message.
@@ -197,76 +226,53 @@ class Mailer( object ):
             log.debug( 'mail sent' )
             return True
         except Exception as e:
-            log.error( 'problem sending mail, exception, `%s`' % repr(e) )
+            log.exception( 'problem sending mail, exception, `%s`' % repr(e) )
             return False
 
     def _build_mail_to( self ):
         """ Builds and returns 'to' list of email addresses.
             Called by send_email() """
-        utf8_to_list = []
-        for address in self.TO_LIST:
-            utf8_to_list.append( address.encode('utf-8', 'replace') )
-        return utf8_to_list
+        try:
+            utf8_to_list = []
+            for address in self.TO_LIST:
+                utf8_to_list.append( address.encode('utf-8', 'replace') )
+            return utf8_to_list
+        except Exception as e:
+            err = f'problem building mail-to, ``{repr(e)}``'
+            log.exception( err )
+            raise Exception( err )
+
+    # def _build_mail_to( self ):
+    #     """ Builds and returns 'to' list of email addresses.
+    #         Called by send_email() """
+    #     utf8_to_list = []
+    #     for address in self.TO_LIST:
+    #         utf8_to_list.append( address.encode('utf-8', 'replace') )
+    #     return utf8_to_list
 
     def _assemble_payload( self, TO, MESSAGE ):
         """ Puts together and returns email payload.
             Called by send_email(). """
-        payload = MIMEText( MESSAGE )
-        payload['To'] = ', '.join( TO ).encode( 'utf-8', 'replace' )
-        payload['From'] = self.FROM_HEADER.encode( 'utf-8', 'replace' )
-        payload['Subject'] = Header( self.SUBJECT, 'utf-8' )  # Header handles encoding
-        payload['Reply-to'] = self.REPLY_TO_HEADER.encode( 'utf-8', 'replace' )
-        return payload
+        try:
+            payload = MIMEText( MESSAGE )
+            payload['To'] = ', '.join( TO ).encode( 'utf-8', 'replace' )
+            payload['From'] = self.FROM_HEADER.encode( 'utf-8', 'replace' )
+            payload['Subject'] = Header( self.SUBJECT, 'utf-8' )  # Header handles encoding
+            payload['Reply-to'] = self.REPLY_TO_HEADER.encode( 'utf-8', 'replace' )
+            return payload
+        except Exception as e:
+            err = f'problem assembling payload, ``{repr(e)}``'
+            log.exception( err )
+            raise Exception( err )
+
+    # def _assemble_payload( self, TO, MESSAGE ):
+    #     """ Puts together and returns email payload.
+    #         Called by send_email(). """
+    #     payload = MIMEText( MESSAGE )
+    #     payload['To'] = ', '.join( TO ).encode( 'utf-8', 'replace' )
+    #     payload['From'] = self.FROM_HEADER.encode( 'utf-8', 'replace' )
+    #     payload['Subject'] = Header( self.SUBJECT, 'utf-8' )  # Header handles encoding
+    #     payload['Reply-to'] = self.REPLY_TO_HEADER.encode( 'utf-8', 'replace' )
+    #     return payload
 
     # end class Mailer
-
-
-# class Mailer( object ):
-#     """ Specs email handling. """
-
-#     def __init__( self, to_json, reply_to, UNICODE_SUBJECT, UNICODE_MESSAGE, request_number ):
-#         self.UTF8_SMTP_SERVER = settings.MAIL_SMTP_SERVER
-#         self.UTF8_RAW_TO_JSON = to_json  # json (ensures reliable formatting/encoding), eg: '["addr1@domain.edu", "addr2@domain.com"]'
-#         self.UTF8_FROM_REAL = settings.MAIL_SENDER  # real 'from' address smtp server will user, eg: 'addr3@domain.edu'
-#         self.UTF8_FROM_HEADER = settings.MAIL_APPARENT_SENDER  # apparent 'from' string user will see, eg: 'some_system'
-#         self.UTF8_REPLY_TO_HEADER = reply_to
-#         self.UNICODE_SUBJECT = UNICODE_SUBJECT
-#         self.UNICODE_MESSAGE = UNICODE_MESSAGE
-#         self.request_number = request_number
-#         log.debug( '%s - Mailer instantiated' % self.request_number )
-
-#     def send_email( self ):
-#         """ Sends email. """
-#         try:
-#             TO = self._build_mail_to()  # list of utf-8 entries
-#             MESSAGE = self.UNICODE_MESSAGE.encode( 'utf-8', 'replace' )  # utf-8
-#             payload = self._assemble_payload( TO, MESSAGE )
-#             s = smtplib.SMTP( self.UTF8_SMTP_SERVER )
-#             s.sendmail( self.UTF8_FROM_REAL, TO, payload.as_string() )
-#             s.quit()
-#             log.debug( 'mail sent' )
-#             return True
-#         except Exception as e:
-#             log.error( 'problem sending mail, exception, `%s`' % unicode(repr(e)) )
-#             return False
-
-#     def _build_mail_to( self ):
-#         """ Builds and returns 'to' list of email addresses.
-#             Called by send_email() """
-#         to_emails = json.loads( self.UTF8_RAW_TO_JSON )
-#         utf8_to_list = []
-#         for address in to_emails:
-#             utf8_to_list.append( address.encode('utf-8') )
-#         return utf8_to_list
-
-#     def _assemble_payload( self, TO, MESSAGE ):
-#         """ Puts together and returns email payload.
-#             Called by send_email(). """
-#         payload = MIMEText( MESSAGE )
-#         payload['To'] = ', '.join( TO )
-#         payload['From'] = self.UTF8_FROM_HEADER
-#         payload['Subject'] = Header( self.UNICODE_SUBJECT, 'utf-8' )  # subject must be unicode
-#         payload['Reply-to'] = self.UTF8_REPLY_TO_HEADER
-#         return payload
-
-#     # end class Mailer
