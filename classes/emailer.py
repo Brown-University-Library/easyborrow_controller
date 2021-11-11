@@ -218,10 +218,10 @@ class Mailer( object ):
         """ Sends email. """
         try:
             TO = self._build_mail_to()  # list of utf-8 entries
-            MESSAGE = self.MESSAGE.encode( 'utf-8', 'replace' )
+            MESSAGE = self.MESSAGE
             payload = self._assemble_payload( TO, MESSAGE )
-            s = smtplib.SMTP( self.SMTP_SERVER.encode('utf-8', 'replace') )
-            s.sendmail( self.FROM_REAL.encode('utf-8', 'replace'), TO, payload.as_string() )
+            s = smtplib.SMTP( self.SMTP_SERVER )
+            s.sendmail( self.FROM_REAL, TO, payload.as_string() )
             s.quit()
             log.debug( 'mail sent' )
             return True
@@ -235,7 +235,7 @@ class Mailer( object ):
         try:
             utf8_to_list = []
             for address in self.TO_LIST:
-                utf8_to_list.append( address.encode('utf-8', 'replace') )
+                utf8_to_list.append( address )
             return utf8_to_list
         except Exception as e:
             err = f'problem building mail-to, ``{repr(e)}``'
@@ -255,10 +255,10 @@ class Mailer( object ):
             Called by send_email(). """
         try:
             payload = MIMEText( MESSAGE )
-            payload['To'] = ', '.join( TO ).encode( 'utf-8', 'replace' )
-            payload['From'] = self.FROM_HEADER.encode( 'utf-8', 'replace' )
+            payload['To'] = ', '.join( TO )
+            payload['From'] = self.FROM_HEADER
             payload['Subject'] = Header( self.SUBJECT, 'utf-8' )  # Header handles encoding
-            payload['Reply-to'] = self.REPLY_TO_HEADER.encode( 'utf-8', 'replace' )
+            payload['Reply-to'] = self.REPLY_TO_HEADER
             return payload
         except Exception as e:
             err = f'problem assembling payload, ``{repr(e)}``'
@@ -276,3 +276,84 @@ class Mailer( object ):
     #     return payload
 
     # end class Mailer
+
+
+# class Mailer( object ):
+#     """ Specs email handling. """
+
+#     def __init__( self, to_list, reply_to, subject, message, request_number ):
+#         self.SMTP_SERVER = settings.MAIL_SMTP_SERVER
+#         self.TO_LIST = to_list  # eg: [ 'addr1@domain.edu', 'addr2@domain.com' ]
+#         self.FROM_REAL = settings.MAIL_SENDER  # real 'from' unicode-string address smtp server will user, eg: 'addr3@domain.edu'
+#         self.FROM_HEADER = settings.MAIL_APPARENT_SENDER  # apparent 'from' unicode-string user will see, eg: 'some_system'
+#         self.REPLY_TO_HEADER = reply_to  # unicode-string
+#         self.SUBJECT = subject  # unicode-string
+#         self.MESSAGE = message  # unicode-string
+#         self.request_number = request_number  # unicode-string
+#         log.debug( '%s - Mailer instantiated' % self.request_number )
+#         # log.debug( 'to_list, `%s`' % pprint.pformat(to_list) )
+#         # log.debug( 'reply_to, `%s`; subject, `%s`' % (reply_to, subject) )
+#         # log.debug( 'message, `%s`' % pprint.pformat(message) )
+
+#     def send_email( self ):
+#         """ Sends email. """
+#         try:
+#             TO = self._build_mail_to()  # list of utf-8 entries
+#             MESSAGE = self.MESSAGE.encode( 'utf-8', 'replace' )
+#             payload = self._assemble_payload( TO, MESSAGE )
+#             s = smtplib.SMTP( self.SMTP_SERVER.encode('utf-8', 'replace') )
+#             s.sendmail( self.FROM_REAL.encode('utf-8', 'replace'), TO, payload.as_string() )
+#             s.quit()
+#             log.debug( 'mail sent' )
+#             return True
+#         except Exception as e:
+#             log.exception( 'problem sending mail, exception, `%s`' % repr(e) )
+#             return False
+
+#     def _build_mail_to( self ):
+#         """ Builds and returns 'to' list of email addresses.
+#             Called by send_email() """
+#         try:
+#             utf8_to_list = []
+#             for address in self.TO_LIST:
+#                 utf8_to_list.append( address.encode('utf-8', 'replace') )
+#             return utf8_to_list
+#         except Exception as e:
+#             err = f'problem building mail-to, ``{repr(e)}``'
+#             log.exception( err )
+#             raise Exception( err )
+
+#     # def _build_mail_to( self ):
+#     #     """ Builds and returns 'to' list of email addresses.
+#     #         Called by send_email() """
+#     #     utf8_to_list = []
+#     #     for address in self.TO_LIST:
+#     #         utf8_to_list.append( address.encode('utf-8', 'replace') )
+#     #     return utf8_to_list
+
+#     def _assemble_payload( self, TO, MESSAGE ):
+#         """ Puts together and returns email payload.
+#             Called by send_email(). """
+#         try:
+#             payload = MIMEText( MESSAGE )
+#             payload['To'] = ', '.join( TO ).encode( 'utf-8', 'replace' )
+#             payload['From'] = self.FROM_HEADER.encode( 'utf-8', 'replace' )
+#             payload['Subject'] = Header( self.SUBJECT, 'utf-8' )  # Header handles encoding
+#             payload['Reply-to'] = self.REPLY_TO_HEADER.encode( 'utf-8', 'replace' )
+#             return payload
+#         except Exception as e:
+#             err = f'problem assembling payload, ``{repr(e)}``'
+#             log.exception( err )
+#             raise Exception( err )
+
+#     # def _assemble_payload( self, TO, MESSAGE ):
+#     #     """ Puts together and returns email payload.
+#     #         Called by send_email(). """
+#     #     payload = MIMEText( MESSAGE )
+#     #     payload['To'] = ', '.join( TO ).encode( 'utf-8', 'replace' )
+#     #     payload['From'] = self.FROM_HEADER.encode( 'utf-8', 'replace' )
+#     #     payload['Subject'] = Header( self.SUBJECT, 'utf-8' )  # Header handles encoding
+#     #     payload['Reply-to'] = self.REPLY_TO_HEADER.encode( 'utf-8', 'replace' )
+#     #     return payload
+
+#     # end class Mailer
