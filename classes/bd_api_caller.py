@@ -166,7 +166,8 @@ class BD_CallerBib( object ):
             api_confirmation_code
         )
         utf8_sql = sql.encode( 'utf-8' )  # old code expects utf-8 string
-        log.debug( '%s- prep_history_sql complete; utf8_sql, `%s`' % (self.log_identifier, sql.decode('utf-8')) )
+        # log.debug( '%s- prep_history_sql complete; utf8_sql, `%s`' % (self.log_identifier, sql.decode('utf-8')) )
+        log.debug( '%s- prep_history_sql complete; utf8_sql, `%s`' % (self.log_identifier, utf8_sql.decode('utf-8')) )
         return utf8_sql
 
     def handle_success( self, request_inst ):
