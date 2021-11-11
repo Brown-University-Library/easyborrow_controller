@@ -130,8 +130,6 @@ class Controller( object ):
                     ## do isbn search?
                     if len( item_inst.isbn ) > 0:
 
-                        1/0
-
                         ## setup
                         bd_caller_exact.log_identifier = self.log_identifier
                         request_inst.current_service = 'borrowDirect'
