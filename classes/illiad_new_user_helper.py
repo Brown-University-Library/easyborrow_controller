@@ -1,6 +1,11 @@
 import datetime, json, logging, os, pprint, random
+
 import requests
 from easyborrow_controller_code import settings
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
+
+
+requests.packages.urllib3.disable_warnings(InsecureRequestWarning)  # to address ```InsecureRequestWarning: Unverified HTTPS request is being made...```
 
 
 ## file and web-loggers

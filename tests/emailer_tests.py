@@ -30,7 +30,8 @@ class MailerTest(unittest.TestCase):
         pass
 
     def test_build_mail_to(self):
-        self.assertEqual( [b'aa', b'bb'], self.mailer._build_mail_to() )
+        # self.assertEqual( [b'aa', b'bb'], self.mailer._build_mail_to() )
+        self.assertEqual( ['aa', 'bb'], self.mailer._build_mail_to() )
 
     ## end class MailerTest()
 
